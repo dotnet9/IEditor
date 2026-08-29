@@ -5,6 +5,7 @@
     <RootNamespace>IEditor.App</RootNamespace>
     <AssemblyName>IEditor.App</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>..\..\logo.ico</ApplicationIcon>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
@@ -13,6 +14,8 @@
     <PackageReference Include="Avalonia.Fonts.Inter" />
     <PackageReference Include="Avalonia.Controls.ColorPicker" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Lang.Avalonia" />
+    <PackageReference Include="Lang.Avalonia.Json" />
     <PackageReference Include="Irihi.Ursa" />
     <PackageReference Include="Irihi.Ursa.Themes.Semi" />
     <PackageReference Include="Semi.Avalonia" />
@@ -20,6 +23,32 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AvaloniaResource Include="..\..\logo.png" Link="Assets\logo.png" />
+    <AvaloniaResource Include="..\..\logo.ico" Link="Assets\logo.ico" />
     <ProjectReference Include="..\IEditor.Core\IEditor.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="I18n\Language.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Language.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="I18n\Language.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Language.tt</DependentUpon>
+    </Compile>
+    <None Update="I18n\Language.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Language.cs</LastGenOutput>
+    </None>
+    <None Update="I18n\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>I18n\$(AssemblyName)\%(Filename)%(Extension)</TargetPath>
+    </None>
   </ItemGroup>
 </Project>

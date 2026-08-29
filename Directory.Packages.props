@@ -4,13 +4,15 @@
     <CentralPackageVersionOverrideEnabled>true</CentralPackageVersionOverrideEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Avalonia" Version="12.1.0" />
+    <PackageVersion Include="Avalonia" Version="12.1.1" />
     <PackageVersion Include="Avalonia.Controls.ColorPicker" Version="12.1.1" />
     <PackageVersion Include="Avalonia.Desktop" Version="12.1.1" />
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.1" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="Irihi.Ursa" Version="2.2.0" />
     <PackageVersion Include="Irihi.Ursa.Themes.Semi" Version="2.2.0" />
+    <PackageVersion Include="Lang.Avalonia" Version="12.1.1.2" />
+    <PackageVersion Include="Lang.Avalonia.Json" Version="12.1.1.2" />
     <PackageVersion Include="Magick.NET-Q16-AnyCPU" Version="14.16.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
     <PackageVersion Include="Semi.Avalonia" Version="12.1.0.1" />

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.svg" width="96" alt="IEditor logo" />
+  <img src="logo.svg" width="96" alt="IEditor 标志" />
 </p>
 
 # 证件照处理

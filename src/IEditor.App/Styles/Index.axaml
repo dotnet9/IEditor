@@ -1,0 +1,238 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Styles.Resources>
+    <ResourceDictionary>
+      <SolidColorBrush x:Key="IEditorWindowBackgroundBrush" Color="#F4F7FC" />
+      <SolidColorBrush x:Key="IEditorPageBackgroundBrush" Color="#F4F7FC" />
+      <SolidColorBrush x:Key="IEditorSurfaceBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="IEditorSurface2Brush" Color="#F7F9FD" />
+      <SolidColorBrush x:Key="IEditorSidebarBrush" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="IEditorSidebarHoverBrush" Color="#F1F5FC" />
+      <SolidColorBrush x:Key="IEditorSidebarActiveBrush" Color="#EAF1FF" />
+      <SolidColorBrush x:Key="IEditorBorderBrush" Color="#E6EBF4" />
+      <SolidColorBrush x:Key="IEditorBorderStrongBrush" Color="#D8E0EE" />
+      <SolidColorBrush x:Key="IEditorTextBrush" Color="#0F172A" />
+      <SolidColorBrush x:Key="IEditorTextSecondaryBrush" Color="#5B6B84" />
+      <SolidColorBrush x:Key="IEditorTextTertiaryBrush" Color="#93A1B8" />
+      <SolidColorBrush x:Key="IEditorAccentBrush" Color="#2E6BFF" />
+      <LinearGradientBrush x:Key="IEditorAccentGradientBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#2E6BFF" Offset="0" />
+        <GradientStop Color="#00B8D9" Offset="1" />
+      </LinearGradientBrush>
+      <SolidColorBrush x:Key="IEditorAccentSoftBrush" Color="#1A2E6BFF" />
+      <SolidColorBrush x:Key="IEditorAccentTintBrush" Color="#0A2E6BFF" />
+      <SolidColorBrush x:Key="IEditorSuccessBrush" Color="#12B76A" />
+      <SolidColorBrush x:Key="IEditorWarningBrush" Color="#F59E0B" />
+      <SolidColorBrush x:Key="IEditorDangerBrush" Color="#EF4444" />
+    </ResourceDictionary>
+  </Styles.Resources>
+
+  <Style Selector="TextBlock.ie-page-title">
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorTextBrush}" />
+  </Style>
+
+  <Style Selector="TextBlock.ie-page-subtitle">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorTextTertiaryBrush}" />
+  </Style>
+
+  <Style Selector="TextBlock.ie-section-title">
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorTextBrush}" />
+  </Style>
+
+  <Style Selector="TextBlock.ie-section-subtitle">
+    <Setter Property="FontSize" Value="12" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorTextSecondaryBrush}" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+
+  <Style Selector="TextBlock.ie-muted">
+    <Setter Property="Foreground" Value="{DynamicResource IEditorTextSecondaryBrush}" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+  </Style>
+
+  <Style Selector="TextBlock.ie-footnote">
+    <Setter Property="FontSize" Value="11" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorTextTertiaryBrush}" />
+  </Style>
+
+  <Style Selector="Border.ie-surface-card">
+    <Setter Property="Background" Value="{DynamicResource IEditorSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource IEditorBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="8" />
+  </Style>
+
+  <Style Selector="Border.ie-surface-panel">
+    <Setter Property="Background" Value="{DynamicResource IEditorSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource IEditorBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="8" />
+  </Style>
+
+  <Style Selector="Button.ie-icon-button">
+    <Setter Property="Width" Value="32" />
+    <Setter Property="Height" Value="32" />
+    <Setter Property="MinWidth" Value="32" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="9" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="Button.ie-icon-button:pointerover">
+    <Setter Property="Background" Value="{DynamicResource IEditorSidebarHoverBrush}" />
+  </Style>
+
+  <Style Selector="Button.ie-icon-button:pressed">
+    <Setter Property="Background" Value="{DynamicResource IEditorSidebarActiveBrush}" />
+  </Style>
+
+  <Style Selector="Button.ie-secondary-button">
+    <Setter Property="Height" Value="34" />
+    <Setter Property="Padding" Value="0,0,14,0" />
+    <Setter Property="Background" Value="{DynamicResource IEditorSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource IEditorBorderStrongBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorTextBrush}" />
+  </Style>
+
+  <Style Selector="Button.ie-secondary-button:pointerover">
+    <Setter Property="BorderBrush" Value="{DynamicResource IEditorAccentBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorAccentBrush}" />
+  </Style>
+
+  <Style Selector="Button.ie-primary-button">
+    <Setter Property="Height" Value="34" />
+    <Setter Property="Padding" Value="0,0,14,0" />
+    <Setter Property="Background" Value="{DynamicResource IEditorAccentGradientBrush}" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Foreground" Value="#FFFFFFFF" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+
+  <Style Selector="Button.ie-primary-button:pointerover">
+    <Setter Property="Opacity" Value="0.96" />
+  </Style>
+
+  <Style Selector="Button.ie-ghost-button">
+    <Setter Property="Height" Value="34" />
+    <Setter Property="Padding" Value="0,0,12,0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="{DynamicResource IEditorBorderStrongBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorTextBrush}" />
+  </Style>
+
+  <Style Selector="Button.ie-ghost-button:pointerover">
+    <Setter Property="BorderBrush" Value="{DynamicResource IEditorAccentBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorAccentBrush}" />
+  </Style>
+
+  <Style Selector="ToggleButton.ie-segment-button">
+    <Setter Property="Height" Value="30" />
+    <Setter Property="MinWidth" Value="0" />
+    <Setter Property="Padding" Value="12,0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="8" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorTextSecondaryBrush}" />
+  </Style>
+
+  <Style Selector="ToggleButton.ie-segment-button:checked">
+    <Setter Property="Background" Value="{DynamicResource IEditorSurfaceBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorAccentBrush}" />
+  </Style>
+
+  <Style Selector="ListBox.ie-segment-list">
+    <Setter Property="Background" Value="{DynamicResource IEditorSurface2Brush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource IEditorBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="Padding" Value="3" />
+  </Style>
+
+  <Style Selector="ListBox.ie-segment-list ListBoxItem">
+    <Setter Property="MinHeight" Value="30" />
+    <Setter Property="Padding" Value="12,5" />
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+  </Style>
+
+  <Style Selector="ListBox.ie-segment-list ListBoxItem:selected">
+    <Setter Property="Background" Value="{DynamicResource IEditorSurfaceBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorAccentBrush}" />
+  </Style>
+
+  <Style Selector="ListBox.ie-swatch-list">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+
+  <Style Selector="ListBox.ie-swatch-list ListBoxItem">
+    <Setter Property="Padding" Value="2" />
+    <Setter Property="Margin" Value="0" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="1" />
+  </Style>
+
+  <Style Selector="ListBox.ie-swatch-list ListBoxItem:selected">
+    <Setter Property="BorderBrush" Value="{DynamicResource IEditorAccentBrush}" />
+  </Style>
+
+  <Style Selector="ListBox.ie-nav-list">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+
+  <Style Selector="ListBox.ie-nav-list ListBoxItem">
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="Margin" Value="0,0,0,6" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+  </Style>
+
+  <Style Selector="ListBox.ie-nav-list ListBoxItem:pointerover">
+    <Setter Property="Background" Value="{DynamicResource IEditorSidebarHoverBrush}" />
+  </Style>
+
+  <Style Selector="ListBox.ie-nav-list ListBoxItem:selected">
+    <Setter Property="Background" Value="{DynamicResource IEditorSidebarActiveBrush}" />
+    <Setter Property="Foreground" Value="{DynamicResource IEditorAccentBrush}" />
+  </Style>
+
+  <Style Selector="ToggleButton.ie-sidebar-toggle">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+    <Setter Property="Padding" Value="0" />
+  </Style>
+
+  <Style Selector="ToggleButton.ie-sidebar-toggle:pointerover">
+    <Setter Property="Background" Value="{DynamicResource IEditorSidebarHoverBrush}" />
+  </Style>
+
+  <Style Selector="ToggleButton.ie-sidebar-toggle:checked">
+    <Setter Property="Background" Value="{DynamicResource IEditorSidebarActiveBrush}" />
+  </Style>
+</Styles>

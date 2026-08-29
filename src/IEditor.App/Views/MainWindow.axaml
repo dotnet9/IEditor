@@ -2,17 +2,26 @@
     x:Class="IEditor.App.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:u="https://irihi.tech/ursa"
+    xmlns:vm="using:IEditor.App.ViewModels"
+    xmlns:u="using:Ursa.Controls"
     xmlns:views="using:IEditor.App.Views"
-    Title="证件照处理"
-    Width="1320"
+    Background="{DynamicResource IEditorWindowBackgroundBrush}"
+    FontFamily="Microsoft YaHei UI, Microsoft YaHei, Segoe UI"
     Height="860"
+    Icon="/Assets/logo.ico"
+    MinHeight="760"
     MinWidth="1100"
-    MinHeight="760">
+    Title="{Binding WindowTitle}"
+    Width="1320"
+    WindowStartupLocation="CenterScreen"
+    x:DataType="vm:MainViewModel">
   <u:UrsaWindow.TitleBarContent>
-    <StackPanel Spacing="2">
-      <TextBlock FontSize="16" FontWeight="SemiBold" Text="证件照处理" />
-      <TextBlock Opacity="0.7" Text="一寸、二寸与自定义背景" />
+    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+      <Image Source="/Assets/logo.png" Width="22" Height="22" />
+      <StackPanel Spacing="1">
+        <TextBlock FontSize="13" FontWeight="SemiBold" Text="{Binding WindowTitle}" />
+        <TextBlock FontSize="11" Opacity="0.72" Text="{Binding WindowSubtitle}" />
+      </StackPanel>
     </StackPanel>
   </u:UrsaWindow.TitleBarContent>
   <views:MainView />

@@ -4,102 +4,80 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:u="https://irihi.tech/ursa"
+    xmlns:shapes="using:Avalonia.Controls.Shapes"
     xmlns:vm="using:IEditor.App.ViewModels"
     x:CompileBindings="True"
     x:DataType="vm:MainViewModel"
     d:DesignHeight="860"
     d:DesignWidth="1320"
     mc:Ignorable="d">
-  <Grid ColumnDefinitions="2.2*,360" ColumnSpacing="16" Margin="16">
-    <Border BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1" CornerRadius="8">
-      <Grid RowDefinitions="Auto,*" RowSpacing="12" Margin="12">
-        <StackPanel Spacing="4">
-          <TextBlock FontWeight="SemiBold" FontSize="14" Text="{Binding SourceSummary}" />
-          <TextBlock Opacity="0.7" Text="{Binding ProcessingSummary}" />
-          <TextBlock Opacity="0.7" Text="{Binding BackgroundSummary}" />
+  <Grid ColumnDefinitions="228,*" Background="{DynamicResource IEditorWindowBackgroundBrush}">
+    <Border
+        Grid.Column="0"
+        Background="{DynamicResource IEditorSidebarBrush}"
+        BorderBrush="{DynamicResource IEditorBorderBrush}"
+        BorderThickness="0,0,1,0">
+      <Grid RowDefinitions="Auto,*,Auto" Margin="14,14,12,12" RowSpacing="12">
+        <StackPanel Orientation="Horizontal" Spacing="10">
+          <Border Width="34" Height="34" CornerRadius="9" Background="{DynamicResource IEditorAccentGradientBrush}">
+            <Image Source="/Assets/logo.png" Width="34" Height="34" />
+          </Border>
+          <StackPanel Spacing="1">
+            <TextBlock Classes="ie-section-title" Text="{Binding WindowTitle}" />
+            <TextBlock Classes="ie-footnote" Text="{Binding WindowSubtitle}" />
+          </StackPanel>
         </StackPanel>
 
-        <Border Grid.Row="1" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1" CornerRadius="6">
-          <u:ImageViewer Source="{Binding PreviewBitmap}" />
-        </Border>
+        <ScrollViewer Grid.Row="1">
+          <ListBox
+              Classes="ie-nav-list"
+              ItemsSource="{Binding NavigationItems}"
+              SelectedItem="{Binding SelectedNavigationItem, Mode=TwoWay}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:NavigationItemViewModel">
+                <Border
+                    Padding="10,9"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    CornerRadius="10"
+                    IsEnabled="{Binding IsEnabled}">
+                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                    <Border Width="28" Height="28" CornerRadius="8" Background="{DynamicResource IEditorSurface2Brush}">
+                      <shapes:Path
+                          Width="15"
+                          Height="15"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Data="{Binding Icon}"
+                          Fill="{DynamicResource IEditorTextSecondaryBrush}" />
+                    </Border>
+                    <StackPanel Grid.Column="1" Spacing="2">
+                      <TextBlock Classes="ie-section-title" FontSize="13" Text="{Binding Title}" />
+                      <TextBlock Classes="ie-footnote" Text="{Binding Subtitle}" />
+                    </StackPanel>
+                    <TextBlock
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        Classes="ie-footnote"
+                        Foreground="{DynamicResource IEditorTextTertiaryBrush}"
+                        Text="{Binding Badge}" />
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Spacing="8">
+          <Border Height="1" Background="{DynamicResource IEditorBorderBrush}" />
+          <TextBlock Classes="ie-footnote" Text="v0.3.0 · 界面原型" />
+        </StackPanel>
       </Grid>
     </Border>
 
-    <ScrollViewer Grid.Column="1">
-      <StackPanel Spacing="12">
-        <HeaderedContentControl Header="源文件" Theme="{DynamicResource GroupBox}">
-          <u:PathPicker
-              AllowMultiple="False"
-              Command="{Binding OpenSourceCommand}"
-              DefaultFileExtension="jpg"
-              FileFilter="[ImageAll]"
-              SelectedPathsText="{Binding SourcePath, Mode=TwoWay}"
-              SuggestedStartPath="{Binding InputSuggestedStartPath}"
-              UsePickerType="OpenFile" />
-        </HeaderedContentControl>
-
-        <HeaderedContentControl Header="尺寸" Theme="{DynamicResource GroupBox}">
-          <StackPanel Spacing="8">
-            <ComboBox ItemsSource="{Binding SizeOptions}" SelectedItem="{Binding SelectedSizeOption, Mode=TwoWay}" />
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-              <u:NumericDoubleUpDown
-                  InnerLeftContent="宽（毫米）"
-                  IsEnabled="{Binding IsCustomSize}"
-                  Value="{Binding WidthMm, Mode=TwoWay}" />
-              <u:NumericDoubleUpDown
-                  Grid.Column="1"
-                  InnerLeftContent="高（毫米）"
-                  IsEnabled="{Binding IsCustomSize}"
-                  Value="{Binding HeightMm, Mode=TwoWay}" />
-            </Grid>
-            <u:NumericIntUpDown
-                InnerLeftContent="分辨率"
-                Minimum="72"
-                Step="10"
-                Value="{Binding Dpi, Mode=TwoWay}" />
-          </StackPanel>
-        </HeaderedContentControl>
-
-        <HeaderedContentControl Header="背景" Theme="{DynamicResource GroupBox}">
-          <StackPanel Spacing="8">
-            <ComboBox ItemsSource="{Binding BackgroundOptions}" SelectedItem="{Binding SelectedBackgroundOption, Mode=TwoWay}" />
-            <ColorView
-                Height="240"
-                IsAccentColorsVisible="False"
-                IsAlphaEnabled="False"
-                IsAlphaVisible="False"
-                IsColorComponentsVisible="False"
-                IsColorModelVisible="False"
-                IsColorPaletteVisible="False"
-                IsColorSpectrumSliderVisible="False"
-                IsComponentSliderVisible="False"
-                IsComponentTextInputVisible="False"
-                IsHexInputVisible="True"
-                IsVisible="{Binding IsCustomBackground}"
-                Color="{Binding CustomBackgroundColor, Mode=TwoWay}" />
-          </StackPanel>
-        </HeaderedContentControl>
-
-        <HeaderedContentControl Header="输出" Theme="{DynamicResource GroupBox}">
-          <u:PathPicker
-              AllowMultiple="False"
-              DefaultFileExtension="jpg"
-              FileFilter="[ImageJpg][ImagePng]"
-              SelectedPathsText="{Binding OutputPath, Mode=TwoWay}"
-              SuggestedFileName="{Binding SuggestedOutputFileName}"
-              SuggestedStartPath="{Binding OutputSuggestedStartPath}"
-              UsePickerType="SaveFile" />
-        </HeaderedContentControl>
-
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <Button Command="{Binding GeneratePreviewCommand}" Content="预览" />
-          <Button Command="{Binding SaveCommand}" Content="保存" />
-          <Button Command="{Binding ResetCommand}" Content="重置" />
-        </StackPanel>
-
-        <TextBlock Opacity="0.7" Text="{Binding StatusMessage}" TextWrapping="Wrap" />
-      </StackPanel>
-    </ScrollViewer>
+    <Border Grid.Column="1" Background="{DynamicResource IEditorPageBackgroundBrush}">
+      <ContentControl Content="{Binding SelectedPage}" />
+    </Border>
   </Grid>
 </UserControl>

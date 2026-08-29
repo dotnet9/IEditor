@@ -1,0 +1,256 @@
+{
+  "language": "简体中文",
+  "description": "IEditor 简体中文资源",
+  "cultureName": "zh-CN",
+  "Localization": {
+    "Common": {
+      "Actions": {
+        "Add": "添加",
+        "Apply": "应用",
+        "Browse": "浏览",
+        "Cancel": "取消",
+        "Close": "关闭",
+        "CheckUpdate": "检查更新",
+        "Confirm": "确认",
+        "Crop": "裁剪",
+        "Export": "导出",
+        "ExportAll": "全部导出",
+        "ExportZip": "导出为 ZIP",
+        "GeneratePreview": "生成预览",
+        "Help": "帮助",
+        "OpenRepository": "代码仓库",
+        "Preview": "预览",
+        "Remove": "移除",
+        "Replace": "更换",
+        "Reset": "重置",
+        "Save": "保存",
+        "SaveExport": "保存导出",
+        "SelectFile": "选择文件",
+        "SelectFolder": "选择文件夹",
+        "TurnOff": "关闭",
+        "TurnOn": "开启"
+      },
+      "Formats": {
+        "Jpg": "JPG",
+        "Png": "PNG",
+        "Zip": "ZIP"
+      },
+      "Language": {
+        "SimplifiedChinese": "简体中文",
+        "TraditionalChinese": "繁體中文"
+      },
+      "States": {
+        "AutoSaved": "更改已自动保存",
+        "ComingSoon": "即将上线",
+        "Completed": "已完成",
+        "Disabled": "已禁用",
+        "Enabled": "已启用",
+        "Failed": "失败",
+        "Planned": "规划中",
+        "Processing": "处理中",
+        "Ready": "就绪",
+        "Selected": "已选中",
+        "Unselected": "未选中",
+        "Waiting": "等待中"
+      },
+      "Theme": {
+        "Dark": "深色",
+        "Light": "浅色",
+        "System": "跟随系统"
+      }
+    },
+    "Shell": {
+      "Navigation": {
+        "BatchProcessing": "批量处理",
+        "ComingSoon": "即将上线",
+        "PhotoStudio": "证件照处理",
+        "Planned": "规划中",
+        "Settings": "设置",
+        "SmartCutout": "智能抠图",
+        "Toolbox": "图片工具箱",
+        "Workspace": "工作区"
+      },
+      "Window": {
+        "Subtitle": "一寸、二寸与自定义背景",
+        "WorkbenchSubtitle": "智能图像工作台",
+        "Title": "IEditor"
+      }
+    },
+    "PhotoStudio": {
+      "Backgrounds": {
+        "Blue": "蓝色",
+        "BlueName": "标准蓝",
+        "Custom": "自定义",
+        "GrayDarkName": "深灰",
+        "GrayLightName": "浅灰",
+        "RedName": "中国红",
+        "White": "白色",
+        "WhiteName": "纯白"
+      },
+      "Labels": {
+        "BackgroundHint": "当前底色",
+        "Dpi": "分辨率",
+        "FileFormat": "文件格式",
+        "FilenameTemplate": "文件名模板",
+        "HeightMm": "高（毫米）",
+        "OutputQuality": "输出质量",
+        "SaveLocation": "保存位置",
+        "SizeHint": "标准冲印比例",
+        "SourceHint": "JPG / PNG / WEBP",
+        "WidthMm": "宽（毫米）"
+      },
+      "Page": {
+        "BackgroundSection": "背景",
+        "BackgroundSmartDescription": "自动抠出人像，任意替换底色",
+        "BackgroundSmartTitle": "智能抠图换底",
+        "Breadcrumb": "工作台 / 证件照处理",
+        "EngineReady": "AI 引擎就绪",
+        "ExportImage": "导出图片",
+        "FitToWindow": "适应",
+        "Help": "帮助",
+        "CompareOriginal": "原图对比",
+        "LivePreview": "实时预览",
+        "LoadImage": "载入图片",
+        "OutputHint": "保存到本地",
+        "OutputSection": "输出",
+        "OutputSettings": "输出设置",
+        "MoreSizes": "更多规格",
+        "SizeSection": "尺寸",
+        "SmartCutoutComingSoon": "即将上线",
+        "FlipHorizontal": "水平镜像",
+        "Guides": "参考线",
+        "ResetView": "重置",
+        "RotateLeft": "向左旋转",
+        "RotateRight": "向右旋转",
+        "SourceSection": "源图片",
+        "ThemeSwitch": "切换主题"
+      },
+      "Sizes": {
+        "Custom": "自定义",
+        "OneInch": "1寸",
+        "SmallTwoInch": "小2寸",
+        "TwoInch": "2寸"
+      },
+      "Status": {
+        "OutputPathMissing": "未选择输出路径",
+        "PreviewFailed": "预览失败：{0}",
+        "PreviewGenerated": "已生成预览：{0} × {1} 像素",
+        "Ready": "就绪",
+        "Reset": "已重置",
+        "SaveFailed": "保存失败：{0}",
+        "SavedFormat": "已保存：{0}",
+        "SourceImageNotFound": "未找到源图片。",
+        "SourcePathRequired": "源图片路径不能为空。",
+        "SourceSelected": "源图片已选中"
+      },
+      "Summary": {
+        "BackgroundFormat": "{0}背景 · {1}",
+        "NoImageSelected": "未选择图片",
+        "ProcessingFormat": "{0} · {1:0.#} × {2:0.#} 毫米 · {3} × {4} 像素",
+        "SavedFormat": "已保存：{0}"
+      }
+    },
+    "Settings": {
+      "Descriptions": {
+        "AccentColor": "按钮、选中等交互元素的主色",
+        "AutoCheckUpdate": "每周检查一次，仅提醒不自动下载",
+        "CurrentVersion": "IEditor · 基于 Avalonia 与 .NET 10",
+        "DefaultDpi": "新建处理任务的初始 DPI",
+        "DefaultFormat": "JPG 体积小，PNG 无损透明",
+        "DefaultQuality": "仅对 JPG 生效",
+        "DefaultSaveLocation": "默认输出目录",
+        "EmbedSrgb": "保证冲印与屏幕显示颜色一致",
+        "FilenameTemplate": "支持 {规格} {底色} {日期} {序号} 变量",
+        "Language": "切换后立即生效",
+        "OpenSourceRepository": "欢迎提交 Issue 与 PR",
+        "ProcessingEngine": "当前使用内置 Magick.NET 引擎",
+        "ShowGuides": "在预览中显示眼位线与头部轮廓",
+        "Theme": "浅色、深色或跟随系统"
+      },
+      "Labels": {
+        "AccentColor": "强调色",
+        "AutoCheckUpdate": "自动检查更新",
+        "CurrentVersion": "当前版本",
+        "DefaultDpi": "默认分辨率",
+        "DefaultFormat": "默认格式",
+        "DefaultQuality": "默认质量",
+        "DefaultSaveLocation": "默认保存位置",
+        "EmbedSrgb": "嵌入 sRGB 色彩配置",
+        "FilenameTemplate": "命名模板",
+        "ImageProcessing": "图像处理",
+        "Language": "界面语言",
+        "OpenSourceRepository": "开源仓库",
+        "ProcessingEngine": "处理引擎",
+        "ShowGuides": "显示对齐参考线",
+        "Theme": "主题"
+      },
+      "Options": {
+        "Amber": "琥珀橙",
+        "AuroraCyan": "极光青",
+        "Dark": "深色",
+        "Green": "松石绿",
+        "Light": "浅色",
+        "NebulaPurple": "星云紫",
+        "SimplifiedChinese": "简体中文",
+        "System": "跟随系统",
+        "TechBlue": "科技蓝",
+        "TraditionalChinese": "繁體中文"
+      },
+      "Page": {
+        "Appearance": "外观",
+        "AutoSaved": "更改已自动保存",
+        "Breadcrumb": "工作台 / 设置",
+        "Subtitle": "外观、导出与更新",
+        "Exporting": "导出",
+        "ImageProcessing": "图像处理",
+        "UpdateAbout": "更新与关于"
+      }
+    },
+    "Batch": {
+      "Descriptions": {
+        "Concurrency": "同时处理图片数量",
+        "FilenameTemplate": "支持 {原名} {规格} {底色} {日期} {序号} 变量",
+        "OpenFolderWhenDone": "全部导出成功后自动打开",
+        "SkipProcessed": "再次导出时忽略无变化文件"
+      },
+      "Labels": {
+        "Background": "背景",
+        "ChooseFile": "选择文件",
+        "Concurrency": "并发处理",
+        "DropDescription": "支持 JPG / PNG / WEBP，单次最多 200 张，可混选整个文件夹",
+        "DropTitle": "拖拽图片到此处，或点击添加",
+        "ExportAll": "全部导出",
+        "ExportZip": "导出为 ZIP",
+        "FilenameTemplate": "文件名模板",
+        "File": "文件",
+        "FollowOriginal": "跟随原",
+        "KeepRatio": "保持比例",
+        "OpenFolderWhenDone": "完成后打开文件夹",
+        "Processing": "处理中",
+        "QueueHint": "5 个文件 · 2 个已完成",
+        "QueueTitle": "处理队列",
+        "Remove": "移除",
+        "SelectedCount": "已选",
+        "Size": "规格",
+        "SkipProcessed": "跳过已处理",
+        "Status": "状态",
+        "UniformBackground": "统一背景",
+        "UniformSize": "统一规格",
+        "UniformSizeTitle": "统一尺寸"
+      },
+      "Page": {
+        "AddImage": "添加图片",
+        "AdvancedOptions": "高级选项",
+        "Breadcrumb": "工作台 / 批量处理",
+        "Subtitle": "拖拽导入、统一规格与批量导出",
+        "PlannedDesign": "规划中 · 设计稿"
+      },
+      "Status": {
+        "Completed": "已完成",
+        "Failed": "失败",
+        "Processing": "处理中",
+        "Waiting": "等待中"
+      }
+    }
+  }
+}

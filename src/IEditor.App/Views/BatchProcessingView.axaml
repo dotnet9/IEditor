@@ -1,0 +1,349 @@
+<UserControl
+    x:Class="IEditor.App.Views.BatchProcessingView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icons="using:IEditor.App.Icons"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:shapes="using:Avalonia.Controls.Shapes"
+    xmlns:u="using:Ursa.Controls"
+    xmlns:vm="using:IEditor.App.ViewModels"
+    x:CompileBindings="True"
+    x:DataType="vm:BatchProcessingViewModel"
+    d:DesignHeight="860"
+    d:DesignWidth="1320"
+    mc:Ignorable="d">
+  <UserControl.Styles>
+    <Style Selector="ToggleButton.ie-swatch-button">
+      <Setter Property="Width" Value="24" />
+      <Setter Property="Height" Value="24" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="CornerRadius" Value="999" />
+      <Setter Property="BorderBrush" Value="{DynamicResource IEditorBorderStrongBrush}" />
+      <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
+    <Style Selector="ToggleButton.ie-swatch-button:checked">
+      <Setter Property="BorderBrush" Value="{DynamicResource IEditorAccentBrush}" />
+      <Setter Property="BorderThickness" Value="2" />
+    </Style>
+  </UserControl.Styles>
+
+  <Grid RowDefinitions="Auto,*,Auto" RowSpacing="16" Margin="16">
+    <Border
+        Background="{DynamicResource IEditorSurfaceBrush}"
+        BorderBrush="{DynamicResource IEditorBorderBrush}"
+        BorderThickness="1"
+        CornerRadius="8"
+        Padding="12,10">
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+        <StackPanel Spacing="2">
+          <TextBlock Classes="ie-section-title" Text="{Binding Breadcrumb}" />
+          <TextBlock Classes="ie-footnote" Text="{Binding Subtitle}" />
+        </StackPanel>
+        <Border
+            Grid.Column="1"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            Padding="10,4"
+            Background="{DynamicResource IEditorAccentSoftBrush}"
+            BorderBrush="{DynamicResource IEditorAccentTintBrush}"
+            BorderThickness="1"
+            CornerRadius="999">
+          <TextBlock Classes="ie-footnote" Foreground="{DynamicResource IEditorAccentBrush}" Text="{Binding PageStatusBadge}" />
+        </Border>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
+          <Button Classes="ie-secondary-button" Command="{Binding AddImagesCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="7">
+              <shapes:Path Width="14" Height="14" Data="{x:Static icons:AppIcons.Add}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
+              <TextBlock Text="{Binding AddImageText}" />
+            </StackPanel>
+          </Button>
+          <Button Classes="ie-primary-button" Command="{Binding ExportAllCommand}">
+            <StackPanel Orientation="Horizontal" Spacing="7">
+              <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Export}" Fill="White" />
+              <TextBlock Text="{Binding ExportAllText}" />
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <Grid Grid.Row="1" ColumnDefinitions="*,332" ColumnSpacing="16">
+      <StackPanel Spacing="14">
+        <Grid>
+          <Border
+              Background="{DynamicResource IEditorSurfaceBrush}"
+              BorderBrush="{DynamicResource IEditorBorderBrush}"
+              BorderThickness="1"
+              CornerRadius="8"
+              Padding="20">
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14" VerticalAlignment="Center">
+              <Border Width="54" Height="54" CornerRadius="16" Background="{DynamicResource IEditorSurface2Brush}" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="1">
+                <shapes:Path Width="18" Height="18" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{x:Static icons:AppIcons.Add}" Fill="{DynamicResource IEditorAccentBrush}" />
+              </Border>
+              <StackPanel Grid.Column="1" Spacing="2" VerticalAlignment="Center">
+                <TextBlock Classes="ie-section-title" FontSize="14" Text="{Binding DropTitleText}" />
+                <TextBlock Classes="ie-muted" Text="{Binding DropDescriptionText}" />
+              </StackPanel>
+              <u:PathPicker
+                  Grid.Column="2"
+                  AllowMultiple="True"
+                  Command="{Binding AddImagesCommand}"
+                  DefaultFileExtension="jpg"
+                  FileFilter="[ImageAll]"
+                  SelectedPathsText="{Binding ImportPathsText, Mode=TwoWay}"
+                  UsePickerType="OpenFile" />
+            </Grid>
+          </Border>
+          <shapes:Rectangle
+              Margin="2"
+              Fill="Transparent"
+              IsHitTestVisible="False"
+              RadiusX="8"
+              RadiusY="8"
+              Stroke="{DynamicResource IEditorBorderBrush}"
+              StrokeDashArray="6,6"
+              StrokeThickness="1" />
+        </Grid>
+
+        <Border Classes="ie-surface-card" Padding="0">
+          <Grid RowDefinitions="Auto,Auto,*,Auto">
+            <Border Padding="14,12" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="0,0,0,1">
+              <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.BatchProcessing}" Fill="{DynamicResource IEditorAccentBrush}" />
+                  <TextBlock Classes="ie-section-title" Text="{Binding QueueTitleText}" />
+                </StackPanel>
+                <TextBlock Grid.Column="1" Classes="ie-footnote" Text="{Binding QueueHintText}" />
+                <CheckBox Grid.Column="2" Command="{Binding SelectAllCommand}" />
+              </Grid>
+            </Border>
+
+            <Border Grid.Row="1" Padding="12,10" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="0,0,0,1">
+              <Grid ColumnDefinitions="36,*,90,120,150,52" ColumnSpacing="12">
+                <TextBlock Classes="ie-footnote" Text=" " />
+                <TextBlock Grid.Column="1" Classes="ie-footnote" Text="{Binding FileColumnText}" />
+                <TextBlock Grid.Column="2" Classes="ie-footnote" Text="{Binding SizeColumnText}" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="3" Classes="ie-footnote" Text="{Binding BackgroundColumnText}" HorizontalAlignment="Center" />
+                <TextBlock Grid.Column="4" Classes="ie-footnote" Text="{Binding StatusColumnText}" HorizontalAlignment="Center" />
+              </Grid>
+            </Border>
+
+            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+              <ItemsControl ItemsSource="{Binding QueueItems}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:BatchProcessingItemViewModel">
+                    <Border Padding="12,10" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="0,0,0,1">
+                      <Grid ColumnDefinitions="36,*,90,120,150,52" ColumnSpacing="12" VerticalAlignment="Center">
+                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+
+                        <Grid Grid.Column="1" ColumnDefinitions="48,*" ColumnSpacing="10" VerticalAlignment="Center">
+                          <Border Width="44" Height="56" CornerRadius="6" Background="{Binding ThumbnailBrush}" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="1" ClipToBounds="True">
+                            <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" />
+                          </Border>
+                          <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
+                            <TextBlock FontWeight="SemiBold" Text="{Binding FileName}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Classes="ie-footnote" Text="{Binding FileInfo}" TextTrimming="CharacterEllipsis" />
+                          </StackPanel>
+                        </Grid>
+
+                        <Border Grid.Column="2" Background="{DynamicResource IEditorSurface2Brush}" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="1" CornerRadius="999" Padding="10,4" HorizontalAlignment="Center" VerticalAlignment="Center">
+                          <TextBlock Classes="ie-footnote" Foreground="{DynamicResource IEditorAccentBrush}" Text="{Binding SizeText}" />
+                        </Border>
+
+                        <Border Grid.Column="3" Background="{DynamicResource IEditorSurface2Brush}" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="1" CornerRadius="999" Padding="10,4" HorizontalAlignment="Center" VerticalAlignment="Center">
+                          <StackPanel Orientation="Horizontal" Spacing="6">
+                            <Border Width="10" Height="10" CornerRadius="999" Background="{Binding ThumbnailBrush}" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="1" />
+                            <TextBlock Classes="ie-footnote" Text="{Binding BackgroundText}" />
+                          </StackPanel>
+                        </Border>
+
+                        <StackPanel Grid.Column="4" Spacing="5" VerticalAlignment="Center">
+                          <TextBlock Classes="ie-footnote" HorizontalAlignment="Center" Text="{Binding StatusText}" />
+                          <ProgressBar Height="4" Minimum="0" Maximum="1" Value="{Binding Progress}" />
+                        </StackPanel>
+
+                        <Button Grid.Column="5" Classes="ie-icon-button" HorizontalAlignment="Center" VerticalAlignment="Center">
+                          <shapes:Path Width="14" Height="14" Data="{x:Static icons:AppIcons.Menu}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
+                        </Button>
+                      </Grid>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+
+            <Border Grid.Row="3" Padding="12,10">
+              <Grid ColumnDefinitions="Auto,Auto,Auto,Auto,*,Auto" ColumnSpacing="8" VerticalAlignment="Center">
+                <TextBlock Classes="ie-footnote" Text="{Binding SelectedCountText}" VerticalAlignment="Center" />
+                <Button Grid.Column="1" Classes="ie-secondary-button" Command="{Binding SelectSizeCommand}" CommandParameter="{Binding SelectedSizeOption}">
+                  <TextBlock Text="{Binding UniformSizeText}" />
+                </Button>
+                <Button Grid.Column="2" Classes="ie-secondary-button" Command="{Binding SelectBackgroundCommand}" CommandParameter="{Binding SelectedBackgroundOption}">
+                  <TextBlock Text="{Binding UniformBackgroundText}" />
+                </Button>
+                <Button Grid.Column="3" Classes="ie-secondary-button" Command="{Binding RemoveSelectedCommand}">
+                  <TextBlock Text="{Binding RemoveText}" />
+                </Button>
+                <Button Grid.Column="5" Classes="ie-secondary-button" Command="{Binding ExportZipCommand}">
+                  <StackPanel Orientation="Horizontal" Spacing="7">
+                    <shapes:Path Width="14" Height="14" Data="{x:Static icons:AppIcons.Zip}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
+                    <TextBlock Text="{Binding ExportZipText}" />
+                  </StackPanel>
+                </Button>
+              </Grid>
+            </Border>
+          </Grid>
+        </Border>
+      </StackPanel>
+
+      <StackPanel Grid.Column="1" Spacing="14">
+        <Border Classes="ie-surface-card" Padding="0">
+          <Grid RowDefinitions="Auto,*">
+            <Border Padding="14,12" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="0,0,0,1">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Crop}" Fill="{DynamicResource IEditorAccentBrush}" />
+                <TextBlock Classes="ie-section-title" Text="{Binding SizeSectionTitleText}" />
+                <TextBlock Classes="ie-footnote" Text="{Binding SizeSectionHintText}" />
+              </StackPanel>
+            </Border>
+            <Border Grid.Row="1" Padding="14">
+              <StackPanel Spacing="10">
+              <ItemsControl ItemsSource="{Binding SizeOptions}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <UniformGrid Columns="2" Rows="2" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:BatchSizeOptionViewModel">
+                    <ToggleButton
+                        Classes="ie-segment-button"
+                        Height="44"
+                        IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                        Command="{ReflectionBinding DataContext.SelectSizeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        CommandParameter="{Binding}">
+                      <StackPanel Spacing="2" HorizontalAlignment="Center">
+                        <TextBlock FontWeight="SemiBold" HorizontalAlignment="Center" Text="{Binding Title}" />
+                        <TextBlock Classes="ie-footnote" HorizontalAlignment="Center" Text="{Binding Token}" />
+                      </StackPanel>
+                    </ToggleButton>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <Border Background="{DynamicResource IEditorSurface2Brush}" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="1" CornerRadius="8" Padding="10,8">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                  <shapes:Path Width="14" Height="14" Data="{x:Static icons:AppIcons.Fit}" Fill="{DynamicResource IEditorAccentBrush}" VerticalAlignment="Center" />
+                  <TextBlock Grid.Column="1" Classes="ie-footnote" Text="{Binding SizeSummaryText}" TextTrimming="CharacterEllipsis" />
+                </Grid>
+              </Border>
+              </StackPanel>
+            </Border>
+          </Grid>
+        </Border>
+
+        <Border Classes="ie-surface-card" Padding="0">
+          <Grid RowDefinitions="Auto,*">
+            <Border Padding="14,12" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="0,0,0,1">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Guides}" Fill="{DynamicResource IEditorAccentBrush}" />
+                <TextBlock Classes="ie-section-title" Text="{Binding BackgroundSectionTitleText}" />
+                <TextBlock Classes="ie-footnote" Text="{Binding BackgroundSectionHintText}" />
+              </StackPanel>
+            </Border>
+            <Border Grid.Row="1" Padding="14">
+              <StackPanel Spacing="10">
+              <ItemsControl ItemsSource="{Binding BackgroundOptions}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" Spacing="8" />
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate x:DataType="vm:BackgroundOptionViewModel">
+                    <ToggleButton
+                        Classes="ie-swatch-button"
+                        Background="{Binding AvaloniaColor}"
+                        Command="{ReflectionBinding DataContext.SelectBackgroundCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        CommandParameter="{Binding}"
+                        IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                        ToolTip.Tip="{Binding Title}" />
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+              <TextBox Text="{Binding FilenameTemplate, Mode=TwoWay}" />
+              </StackPanel>
+            </Border>
+          </Grid>
+        </Border>
+
+        <Border Classes="ie-surface-card" Padding="0">
+          <Grid RowDefinitions="Auto,*">
+            <Border Padding="14,12" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="0,0,0,1">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Help}" Fill="{DynamicResource IEditorAccentBrush}" />
+                <TextBlock Classes="ie-section-title" Text="{Binding AdvancedOptionsTitleText}" />
+              </StackPanel>
+            </Border>
+            <Border Grid.Row="1" Padding="14">
+              <StackPanel Spacing="0">
+                <Border Margin="0,6">
+                  <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="4">
+                    <StackPanel>
+                      <TextBlock Classes="ie-section-title" Text="{Binding ConcurrencyLabelText}" />
+                      <TextBlock Classes="ie-footnote" Text="{Binding ConcurrencyDescriptionText}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                      <ToggleButton Classes="ie-segment-button" Command="{Binding SetConcurrencyCommand}" CommandParameter="2" Content="2" />
+                      <ToggleButton Classes="ie-segment-button" Command="{Binding SetConcurrencyCommand}" CommandParameter="4" Content="4" />
+                      <ToggleButton Classes="ie-segment-button" Command="{Binding SetConcurrencyCommand}" CommandParameter="8" Content="8" />
+                    </StackPanel>
+                  </Grid>
+                </Border>
+
+                <Border Height="1" Background="{DynamicResource IEditorBorderBrush}" Margin="0,6" />
+
+                <Border Margin="0,6">
+                  <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="4">
+                    <StackPanel>
+                      <TextBlock Classes="ie-section-title" Text="{Binding SkipProcessedLabelText}" />
+                      <TextBlock Classes="ie-footnote" Text="{Binding SkipProcessedDescriptionText}" />
+                    </StackPanel>
+                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding SkipProcessed, Mode=TwoWay}" />
+                  </Grid>
+                </Border>
+
+                <Border Height="1" Background="{DynamicResource IEditorBorderBrush}" Margin="0,6" />
+
+                <Border Margin="0,6">
+                  <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto" RowSpacing="4">
+                    <StackPanel>
+                      <TextBlock Classes="ie-section-title" Text="{Binding OpenFolderWhenDoneLabelText}" />
+                      <TextBlock Classes="ie-footnote" Text="{Binding OpenFolderWhenDoneDescriptionText}" />
+                    </StackPanel>
+                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding OpenFolderWhenDone, Mode=TwoWay}" />
+                  </Grid>
+                </Border>
+              </StackPanel>
+            </Border>
+          </Grid>
+        </Border>
+      </StackPanel>
+    </Grid>
+
+    <Border
+        Grid.Row="2"
+        Background="{DynamicResource IEditorSurfaceBrush}"
+        BorderBrush="{DynamicResource IEditorBorderBrush}"
+        BorderThickness="1"
+        CornerRadius="8"
+        Padding="12,8">
+      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+        <TextBlock Classes="ie-footnote" Text="{Binding FooterStatusText}" />
+        <TextBlock Grid.Column="1" Classes="ie-footnote" Text="{Binding QueueSummaryText}" />
+        <TextBlock Grid.Column="2" Classes="ie-footnote" Text="{Binding Concurrency, StringFormat=并发 {0}}" />
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

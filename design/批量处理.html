@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>批量处理 · IEditor 界面原型</title>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="icon" href="../logo.svg">
+</head>
+<body class="desktop">
+<div class="desk">
+<div class="window">
+
+  <!-- 自定义标题栏 -->
+  <div class="titlebar">
+    <img src="../logo.svg" alt="IEditor">
+    <span class="win-title">IEditor</span>
+    <span class="win-module">批量处理</span>
+    <div class="win-controls">
+      <button class="wc" title="最小化" type="button"><svg viewBox="0 0 12 12"><path d="M1 6h10" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <button class="wc" title="最大化" type="button"><svg viewBox="0 0 12 12"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <button class="wc close" title="关闭" type="button"><svg viewBox="0 0 12 12"><path d="m2 2 8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+
+  <div class="app">
+
+  <!-- ======== 侧边导航 ======== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="../logo.svg" alt="IEditor">
+      <div class="bt"><b>IEditor</b><small>智能图像工作台</small></div>
+    </div>
+    <div class="nav-label">工作区</div>
+    <a class="nav-item" href="证件照处理.html">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.5" cy="11" r="2"/><path d="M5.6 15.8c.5-1.5 1.6-2.3 2.9-2.3s2.4.8 2.9 2.3"/><path d="M14 9.5h4.2M14 13h3"/></svg>
+      证件照处理
+    </a>
+    <a class="nav-item active" href="批量处理.html">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+      批量处理 <em class="soon">规划中</em>
+    </a>
+    <button class="nav-item disabled" type="button">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 13.6 8l4.4 1.6-4.4 1.6L12 15.7l-1.6-4.5L6 9.6 10.4 8Z"/><path d="m18.6 14.2.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z"/></svg>
+      智能抠图 <em class="soon">即将上线</em>
+    </button>
+    <button class="nav-item disabled" type="button">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>
+      图片工具箱 <em class="soon">即将上线</em>
+    </button>
+    <div class="sidebar-foot">
+      <a class="nav-item" href="设置.html">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        设置
+      </a>
+      <div class="version">v0.3.0 · 界面原型</div>
+    </div>
+  </aside>
+
+  <!-- ======== 主区 ======== -->
+  <div class="main">
+    <header class="topbar">
+      <span class="crumb">工作台 /<b>批量处理</b></span>
+      <span class="chip amber"><svg class="ic" style="width:12px;height:12px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5"/><circle cx="12" cy="16.6" r=".6" fill="currentColor"/><path d="M10.3 3.8 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"/></svg>规划中 · 设计稿</span>
+      <span class="spacer"></span>
+      <button class="btn" type="button">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+        添加图片
+      </button>
+      <button class="btn primary" type="button">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/></svg>
+        全部导出
+      </button>
+    </header>
+
+    <main class="content">
+      <div class="batch">
+
+        <!-- 左列：导入 + 队列 -->
+        <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+
+          <div class="dropzone" style="border-style:dashed">
+            <div class="big-ic">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4.5"/><path d="m7.5 8.5 4.5-4 4.5 4"/><path d="M4.5 17v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V17"/></svg>
+            </div>
+            <div class="dt">
+              <b>拖拽图片到此处，或点击添加</b>
+              <span>支持 JPG / PNG / WEBP，单次最多 200 张，可混选整个文件夹</span>
+            </div>
+            <button class="btn" type="button" style="flex:none">选择文件</button>
+          </div>
+
+          <section class="card">
+            <div class="card-h">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+              处理队列<span class="hint">5 个文件 · 2 个已完成</span>
+            </div>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th style="width:36px"><input type="checkbox" checked></th>
+                  <th>文件</th>
+                  <th style="width:90px">规格</th>
+                  <th style="width:96px">背景</th>
+                  <th style="width:150px">状态</th>
+                  <th style="width:52px"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" checked></td>
+                  <td><div class="file-cell">
+                    <div class="thumb"><svg viewBox="0 0 300 400"><rect width="300" height="400" fill="#438EDB"/><ellipse cx="150" cy="150" rx="52" ry="57" fill="#d3deee"/><path d="M150 206 C105 206 76 240 68 296 L60 400 H240 L232 296 C224 240 195 206 150 206 Z" fill="#d3deee"/></svg></div>
+                    <div><b>合影-张三.jpg</b><small>1200×1600 · 2.1 MB</small></div>
+                  </div></td>
+                  <td><span class="chip blue">1 寸</span></td>
+                  <td><span class="chip"><i style="width:10px;height:10px;border-radius:50%;background:#438EDB;display:inline-block"></i>标准蓝</span></td>
+                  <td><span class="chip green"><svg class="ic" style="width:12px;height:12px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>已完成</span></td>
+                  <td><button class="icon-btn" type="button"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" checked></td>
+                  <td><div class="file-cell">
+                    <div class="thumb"><svg viewBox="0 0 300 400"><rect width="300" height="400" fill="#FFFFFF"/><ellipse cx="150" cy="150" rx="52" ry="57" fill="#a8bad4"/><path d="M150 206 C105 206 76 240 68 296 L60 400 H240 L232 296 C224 240 195 206 150 206 Z" fill="#a8bad4"/></svg></div>
+                    <div><b>证件照-李四.png</b><small>3024×4032 · 4.8 MB</small></div>
+                  </div></td>
+                  <td><span class="chip blue">2 寸</span></td>
+                  <td><span class="chip"><i style="width:10px;height:10px;border-radius:50%;background:#FFFFFF;display:inline-block;border:1px solid var(--border-strong)"></i>纯白</span></td>
+                  <td><span class="chip green"><svg class="ic" style="width:12px;height:12px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>已完成</span></td>
+                  <td><button class="icon-btn" type="button"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" checked></td>
+                  <td><div class="file-cell">
+                    <div class="thumb"><svg viewBox="0 0 300 400"><rect width="300" height="400" fill="#BE0B24"/><ellipse cx="150" cy="150" rx="52" ry="57" fill="#d3deee"/><path d="M150 206 C105 206 76 240 68 296 L60 400 H240 L232 296 C224 240 195 206 150 206 Z" fill="#d3deee"/></svg></div>
+                    <div><b>报名照-王五.jpg</b><small>960×1280 · 1.3 MB</small></div>
+                  </div></td>
+                  <td><span class="chip blue">1 寸</span></td>
+                  <td><span class="chip"><i style="width:10px;height:10px;border-radius:50%;background:#BE0B24;display:inline-block"></i>中国红</span></td>
+                  <td>
+                    <div style="display:flex;align-items:center;gap:8px">
+                      <span class="chip blue">处理中</span>
+                      <div class="progress"><i></i></div>
+                    </div>
+                  </td>
+                  <td><button class="icon-btn" type="button"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" checked></td>
+                  <td><div class="file-cell">
+                    <div class="thumb"><svg viewBox="0 0 300 400"><rect width="300" height="400" fill="#EDF1F6"/><ellipse cx="150" cy="150" rx="52" ry="57" fill="#a8bad4"/><path d="M150 206 C105 206 76 240 68 296 L60 400 H240 L232 296 C224 240 195 206 150 206 Z" fill="#a8bad4"/></svg></div>
+                    <div><b>体检表-赵六.jpg</b><small>1500×2100 · 2.7 MB</small></div>
+                  </div></td>
+                  <td><span class="chip blue">小2寸</span></td>
+                  <td><span class="chip"><i style="width:10px;height:10px;border-radius:50%;background:#EDF1F6;display:inline-block;border:1px solid var(--border-strong)"></i>浅灰</span></td>
+                  <td><span class="chip">等待中</span></td>
+                  <td><button class="icon-btn" type="button"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" checked></td>
+                  <td><div class="file-cell">
+                    <div class="thumb"><svg viewBox="0 0 300 400"><rect width="300" height="400" fill="#438EDB"/><ellipse cx="150" cy="150" rx="52" ry="57" fill="#d3deee"/><path d="M150 206 C105 206 76 240 68 296 L60 400 H240 L232 296 C224 240 195 206 150 206 Z" fill="#d3deee"/></svg></div>
+                    <div><b>简历照-孙七.png</b><small>1800×2400 · 3.2 MB</small></div>
+                  </div></td>
+                  <td><span class="chip blue">2 寸</span></td>
+                  <td><span class="chip"><i style="width:10px;height:10px;border-radius:50%;background:#438EDB;display:inline-block"></i>标准蓝</span></td>
+                  <td><span class="chip">等待中</span></td>
+                  <td><button class="icon-btn" type="button"><svg class="ic" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="batch-bar">
+              <span style="font-size:12px;color:var(--text-2)">已选 <b style="color:var(--primary)">5</b> 项</span>
+              <button class="btn" style="height:28px;font-size:12px" type="button">统一规格</button>
+              <button class="btn" style="height:28px;font-size:12px" type="button">统一背景</button>
+              <button class="btn danger" style="height:28px;font-size:12px" type="button">
+                <svg class="ic" style="width:13px;height:13px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9.5 7V5a1.5 1.5 0 0 1 1.5-1.5h2A1.5 1.5 0 0 1 14.5 5v2M6.5 7l.8 12a2 2 0 0 0 2 1.9h5.4a2 2 0 0 0 2-1.9l.8-12"/></svg>
+                移除
+              </button>
+              <span class="spacer"></span>
+              <button class="btn" style="height:30px;font-size:12px" type="button">导出为 ZIP</button>
+            </div>
+          </section>
+        </div>
+
+        <!-- 右列：批量参数 -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <section class="card">
+            <div class="card-h">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 2.5v13a2 2 0 0 0 2 2h13"/><path d="M17.5 21.5v-13a2 2 0 0 0-2-2h-13"/></svg>
+              统一尺寸<span class="hint">应用到全部</span>
+            </div>
+            <div class="card-b">
+              <div class="spec-grid">
+                <button class="spec on" type="button"><b>1 寸</b><span>25×35</span></button>
+                <button class="spec" type="button"><b>2 寸</b><span>35×49</span></button>
+                <button class="spec" type="button"><b>小2寸</b><span>33×48</span></button>
+                <button class="spec" type="button"><b>跟随原</b><span>保持比例</span></button>
+              </div>
+              <div class="calc">输出尺寸&nbsp;<b>295 × 413 px</b>&nbsp;·&nbsp;<span style="font-family:var(--mono)">300 DPI</span></div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-h">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.4 0 2-.8 2-1.7 0-.8-.6-1.3-.6-2 0-.9.7-1.6 1.8-1.6h1.6c2 0 3.7-1.6 3.7-3.6 0-4.9-3.8-8.1-8.5-8.1Z"/><circle cx="7.6" cy="11" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="7.6" r="1" fill="currentColor" stroke="none"/><circle cx="14.4" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg>
+              统一背景
+            </div>
+            <div class="card-b">
+              <div class="swatches">
+                <button class="swatch" data-color="#FFFFFF" style="background:#FFFFFF" title="纯白" type="button"></button>
+                <button class="swatch on" data-color="#438EDB" style="background:#438EDB" title="标准蓝" type="button"></button>
+                <button class="swatch" data-color="#BE0B24" style="background:#BE0B24" title="中国红" type="button"></button>
+                <button class="swatch" data-color="#EDF1F6" style="background:#EDF1F6" title="浅灰" type="button"></button>
+                <button class="swatch rainbow" title="自定义" type="button"></button>
+              </div>
+              <div class="field">
+                <label>文件名模板</label>
+                <input class="input mono" value="证件照_{原名}_{规格}" spellcheck="false">
+              </div>
+              <div class="token-chips">
+                <span class="chip">{原名}</span><span class="chip">{规格}</span><span class="chip">{底色}</span><span class="chip">{日期}</span><span class="chip">{序号}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-h">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13.5h5L11 21l8-10.5h-5Z"/></svg>
+              高级选项
+            </div>
+            <div class="card-b" style="gap:0;padding:4px 0">
+              <div class="row">
+                <div class="grow"><div class="t">并发处理</div><div class="d">同时处理图片数量</div></div>
+                <div class="ctl">
+                  <div class="seg" style="width:130px"><button data-value="2" type="button">2</button><button data-value="4" class="on" type="button">4</button><button data-value="8" type="button">8</button></div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="grow"><div class="t">跳过已处理</div><div class="d">再次导出时忽略无变化文件</div></div>
+                <div class="ctl"><label class="switch"><input type="checkbox" checked><i></i></label></div>
+              </div>
+              <div class="row">
+                <div class="grow"><div class="t">完成后打开文件夹</div><div class="d">全部导出成功后自动打开</div></div>
+                <div class="ctl"><label class="switch"><input type="checkbox" checked><i></i></label></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <footer class="statusbar">
+      <span><span class="dot busy"></span>处理中 · 2 / 5 · 预计剩余 6 秒</span>
+      <span class="spacer"></span>
+      <span class="meta">已完成 2 · 等待 3 · 失败 0</span>
+      <span class="meta">并发 4</span>
+    </footer>
+  </div>
+</div>
+</div>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+// 全选/取消全选
+(function () {
+  var head = document.querySelector('.table thead input');
+  head.addEventListener('change', function () {
+    document.querySelectorAll('.table tbody input').forEach(function (c) { c.checked = head.checked; });
+  });
+})();
+</script>
+</body>
+</html>

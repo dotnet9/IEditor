@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>设置 · IEditor 界面原型</title>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="icon" href="../logo.svg">
+</head>
+<body class="desktop">
+<div class="desk">
+<div class="window">
+
+  <!-- 自定义标题栏 -->
+  <div class="titlebar">
+    <img src="../logo.svg" alt="IEditor">
+    <span class="win-title">IEditor</span>
+    <span class="win-module">设置</span>
+    <div class="win-controls">
+      <button class="wc" title="最小化" type="button"><svg viewBox="0 0 12 12"><path d="M1 6h10" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <button class="wc" title="最大化" type="button"><svg viewBox="0 0 12 12"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <button class="wc close" title="关闭" type="button"><svg viewBox="0 0 12 12"><path d="m2 2 8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+
+  <div class="app">
+
+  <!-- ======== 侧边导航 ======== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="../logo.svg" alt="IEditor">
+      <div class="bt"><b>IEditor</b><small>智能图像工作台</small></div>
+    </div>
+    <div class="nav-label">工作区</div>
+    <a class="nav-item" href="证件照处理.html">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.5" cy="11" r="2"/><path d="M5.6 15.8c.5-1.5 1.6-2.3 2.9-2.3s2.4.8 2.9 2.3"/><path d="M14 9.5h4.2M14 13h3"/></svg>
+      证件照处理
+    </a>
+    <a class="nav-item" href="批量处理.html">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+      批量处理 <em class="soon">规划中</em>
+    </a>
+    <button class="nav-item disabled" type="button">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 13.6 8l4.4 1.6-4.4 1.6L12 15.7l-1.6-4.5L6 9.6 10.4 8Z"/><path d="m18.6 14.2.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z"/></svg>
+      智能抠图 <em class="soon">即将上线</em>
+    </button>
+    <button class="nav-item disabled" type="button">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>
+      图片工具箱 <em class="soon">即将上线</em>
+    </button>
+    <div class="sidebar-foot">
+      <a class="nav-item active" href="设置.html">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        设置
+      </a>
+      <div class="version">v0.3.0 · 界面原型</div>
+    </div>
+  </aside>
+
+  <!-- ======== 主区 ======== -->
+  <div class="main">
+    <header class="topbar">
+      <span class="crumb">工作台 /<b>设置</b></span>
+      <span class="spacer"></span>
+      <span class="chip green"><span class="dot ok"></span>更改已自动保存</span>
+      <button class="icon-btn" title="帮助" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.9.6c0 1.7-2.5 2-2.5 3.5"/><circle cx="12" cy="16.6" r=".6" fill="currentColor"/></svg></button>
+    </header>
+
+    <main class="content">
+      <div class="settings">
+
+        <!-- 外观 -->
+        <section class="card">
+          <div class="card-h">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.4 0 2-.8 2-1.7 0-.8-.6-1.3-.6-2 0-.9.7-1.6 1.8-1.6h1.6c2 0 3.7-1.6 3.7-3.6 0-4.9-3.8-8.1-8.5-8.1Z"/><circle cx="7.6" cy="11" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="7.6" r="1" fill="currentColor" stroke="none"/><circle cx="14.4" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg>
+            外观
+          </div>
+          <div class="card-b" style="gap:0;padding:4px 0">
+            <div class="row">
+              <div class="grow"><div class="t">主题</div><div class="d">深色主题将随 v0.5 一同发布</div></div>
+              <div class="ctl">
+                <div class="seg" style="width:230px">
+                  <button data-value="light" class="on" type="button">浅色</button>
+                  <button data-value="dark" disabled type="button">深色</button>
+                  <button data-value="system" type="button">跟随系统</button>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="grow"><div class="t">强调色</div><div class="d">按钮、选中等交互元素的主色</div></div>
+              <div class="ctl">
+                <div class="swatches">
+                  <button class="swatch on" style="background:#2e6bff" title="科技蓝" type="button"></button>
+                  <button class="swatch" style="background:#00b8d9" title="极光青" type="button"></button>
+                  <button class="swatch" style="background:#7c5cff" title="星云紫" type="button"></button>
+                  <button class="swatch" style="background:#12b76a" title="松石绿" type="button"></button>
+                  <button class="swatch" style="background:#f59e0b" title="琥珀橙" type="button"></button>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="grow"><div class="t">界面语言</div><div class="d">切换后立即生效</div></div>
+              <div class="ctl">
+                <select class="input" style="width:160px">
+                  <option selected>简体中文</option>
+                  <option>English</option>
+                  <option>繁體中文</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 图像处理 -->
+        <section class="card">
+          <div class="card-h">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m5.5 17.5 4-4a1.4 1.4 0 0 1 2 0l4.5 4.5"/><path d="m14.5 15.5 1.5-1.5a1.4 1.4 0 0 1 2 0l2.5 2.5"/></svg>
+            图像处理
+          </div>
+          <div class="card-b" style="gap:0;padding:4px 0">
+            <div class="row">
+              <div class="grow"><div class="t">默认分辨率</div><div class="d">新建处理任务的初始 DPI</div></div>
+              <div class="ctl">
+                <div class="stepper">
+                  <button type="button">−</button>
+                  <span class="val">300</span>
+                  <button type="button">＋</button>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="grow"><div class="t">显示对齐参考线</div><div class="d">在预览中显示眼位线与头部轮廓</div></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" checked><i></i></label></div>
+            </div>
+            <div class="row">
+              <div class="grow"><div class="t">嵌入 sRGB 色彩配置</div><div class="d">保证冲印与屏幕显示颜色一致</div></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" checked><i></i></label></div>
+            </div>
+            <div class="row">
+              <div class="grow"><div class="t">处理引擎</div><div class="d">当前使用内置 Magick.NET 引擎</div></div>
+              <div class="ctl"><span class="chip blue">Magick.NET · 内置</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 导出 -->
+        <section class="card">
+          <div class="card-h">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/></svg>
+            导出
+          </div>
+          <div class="card-b" style="gap:0;padding:4px 0">
+            <div class="row">
+              <div class="grow"><div class="t">默认保存位置</div><div class="d" style="font-family:var(--mono)">D:\Pictures\证件照</div></div>
+              <div class="ctl"><button class="btn" style="height:30px;font-size:12px" type="button">浏览</button></div>
+            </div>
+            <div class="row">
+              <div class="grow"><div class="t">默认格式</div><div class="d">JPG 体积小，PNG 无损透明</div></div>
+              <div class="ctl">
+                <div class="seg" style="width:150px">
+                  <button data-value="jpg" class="on" type="button">JPG</button>
+                  <button data-value="png" type="button">PNG</button>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="grow" style="max-width:340px"><div class="t">默认质量</div><div class="d">仅对 JPG 生效</div></div>
+              <div class="ctl" style="flex:1;max-width:240px"><input type="range" min="60" max="100" value="92"></div>
+              <span class="chip" style="font-family:var(--mono)">92</span>
+            </div>
+            <div class="row">
+              <div class="grow"><div class="t">命名模板</div><div class="d">支持 {规格} {底色} {日期} {序号} 变量</div></div>
+              <div class="ctl"><input class="input mono" style="width:220px" value="证件照_{规格}_{底色}"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 更新与关于 -->
+        <section class="card">
+          <div class="card-h">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v4.5"/><circle cx="12" cy="15.8" r=".6" fill="currentColor"/></svg>
+            更新与关于
+          </div>
+          <div class="card-b" style="gap:0;padding:4px 0">
+            <div class="row">
+              <div class="grow"><div class="t">自动检查更新</div><div class="d">每周检查一次，仅提醒不自动下载</div></div>
+              <div class="ctl"><label class="switch"><input type="checkbox" checked><i></i></label></div>
+            </div>
+            <div class="row">
+              <div class="grow"><div class="t">当前版本</div><div class="d">IEditor · 基于 Avalonia 11 与 .NET 10</div></div>
+              <div class="ctl">
+                <span class="chip blue">v0.3.0</span>
+                <button class="btn" style="height:30px;font-size:12px" type="button">检查更新</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="grow"><div class="t">开源仓库</div><div class="d">欢迎提交 Issue 与 PR</div></div>
+              <div class="ctl"><a class="btn" style="height:30px;font-size:12px;text-decoration:none" href="https://github.com" target="_blank" rel="noreferrer">GitHub</a></div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <footer class="statusbar">
+      <span><span class="dot ok"></span>所有设置已自动保存</span>
+      <span class="spacer"></span>
+      <span class="meta">v0.3.0 · 界面原型</span>
+    </footer>
+  </div>
+</div>
+</div>
+</div>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>原型总览 · IEditor 界面原型</title>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="icon" href="../logo.svg">
+</head>
+<body class="desktop">
+<div class="desk">
+<div class="window">
+
+  <!-- 自定义标题栏 -->
+  <div class="titlebar">
+    <img src="../logo.svg" alt="IEditor">
+    <span class="win-title">IEditor</span>
+    <span class="win-module">界面原型总览</span>
+    <div class="win-controls">
+      <button class="wc" title="最小化" type="button"><svg viewBox="0 0 12 12"><path d="M1 6h10" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <button class="wc" title="最大化" type="button"><svg viewBox="0 0 12 12"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <button class="wc close" title="关闭" type="button"><svg viewBox="0 0 12 12"><path d="m2 2 8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+
+  <div class="win-body">
+    <div class="cover">
+
+      <!-- ======== Hero ======== -->
+      <div class="hero">
+        <img src="../logo.svg" alt="IEditor logo">
+        <h1>IEditor 界面原型</h1>
+        <p>清爽 · 科技感 · 可扩展 —— 桌面端图像工作台设计稿</p>
+        <div class="chips">
+          <span class="chip blue">Avalonia 桌面端</span>
+          <span class="chip grad">圆角自绘窗口</span>
+          <span class="chip">亮色主题 · v0.3</span>
+        </div>
+        <div class="cta">
+          <a class="btn lg primary" href="证件照处理.html" style="text-decoration:none">
+            <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.5" cy="11" r="2"/><path d="M5.6 15.8c.5-1.5 1.6-2.3 2.9-2.3s2.4.8 2.9 2.3"/><path d="M14 9.5h4.2M14 13h3"/></svg>
+            打开「证件照处理」原型
+          </a>
+          <a class="btn lg" href="批量处理.html" style="text-decoration:none">批量处理原型</a>
+          <a class="btn lg" href="设置.html" style="text-decoration:none">设置原型</a>
+        </div>
+      </div>
+
+      <!-- ======== 原型页面 ======== -->
+      <h2 class="section-title">原型页面</h2>
+      <p class="section-sub">按功能命名的静态 HTML，可直接双击在浏览器中评审</p>
+      <div class="page-grid">
+        <a class="card page-card" href="证件照处理.html">
+          <div class="body">
+            <div class="pic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.5" cy="11" r="2"/><path d="M5.6 15.8c.5-1.5 1.6-2.3 2.9-2.3s2.4.8 2.9 2.3"/><path d="M14 9.5h4.2M14 13h3"/></svg></div>
+            <div>
+              <b>证件照处理</b>
+              <p>核心工作流：载入图片 → 尺寸规格（1寸 / 2寸 / 自定义）→ 背景颜色 → 实时预览 → 导出。含对齐参考线与扫描动效。</p>
+              <div class="tags"><span class="chip green"><span class="dot ok"></span>v0.3 已实现</span><span class="chip">核心页面</span></div>
+            </div>
+          </div>
+        </a>
+        <a class="card page-card" href="批量处理.html">
+          <div class="body">
+            <div class="pic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg></div>
+            <div>
+              <b>批量处理</b>
+              <p>扩展方向：拖拽批量导入、处理队列、统一规格与底色、按模板命名、导出 ZIP。展示侧边导航的模块化扩展方式。</p>
+              <div class="tags"><span class="chip amber">规划中</span><span class="chip">扩展演示</span></div>
+            </div>
+          </div>
+        </a>
+        <a class="card page-card" href="设置.html">
+          <div class="body">
+            <div class="pic"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg></div>
+            <div>
+              <b>设置</b>
+              <p>通用配置：外观与强调色、图像处理默认值、导出目录与命名模板、更新与关于。更改即时自动保存。</p>
+              <div class="tags"><span class="chip blue">通用页面</span><span class="chip">随 v0.3 交付</span></div>
+            </div>
+          </div>
+        </a>
+      </div>
+
+      <!-- ======== 窗口外观 ======== -->
+      <h2 class="section-title">窗口外观</h2>
+      <p class="section-sub">桌面软件的“窗口感”与个性化设计约定</p>
+      <div class="principles">
+        <div class="card principle">
+          <b><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M3.5 9h17M9 9v11.5"/></svg>圆角自绘窗口</b>
+          <p>无边框窗口，圆角 14px，1px 冷色描边 + 大范围柔和投影，悬浮于深色科技感壁纸上。</p>
+        </div>
+        <div class="card principle">
+          <b><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 7l4 6 3-4 5 8Z"/><circle cx="8" cy="5" r="1.5"/></svg>品牌渐变顶线</b>
+          <p>窗口顶端 3px 蓝→青渐变线（同 logo），是产品的视觉签名，也是窗口边缘的个性化点缀。</p>
+        </div>
+        <div class="card principle">
+          <b><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg>自绘标题栏</b>
+          <p>标题栏集成 logo + 模块名，右侧自绘最小化 / 最大化 / 关闭按钮，关闭悬停红色（#E81123）。</p>
+        </div>
+        <div class="card principle">
+          <b><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 13.6 8l4.4 1.6-4.4 1.6L12 15.7l-1.6-4.5L6 9.6 10.4 8Z"/><path d="m18.6 14.2.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z"/></svg>桌面衬托</b>
+          <p>原型页背景为深蓝青渐变壁纸（含细网格），衬托浅色窗口主体，突出“清爽”的界面内芯。</p>
+        </div>
+      </div>
+
+      <!-- ======== 设计规范 ======== -->
+      <h2 class="section-title" id="tokens">设计规范</h2>
+      <p class="section-sub">所有页面共享同一套设计令牌，定义于 <code style="font-family:var(--mono);font-size:11px">assets/app.css</code></p>
+
+      <div class="tok-grid" style="margin-top:12px">
+        <div class="tok"><div class="c" style="background:linear-gradient(135deg,#2e6bff,#00b8d9)"></div><div class="m"><b>品牌渐变</b><code>#2E6BFF → #00B8D9</code></div></div>
+        <div class="tok"><div class="c" style="background:#2e6bff"></div><div class="m"><b>主色 · 科技蓝</b><code>#2E6BFF</code></div></div>
+        <div class="tok"><div class="c" style="background:#00b8d9"></div><div class="m"><b>辅色 · 极光青</b><code>#00B8D9</code></div></div>
+        <div class="tok"><div class="c" style="background:#f4f7fc"></div><div class="m"><b>背景</b><code>#F4F7FC</code></div></div>
+        <div class="tok"><div class="c" style="background:#ffffff"></div><div class="m"><b>卡面</b><code>#FFFFFF</code></div></div>
+        <div class="tok"><div class="c" style="background:#0f172a"></div><div class="m"><b>主文字</b><code>#0F172A</code></div></div>
+        <div class="tok"><div class="c" style="background:#5b6b84"></div><div class="m"><b>次文字</b><code>#5B6B84</code></div></div>
+        <div class="tok"><div class="c" style="background:#e6ebf4"></div><div class="m"><b>边框</b><code>#E6EBF4</code></div></div>
+        <div class="tok"><div class="c" style="background:#12b76a"></div><div class="m"><b>成功</b><code>#12B76A</code></div></div>
+        <div class="tok"><div class="c" style="background:#f59e0b"></div><div class="m"><b>警告</b><code>#F59E0B</code></div></div>
+        <div class="tok"><div class="c" style="background:#ef4444"></div><div class="m"><b>危险</b><code>#EF4444</code></div></div>
+        <div class="tok"><div class="c" style="background:linear-gradient(160deg,#0a1226,#072033)"></div><div class="m"><b>桌面壁纸</b><code>#0A1226 → #072033</code></div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:14px">
+        <div class="card" style="padding:16px">
+          <div class="type-spec">
+            <div class="line"><span class="tag">页面标题 20px</span><span style="font-size:20px;font-weight:700">证件照处理</span></div>
+            <div class="line"><span class="tag">卡片标题 13px</span><span style="font-size:13px;font-weight:600">尺寸规格</span></div>
+            <div class="line"><span class="tag">正文 13px</span><span style="font-size:13px">选择规格后自动换算输出像素。</span></div>
+            <div class="line"><span class="tag">辅助 12px</span><span style="font-size:12px;color:var(--text-3)">支持 JPG / PNG / WEBP</span></div>
+            <div class="line"><span class="tag">数值 · 等宽</span><span style="font-family:var(--mono);font-size:12.5px">295 × 413 px @ 300 DPI</span></div>
+          </div>
+        </div>
+        <div class="card" style="padding:16px;display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:10px;align-items:flex-end">
+            <div style="text-align:center"><div style="width:44px;height:44px;border-radius:8px;background:#eef2f8;border:1px solid var(--border)"></div><small class="section-sub" style="font-family:var(--mono)">r 8</small></div>
+            <div style="text-align:center"><div style="width:56px;height:56px;border-radius:12px;background:#eef2f8;border:1px solid var(--border)"></div><small class="section-sub" style="font-family:var(--mono)">r 12</small></div>
+            <div style="text-align:center"><div style="width:68px;height:68px;border-radius:16px;background:#eef2f8;border:1px solid var(--border)"></div><small class="section-sub" style="font-family:var(--mono)">r 16 · 窗口 14</small></div>
+          </div>
+          <div style="height:52px;border-radius:12px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow-2)"></div>
+          <small class="section-sub">卡片阴影：0 2px 6px + 0 12px 32px（双色柔和投影）</small>
+        </div>
+      </div>
+
+      <!-- ======== 扩展原则 ======== -->
+      <h2 class="section-title">扩展原则</h2>
+      <p class="section-sub">当前聚焦寸照处理，后续功能按以下约定平滑接入</p>
+      <div class="principles">
+        <div class="card principle">
+          <b><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>模块化侧边导航</b>
+          <p>每个功能 = 侧栏一个入口 + 一个独立页面。未上线模块以「规划中 / 即将上线」徽标占位，骨架不变。</p>
+        </div>
+        <div class="card principle">
+          <b><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 13.6 8l4.4 1.6-4.4 1.6L12 15.7l-1.6-4.5L6 9.6 10.4 8Z"/></svg>统一设计令牌</b>
+          <p>颜色、圆角、阴影、控件全部收敛在 <code style="font-family:var(--mono);font-size:11px">assets/app.css</code>，改一处全局生效。</p>
+        </div>
+        <div class="card principle">
+          <b><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3.5" width="16" height="17" rx="3"/><path d="M8.5 3.5v17M4 8.5h16"/></svg>功能页模板</b>
+          <p>新增功能页：复制任一原型页，替换标题栏模块名与内容区，即可保持窗口外壳与导航完全一致。</p>
+        </div>
+        <div class="card principle">
+          <b><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/></svg>渐进式发布</b>
+          <p>规划中的模块先出设计稿评审，实现一个上线一个；导航徽标随版本移除，用户可感知产品演进。</p>
+        </div>
+      </div>
+
+      <div class="cover-foot">
+        IEditor 界面原型 · 静态 HTML 实现，仅用于视觉与交互评审，不含真实图像处理逻辑<br>
+        文件：证件照处理.html · 批量处理.html · 设置.html · assets/app.css · assets/app.js
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+</body>
+</html>

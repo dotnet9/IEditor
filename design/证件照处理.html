@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>证件照处理 · IEditor 界面原型</title>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="icon" href="../logo.svg">
+</head>
+<body class="desktop">
+<div class="desk">
+<div class="window">
+
+  <!-- 自定义标题栏 -->
+  <div class="titlebar">
+    <img src="../logo.svg" alt="IEditor">
+    <span class="win-title">IEditor</span>
+    <span class="win-module">证件照处理</span>
+    <div class="win-controls">
+      <button class="wc" title="最小化" type="button"><svg viewBox="0 0 12 12"><path d="M1 6h10" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <button class="wc" title="最大化" type="button"><svg viewBox="0 0 12 12"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></button>
+      <button class="wc close" title="关闭" type="button"><svg viewBox="0 0 12 12"><path d="m2 2 8 8M10 2l-8 8" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></button>
+    </div>
+  </div>
+
+  <div class="app">
+
+  <!-- ======== 侧边导航 ======== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="../logo.svg" alt="IEditor">
+      <div class="bt"><b>IEditor</b><small>智能图像工作台</small></div>
+    </div>
+    <div class="nav-label">工作区</div>
+    <a class="nav-item active" href="证件照处理.html">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.5" cy="11" r="2"/><path d="M5.6 15.8c.5-1.5 1.6-2.3 2.9-2.3s2.4.8 2.9 2.3"/><path d="M14 9.5h4.2M14 13h3"/></svg>
+      证件照处理
+    </a>
+    <a class="nav-item" href="批量处理.html">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
+      批量处理 <em class="soon">规划中</em>
+    </a>
+    <button class="nav-item disabled" type="button">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 13.6 8l4.4 1.6-4.4 1.6L12 15.7l-1.6-4.5L6 9.6 10.4 8Z"/><path d="m18.6 14.2.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z"/></svg>
+      智能抠图 <em class="soon">即将上线</em>
+    </button>
+    <button class="nav-item disabled" type="button">
+      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>
+      图片工具箱 <em class="soon">即将上线</em>
+    </button>
+    <div class="sidebar-foot">
+      <a class="nav-item" href="设置.html">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+        设置
+      </a>
+      <div class="version">v0.3.0 · 界面原型</div>
+    </div>
+  </aside>
+
+  <!-- ======== 主区 ======== -->
+  <div class="main">
+    <header class="topbar">
+      <span class="crumb">工作台 /<b>证件照处理</b></span>
+      <span class="chip blue"><span class="dot ok"></span>实时预览</span>
+      <span class="spacer"></span>
+      <button class="icon-btn" title="帮助" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.9.6c0 1.7-2.5 2-2.5 3.5"/><circle cx="12" cy="16.6" r=".6" fill="currentColor"/></svg></button>
+      <button class="icon-btn" title="切换主题" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13.6A8 8 0 1 1 10.4 4 6.4 6.4 0 0 0 20 13.6Z"/></svg></button>
+      <button class="btn primary" type="button">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/></svg>
+        导出图片
+      </button>
+    </header>
+
+    <main class="content">
+      <div class="work">
+
+        <!-- 工具栏 -->
+        <div class="card rail">
+          <button class="rail-btn" title="载入图片" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m5.5 17.5 4-4a1.4 1.4 0 0 1 2 0l4.5 4.5"/><path d="m14.5 15.5 1.5-1.5a1.4 1.4 0 0 1 2 0l2.5 2.5"/></svg></button>
+          <hr>
+          <button class="rail-btn on" title="裁剪" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 2.5v13a2 2 0 0 0 2 2h13"/><path d="M17.5 21.5v-13a2 2 0 0 0-2-2h-13"/></svg></button>
+          <button class="rail-btn" title="向左旋转" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6L3.5 8.5"/><path d="M3.5 3.5v5h5"/></svg></button>
+          <button class="rail-btn" title="向右旋转" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 12a8.5 8.5 0 1 1-2.5-6l2.5 2.5"/><path d="M20.5 3.5v5h-5"/></svg></button>
+          <button class="rail-btn" title="水平镜像" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18" stroke-dasharray="2.5 3"/><path d="M8.5 7.5 4 12l4.5 4.5Z"/><path d="m15.5 7.5 4.5 4.5-4.5 4.5Z"/></svg></button>
+          <hr>
+          <button class="rail-btn" title="重置" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a9 9 0 1 1-1 5"/><path d="M3 3v5h5"/></svg></button>
+        </div>
+
+        <!-- 预览区 -->
+        <div class="stage-col">
+          <div class="stage-toolbar">
+            <div class="zoom">
+              <button type="button" data-zoom="-">−</button>
+              <span class="pct" id="zoomPct">100%</span>
+              <button type="button" data-zoom="+">+</button>
+              <button type="button" data-zoom="fit" title="适应窗口" style="width:auto;padding:0 9px;font-size:12px">适应</button>
+            </div>
+            <button class="tool on" id="btnGuides" type="button">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M9.2 3.5v17M14.8 3.5v17M3.5 9.2h17M3.5 14.8h17"/></svg>
+              参考线
+            </button>
+            <button class="tool" id="btnCompare" type="button">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M12 4.5v15"/></svg>
+              原图对比
+            </button>
+            <span class="spacer"></span>
+            <span class="chip"><svg class="ic" style="width:13px;height:13px;color:var(--primary)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13.5h5L11 21l8-10.5h-5Z"/></svg>AI 引擎就绪</span>
+          </div>
+
+          <div class="stage">
+            <div class="photo" id="photo" style="background:#438EDB">
+              <svg class="person" viewBox="0 0 300 400" aria-hidden="true">
+                <defs>
+                  <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#d3deee"/><stop offset="1" stop-color="#a8bad4"/>
+                  </linearGradient>
+                </defs>
+                <ellipse cx="150" cy="148" rx="52" ry="57" fill="url(#pg)"/>
+                <path d="M150 206 C105 206 76 240 68 296 L60 400 H240 L232 296 C224 240 195 206 150 206 Z" fill="url(#pg)"/>
+              </svg>
+              <svg class="guides" id="guides" viewBox="0 0 300 400" aria-hidden="true">
+                <g fill="none" stroke="rgba(255,255,255,.75)" stroke-width="2.6" stroke-dasharray="5 5">
+                  <ellipse cx="150" cy="150" rx="84" ry="102"/>
+                  <line x1="46" y1="140" x2="254" y2="140"/>
+                </g>
+                <g fill="none" stroke="rgba(15,50,120,.60)" stroke-width="1.2" stroke-dasharray="5 5">
+                  <ellipse cx="150" cy="150" rx="84" ry="102"/>
+                  <line x1="46" y1="140" x2="254" y2="140"/>
+                  <line x1="150" y1="30" x2="150" y2="370" stroke-dasharray="3 7" opacity=".55"/>
+                </g>
+              </svg>
+              <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+              <div class="scanline"></div>
+              <div class="dim-chip" id="dimChip">295 × 413 px · 300 DPI</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 参数面板 -->
+        <div class="panel" style="display:flex;flex-direction:column;gap:14px">
+
+          <section class="card">
+            <div class="card-h">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m5.5 17.5 4-4a1.4 1.4 0 0 1 2 0l4.5 4.5"/><path d="m14.5 15.5 1.5-1.5a1.4 1.4 0 0 1 2 0l2.5 2.5"/></svg>
+              源图片<span class="hint">JPG / PNG / WEBP</span>
+            </div>
+            <div class="card-b">
+              <div class="src">
+                <div class="thumb">
+                  <svg viewBox="0 0 300 400"><rect width="300" height="400" fill="#dce8f8"/><ellipse cx="150" cy="150" rx="52" ry="57" fill="#a8bad4"/><path d="M150 206 C105 206 76 240 68 296 L60 400 H240 L232 296 C224 240 195 206 150 206 Z" fill="#a8bad4"/></svg>
+                </div>
+                <div class="meta"><b>photo_2026.jpg</b><span>1200 × 1600 · 2.1 MB</span></div>
+                <button class="btn" style="height:30px;padding:0 11px;font-size:12px" type="button">更换</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-h">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 2.5v13a2 2 0 0 0 2 2h13"/><path d="M17.5 21.5v-13a2 2 0 0 0-2-2h-13"/></svg>
+              尺寸规格<span class="hint">标准冲印比例</span>
+            </div>
+            <div class="card-b">
+              <div class="spec-grid">
+                <button class="spec on" data-spec="1inch" type="button"><b>1 寸</b><span>25×35</span></button>
+                <button class="spec" data-spec="2inch" type="button"><b>2 寸</b><span>35×49</span></button>
+                <button class="spec" data-spec="small2" type="button"><b>小2寸</b><span>33×48</span></button>
+                <button class="spec" data-spec="custom" type="button"><b>自定义</b><span>自定</span></button>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+                <div class="field disabled" id="wField">
+                  <label>宽度</label>
+                  <div class="ig"><span class="prefix">宽</span><input id="wIn" value="25" inputmode="decimal"><span class="suffix">mm</span></div>
+                </div>
+                <div class="field disabled" id="hField">
+                  <label>高度</label>
+                  <div class="ig"><span class="prefix">高</span><input id="hIn" value="35" inputmode="decimal"><span class="suffix">mm</span></div>
+                </div>
+                <div class="field">
+                  <label>分辨率</label>
+                  <div class="stepper">
+                    <button type="button" data-dpi="-">−</button>
+                    <span class="val" id="dpiVal">300</span>
+                    <button type="button" data-dpi="+">＋</button>
+                  </div>
+                </div>
+              </div>
+              <div class="calc">
+                <svg class="ic" style="width:14px;height:14px;color:var(--primary)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13.5h5L11 21l8-10.5h-5Z"/></svg>
+                输出尺寸&nbsp;<b id="pxOut">295 × 413 px</b>&nbsp;·&nbsp;<span id="mmOut" style="font-family:var(--mono)">25 × 35 mm</span>
+              </div>
+              <div class="chips-row">
+                <span class="lbl">更多规格</span>
+                <span class="chip locked">护照 35×45</span>
+                <span class="chip locked">社保 26×32</span>
+                <span class="chip locked">考试 33×48</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-h">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5a8.5 8.5 0 1 0 0 17c1.4 0 2-.8 2-1.7 0-.8-.6-1.3-.6-2 0-.9.7-1.6 1.8-1.6h1.6c2 0 3.7-1.6 3.7-3.6 0-4.9-3.8-8.1-8.5-8.1Z"/><circle cx="7.6" cy="11" r="1" fill="currentColor" stroke="none"/><circle cx="10" cy="7.6" r="1" fill="currentColor" stroke="none"/><circle cx="14.4" cy="7.6" r="1" fill="currentColor" stroke="none"/></svg>
+              背景颜色<span class="hint" id="bgName">标准蓝</span>
+            </div>
+            <div class="card-b">
+              <div class="swatches" id="bgSwatches">
+                <button class="swatch" data-color="#FFFFFF" data-name="纯白" style="background:#FFFFFF" title="纯白" type="button"></button>
+                <button class="swatch on" data-color="#438EDB" data-name="标准蓝" style="background:#438EDB" title="标准蓝" type="button"></button>
+                <button class="swatch" data-color="#BE0B24" data-name="中国红" style="background:#BE0B24" title="中国红" type="button"></button>
+                <button class="swatch" data-color="#EDF1F6" data-name="浅灰" style="background:#EDF1F6" title="浅灰" type="button"></button>
+                <button class="swatch" data-color="#3A4657" data-name="深灰" style="background:#3A4657" title="深灰" type="button"></button>
+                <button class="swatch rainbow" data-color="" data-name="自定义" title="自定义" type="button"></button>
+              </div>
+              <div class="ig">
+                <span class="prefix">#</span>
+                <input id="hexInput" value="438EDB" maxlength="6" spellcheck="false">
+                <span class="suffix" style="display:flex;align-items:center;gap:6px"><i id="hexDot" style="width:14px;height:14px;border-radius:4px;background:#438EDB;display:inline-block;border:1px solid rgba(15,23,42,.12)"></i>HEX</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <svg class="ic" style="color:var(--cyan)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 13.6 8l4.4 1.6-4.4 1.6L12 15.7l-1.6-4.5L6 9.6 10.4 8Z"/><path d="m18.6 14.2.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z"/></svg>
+                <div class="grow" style="flex:1">
+                  <div class="t" style="font-weight:500">智能抠图换底</div>
+                  <div class="d" style="font-size:12px;color:var(--text-3)">自动抠出人像，任意替换底色</div>
+                </div>
+                <span class="chip amber">即将上线</span>
+                <label class="switch"><input type="checkbox" disabled><i></i></label>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-h">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/></svg>
+              输出设置<span class="hint">保存到本地</span>
+            </div>
+            <div class="card-b">
+              <div class="field">
+                <label>文件格式</label>
+                <div class="seg" id="fmtSeg">
+                  <button data-value="jpg" class="on" type="button">JPG</button>
+                  <button data-value="png" type="button">PNG</button>
+                </div>
+              </div>
+              <div class="field">
+                <label style="display:flex;justify-content:space-between">输出质量 <b id="qVal" style="font-family:var(--mono);font-weight:600">92</b></label>
+                <input type="range" id="qRange" min="60" max="100" value="92">
+              </div>
+              <div class="field">
+                <label>保存位置</label>
+                <div style="display:flex;gap:8px">
+                  <input class="input mono" value="D:\Pictures\证件照" readonly>
+                  <button class="btn" type="button" title="浏览"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7a2 2 0 0 1 2-2h4.2l2 2.3h6.8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"/></svg></button>
+                </div>
+              </div>
+              <div class="field">
+                <label>文件名模板</label>
+                <input class="input mono" value="证件照_{规格}_{底色}" spellcheck="false">
+              </div>
+            </div>
+          </section>
+
+          <div class="actions">
+            <button class="btn lg primary block" type="button">
+              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/></svg>
+              保存导出
+            </button>
+            <div class="actions-row">
+              <button class="btn" type="button">
+                <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13.5h5L11 21l8-10.5h-5Z"/></svg>
+                生成预览
+              </button>
+              <button class="btn" type="button">重置</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="statusbar">
+      <span><span class="dot ok"></span>就绪 · 预览已生成</span>
+      <span class="meta mono" style="font-family:var(--mono)" id="stSize">295×413 px @ 300 DPI</span>
+      <span class="spacer"></span>
+      <span class="meta">Magick.NET</span>
+      <span class="meta" id="stFmt">JPG · 质量 92 · 约 86 KB</span>
+    </footer>
+  </div>
+</div>
+</div>
+</div>
+
+<script src="assets/app.js"></script>
+<script>
+(function () {
+  var SPECS = { '1inch': [25, 35], '2inch': [35, 49], 'small2': [33, 48], custom: null };
+  var spec = '1inch';
+  var $ = function (id) { return document.getElementById(id); };
+  var wIn = $('wIn'), hIn = $('hIn'), dpiVal = $('dpiVal');
+
+  function px(mm, dpi) { return Math.round(mm / 25.4 * dpi); }
+
+  function update() {
+    var dpi = parseInt(dpiVal.textContent, 10);
+    var mm = spec === 'custom' ? [parseFloat(wIn.value) || 0, parseFloat(hIn.value) || 0] : SPECS[spec];
+    var pw = px(mm[0], dpi), ph = px(mm[1], dpi);
+    $('pxOut').textContent = pw + ' × ' + ph + ' px';
+    $('mmOut').textContent = mm[0] + ' × ' + mm[1] + ' mm';
+    $('dimChip').textContent = pw + ' × ' + ph + ' px · ' + dpi + ' DPI';
+    $('stSize').textContent = pw + '×' + ph + ' px @ ' + dpi + ' DPI';
+  }
+
+  document.addEventListener('specchange', function (e) {
+    spec = e.detail.id;
+    var custom = spec === 'custom';
+    $('wField').classList.toggle('disabled', !custom);
+    $('hField').classList.toggle('disabled', !custom);
+    if (!custom) { wIn.value = SPECS[spec][0]; hIn.value = SPECS[spec][1]; }
+    update();
+  });
+
+  document.querySelectorAll('[data-dpi]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var v = parseInt(dpiVal.textContent, 10) + (btn.dataset.dpi === '+' ? 30 : -30);
+      dpiVal.textContent = Math.min(1200, Math.max(72, v));
+      update();
+    });
+  });
+
+  wIn.addEventListener('input', update);
+  hIn.addEventListener('input', update);
+
+  // 背景色联动
+  var photo = $('photo');
+  $('bgSwatches').addEventListener('swchange', function (e) {
+    var color = e.detail.color;
+    var swatch = e.target.querySelector('.swatch.on');
+    $('bgName').textContent = swatch ? (swatch.dataset.name || '自定义') : '自定义';
+    if (!color) color = '#7C5CFF'; // 自定义色板（原型演示值）
+    photo.style.background = color;
+    $('hexInput').value = color.replace('#', '').toUpperCase();
+    $('hexDot').style.background = color;
+  });
+  $('hexInput').addEventListener('input', function () {
+    var v = this.value.trim();
+    if (/^[0-9a-fA-F]{6}$/.test(v)) {
+      photo.style.background = '#' + v;
+      $('hexDot').style.background = '#' + v;
+      $('bgName').textContent = '自定义';
+    }
+  });
+
+  // 质量
+  $('qRange').addEventListener('input', function () {
+    $('qVal').textContent = this.value;
+    $('stFmt').textContent = 'JPG · 质量 ' + this.value + ' · 约 ' + Math.round(this.value * 0.94) + ' KB';
+  });
+
+  // 格式
+  $('fmtSeg').addEventListener('segchange', function (e) {
+    $('stFmt').textContent = e.detail.value.toUpperCase() + ' · 质量 ' + $('qVal').textContent + ' · 约 9' + Math.round(Math.random() * 8) + ' KB';
+  });
+
+  // 参考线
+  $('btnGuides').addEventListener('click', function () {
+    this.classList.toggle('on');
+    $('guides').classList.toggle('hidden');
+  });
+
+  // 原图对比（按住查看）
+  var compareBtn = $('btnCompare'), dimChip = $('dimChip'), savedDim = dimChip.textContent;
+  function compareOn() { compareBtn.classList.add('on'); photo.classList.add('compare'); dimChip.textContent = '原图 · 1200 × 1600'; }
+  function compareOff() { compareBtn.classList.remove('on'); photo.classList.remove('compare'); dimChip.textContent = savedDim; }
+  compareBtn.addEventListener('mousedown', compareOn);
+  compareBtn.addEventListener('mouseup', compareOff);
+  compareBtn.addEventListener('mouseleave', compareOff);
+
+  // 缩放
+  var zoomLevels = [50, 75, 100, 125, 150, 200], zi = 2;
+  function applyZoom() {
+    $('zoomPct').textContent = zoomLevels[zi] + '%';
+    photo.style.transform = 'scale(' + zoomLevels[zi] / 100 + ')';
+  }
+  document.querySelectorAll('[data-zoom]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var z = btn.dataset.zoom;
+      if (z === '+') zi = Math.min(zoomLevels.length - 1, zi + 1);
+      else if (z === '-') zi = Math.max(0, zi - 1);
+      else zi = 2;
+      applyZoom();
+    });
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>

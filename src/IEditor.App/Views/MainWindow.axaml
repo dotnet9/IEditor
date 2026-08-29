@@ -1,0 +1,19 @@
+<u:UrsaWindow
+    x:Class="IEditor.App.Views.MainWindow"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:u="https://irihi.tech/ursa"
+    xmlns:views="using:IEditor.App.Views"
+    Title="证件照处理"
+    Width="1320"
+    Height="860"
+    MinWidth="1100"
+    MinHeight="760">
+  <u:UrsaWindow.TitleBarContent>
+    <StackPanel Spacing="2">
+      <TextBlock FontSize="16" FontWeight="SemiBold" Text="证件照处理" />
+      <TextBlock Opacity="0.7" Text="一寸、二寸与自定义背景" />
+    </StackPanel>
+  </u:UrsaWindow.TitleBarContent>
+  <views:MainView />
+</u:UrsaWindow>

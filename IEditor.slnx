@@ -1,0 +1,19 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/docs/">
+    <File Path="docs/architecture.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/IEditor.Core/IEditor.Core.csproj" />
+    <Project Path="src/IEditor.App/IEditor.App.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/IEditor.Core.Tests/IEditor.Core.Tests.csproj" />
+  </Folder>
+</Solution>

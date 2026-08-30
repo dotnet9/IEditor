@@ -218,6 +218,11 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
                     SelectedBackgroundOption.SetColor(value.ToRgbColor());
                 }
 
+                if (SelectedBackgroundOption is { IsCustom: true })
+                {
+                    EnsureSmartCutoutEnabledForBackgroundChange();
+                }
+
                 UpdateSuggestedFileName();
                 UpdateDerivedText();
                 SchedulePreview();
@@ -976,6 +981,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         if (option is not null)
         {
             SelectedBackgroundOption = option;
+            EnsureSmartCutoutEnabledForBackgroundChange();
         }
     }
 
@@ -1015,6 +1021,14 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
 
         previewTimer.Stop();
         previewTimer.Start();
+    }
+
+    private void EnsureSmartCutoutEnabledForBackgroundChange()
+    {
+        if (!string.IsNullOrWhiteSpace(SourcePath) && !IsSmartCutoutEnabled)
+        {
+            IsSmartCutoutEnabled = true;
+        }
     }
 
     private void OnSourcePathUpdated()

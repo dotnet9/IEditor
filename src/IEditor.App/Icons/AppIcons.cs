@@ -51,4 +51,8 @@ public static class AppIcons
     public static readonly StreamGeometry Check = StreamGeometry.Parse("M5 12.5 9.2 16.7 19 7");
 
     public static readonly StreamGeometry Menu = StreamGeometry.Parse("M5 7h14 M5 12h14 M5 17h14");
+
+    public static readonly StreamGeometry Zap = StreamGeometry.Parse("M13 3 5 13.5h5L11 21l8-10.5h-5Z");
+
+    public static readonly StreamGeometry Palette = StreamGeometry.Parse("M12 3.5a8.5 8.5 0 1 0 0 17c1.4 0 2-.8 2-1.7 0-.8-.6-1.3-.6-2 0-.9.7-1.6 1.8-1.6h1.6c2 0 3.7-1.6 3.7-3.6 0-4.9-3.8-8.1-8.5-8.1z");
 }

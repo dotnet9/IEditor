@@ -35,8 +35,12 @@ public sealed partial class NavigationItemViewModel : LocalizedViewModel
 
     public bool IsEnabled { get; }
 
+    public bool ShowAsDisabled => !IsEnabled;
+
     [ObservableProperty]
     private bool isSelected;
+
+    public bool HasBadge => !string.IsNullOrWhiteSpace(Badge);
 
     public string Title
     {
@@ -53,7 +57,13 @@ public sealed partial class NavigationItemViewModel : LocalizedViewModel
     public string Badge
     {
         get => _badge;
-        private set => SetProperty(ref _badge, value);
+        private set
+        {
+            if (SetProperty(ref _badge, value))
+            {
+                OnPropertyChanged(nameof(HasBadge));
+            }
+        }
     }
 
     protected override void RefreshLocalizedText()

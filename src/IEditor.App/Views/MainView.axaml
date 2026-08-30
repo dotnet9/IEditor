@@ -2,82 +2,10 @@
     x:Class="IEditor.App.Views.MainView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:shapes="using:Avalonia.Controls.Shapes"
     xmlns:vm="using:IEditor.App.ViewModels"
     x:CompileBindings="True"
-    x:DataType="vm:MainViewModel"
-    d:DesignHeight="860"
-    d:DesignWidth="1320"
-    mc:Ignorable="d">
-  <Grid ColumnDefinitions="228,*" Background="{DynamicResource IEditorWindowBackgroundBrush}">
-    <Border
-        Grid.Column="0"
-        Background="{DynamicResource IEditorSidebarBrush}"
-        BorderBrush="{DynamicResource IEditorBorderBrush}"
-        BorderThickness="0,0,1,0">
-      <Grid RowDefinitions="Auto,*,Auto" Margin="14,14,12,12" RowSpacing="12">
-        <StackPanel Orientation="Horizontal" Spacing="10">
-          <Border Width="34" Height="34" CornerRadius="9" Background="{DynamicResource IEditorAccentGradientBrush}">
-            <Image Source="/Assets/logo.png" Width="34" Height="34" />
-          </Border>
-          <StackPanel Spacing="1">
-            <TextBlock Classes="ie-section-title" Text="{Binding WindowTitle}" />
-            <TextBlock Classes="ie-footnote" Text="{Binding WindowSubtitle}" />
-          </StackPanel>
-        </StackPanel>
-
-        <ScrollViewer Grid.Row="1">
-          <ListBox
-              Classes="ie-nav-list"
-              ItemsSource="{Binding NavigationItems}"
-              SelectedItem="{Binding SelectedNavigationItem, Mode=TwoWay}">
-            <ListBox.ItemTemplate>
-              <DataTemplate x:DataType="vm:NavigationItemViewModel">
-                <Border
-                    Padding="10,9"
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    BorderThickness="0"
-                    CornerRadius="10"
-                    IsEnabled="{Binding IsEnabled}">
-                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-                    <Border Width="28" Height="28" CornerRadius="8" Background="{DynamicResource IEditorSurface2Brush}">
-                      <shapes:Path
-                          Width="15"
-                          Height="15"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          Data="{Binding Icon}"
-                          Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-                    </Border>
-                    <StackPanel Grid.Column="1" Spacing="2">
-                      <TextBlock Classes="ie-section-title" FontSize="13" Text="{Binding Title}" />
-                      <TextBlock Classes="ie-footnote" Text="{Binding Subtitle}" />
-                    </StackPanel>
-                    <TextBlock
-                        Grid.Column="2"
-                        VerticalAlignment="Center"
-                        Classes="ie-footnote"
-                        Foreground="{DynamicResource IEditorTextTertiaryBrush}"
-                        Text="{Binding Badge}" />
-                  </Grid>
-                </Border>
-              </DataTemplate>
-            </ListBox.ItemTemplate>
-          </ListBox>
-        </ScrollViewer>
-
-        <StackPanel Grid.Row="2" Spacing="8">
-          <Border Height="1" Background="{DynamicResource IEditorBorderBrush}" />
-          <TextBlock Classes="ie-footnote" Text="v0.3.0 · 界面原型" />
-        </StackPanel>
-      </Grid>
-    </Border>
-
-    <Border Grid.Column="1" Background="{DynamicResource IEditorPageBackgroundBrush}">
-      <ContentControl Content="{Binding SelectedPage}" />
-    </Border>
+    x:DataType="vm:MainViewModel">
+  <Grid Background="{DynamicResource IEditorPageBackgroundBrush}">
+    <ContentControl Content="{Binding SelectedPage}" />
   </Grid>
 </UserControl>

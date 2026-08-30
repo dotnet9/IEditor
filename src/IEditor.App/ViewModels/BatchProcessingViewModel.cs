@@ -130,9 +130,18 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
             {
                 _preferencesService.Preferences.BatchConcurrency = concurrency;
                 _preferencesService.Save();
+                OnPropertyChanged(nameof(IsConcurrency2));
+                OnPropertyChanged(nameof(IsConcurrency4));
+                OnPropertyChanged(nameof(IsConcurrency8));
             }
         }
     }
+
+    public bool IsConcurrency2 => Concurrency == 2;
+
+    public bool IsConcurrency4 => Concurrency == 4;
+
+    public bool IsConcurrency8 => Concurrency == 8;
 
     public bool SkipProcessed
     {
@@ -215,6 +224,24 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
         get => addImageText;
         private set => SetProperty(ref addImageText, value);
     }
+
+    public string SelectFileText
+    {
+        get => selectFileText;
+        private set => SetProperty(ref selectFileText, value);
+    }
+
+    private string selectFileText = string.Empty;
+
+    public string TokenNameText { get; private set; } = "{原名}";
+
+    public string TokenSizeText { get; private set; } = "{规格}";
+
+    public string TokenColorText { get; private set; } = "{底色}";
+
+    public string TokenDateText { get; private set; } = "{日期}";
+
+    public string TokenIndexText { get; private set; } = "{序号}";
 
     public string ExportAllText
     {
@@ -386,6 +413,12 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
 
     public int SelectedCount => QueueItems.Count(item => item.IsSelected);
 
+    public bool AreAllItemsSelected
+    {
+        get => QueueItems.Count > 0 && QueueItems.All(item => item.IsSelected);
+        set => SetAllSelection(value);
+    }
+
     public string WindowTitle => Title;
 
     public string WindowSubtitle => Subtitle;
@@ -403,6 +436,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
         QueueTitleText = L(Localization.Batch.Labels.QueueTitle);
         QueueHintText = QueueSummaryText;
         AddImageText = L(Localization.Batch.Page.AddImage);
+        SelectFileText = L(Localization.Common.Actions.SelectFile);
         ExportAllText = L(Localization.Batch.Labels.ExportAll);
         ExportZipText = L(Localization.Batch.Labels.ExportZip);
         UniformSizeText = L(Localization.Batch.Labels.UniformSize);
@@ -462,6 +496,11 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
         RebuildSummary();
     }
 
+    public void AddImagePaths(IEnumerable<string> paths)
+    {
+        AddImages(paths.ToArray());
+    }
+
     [RelayCommand]
     private void RemoveSelected()
     {
@@ -498,7 +537,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
             foreach (var item in exportItems)
             {
                 processed++;
-                item.StatusText = L(Localization.Batch.Status.Processing);
+                item.SetStatus(L(Localization.Batch.Status.Processing), "processing");
                 item.Progress = 0.4;
 
                 var request = new PhotoProcessingRequest(
@@ -513,7 +552,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
                 var targetPath = Path.Combine(outputFolder, fileName);
                 await File.WriteAllBytesAsync(targetPath, result.Data);
 
-                item.StatusText = L(Localization.Batch.Status.Completed);
+                item.SetStatus(L(Localization.Batch.Status.Completed), "completed");
                 item.Progress = 1;
                 FooterStatusText = $"{L(Localization.Batch.Status.Processing)} · {processed} / {total}";
                 RebuildSummary();
@@ -529,7 +568,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
         {
             foreach (var item in exportItems.Where(item => item.Progress < 1))
             {
-                item.StatusText = L(Localization.Batch.Status.Failed);
+                item.SetStatus(L(Localization.Batch.Status.Failed), "failed");
             }
 
             RebuildSummary();
@@ -563,7 +602,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
             for (var index = 0; index < exportItems.Length; index++)
             {
                 var item = exportItems[index];
-                item.StatusText = L(Localization.Batch.Status.Processing);
+                item.SetStatus(L(Localization.Batch.Status.Processing), "processing");
                 item.Progress = 0.5;
 
                 var request = new PhotoProcessingRequest(
@@ -580,7 +619,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
                     await entryStream.WriteAsync(result.Data, 0, result.Data.Length);
                 }
 
-                item.StatusText = L(Localization.Batch.Status.Completed);
+                item.SetStatus(L(Localization.Batch.Status.Completed), "completed");
                 item.Progress = 1;
                 FooterStatusText = $"{L(Localization.Batch.Status.Processing)} · {index + 1} / {total}";
                 RebuildSummary();
@@ -597,7 +636,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
             StatusText = string.Format(L(Localization.PhotoStudio.Status.SaveFailed), ex.Message);
             foreach (var item in exportItems.Where(item => item.Progress < 1))
             {
-                item.StatusText = L(Localization.Batch.Status.Failed);
+                item.SetStatus(L(Localization.Batch.Status.Failed), "failed");
             }
 
             RebuildSummary();
@@ -611,9 +650,14 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
     [RelayCommand]
     private void SelectAll()
     {
+        SetAllSelection(true);
+    }
+
+    private void SetAllSelection(bool isSelected)
+    {
         foreach (var item in QueueItems)
         {
-            item.IsSelected = true;
+            item.IsSelected = isSelected;
         }
 
         RebuildSummary();
@@ -691,6 +735,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
                 L(Localization.PhotoStudio.Backgrounds.BlueName),
                 new RgbColor(67, 142, 219).ToAvaloniaColor(),
                 L(Localization.Batch.Status.Completed),
+                "completed",
                 1),
             BatchProcessingItemViewModel.CreatePlaceholder(
                 "证件照-李四.png",
@@ -699,6 +744,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
                 L(Localization.PhotoStudio.Backgrounds.WhiteName),
                 Colors.White,
                 L(Localization.Batch.Status.Completed),
+                "completed",
                 1),
             BatchProcessingItemViewModel.CreatePlaceholder(
                 "报名照-王五.jpg",
@@ -707,6 +753,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
                 L(Localization.PhotoStudio.Backgrounds.RedName),
                 new RgbColor(190, 11, 36).ToAvaloniaColor(),
                 L(Localization.Batch.Status.Processing),
+                "processing",
                 0.6),
             BatchProcessingItemViewModel.CreatePlaceholder(
                 "体检表-赵六.jpg",
@@ -715,6 +762,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
                 L(Localization.PhotoStudio.Backgrounds.GrayLightName),
                 new RgbColor(237, 241, 246).ToAvaloniaColor(),
                 L(Localization.Batch.Status.Waiting),
+                "waiting",
                 0),
             BatchProcessingItemViewModel.CreatePlaceholder(
                 "简历照-孙七.png",
@@ -723,6 +771,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
                 L(Localization.PhotoStudio.Backgrounds.BlueName),
                 new RgbColor(67, 142, 219).ToAvaloniaColor(),
                 L(Localization.Batch.Status.Waiting),
+                "waiting",
                 0)
         ];
 
@@ -815,10 +864,10 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
 
     private void RebuildSummary()
     {
-        CompletedCount = QueueItems.Count(item => item.StatusText == L(Localization.Batch.Status.Completed));
-        ProcessingCount = QueueItems.Count(item => item.StatusText == L(Localization.Batch.Status.Processing));
-        WaitingCount = QueueItems.Count(item => item.StatusText == L(Localization.Batch.Status.Waiting));
-        FailedCount = QueueItems.Count(item => item.StatusText == L(Localization.Batch.Status.Failed));
+        CompletedCount = QueueItems.Count(item => item.IsCompleted);
+        ProcessingCount = QueueItems.Count(item => item.IsProcessing);
+        WaitingCount = QueueItems.Count(item => item.IsWaiting);
+        FailedCount = QueueItems.Count(item => item.IsFailed);
 
         QueueSummaryText = string.Format(
             "{0} {1} · {2} {3} · {4} {5} · {6} {7}",
@@ -833,6 +882,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
             : $"{L(Localization.Common.States.Ready)} · {QueueItems.Count} 个文件";
 
         OnPropertyChanged(nameof(SelectedCount));
+        OnPropertyChanged(nameof(AreAllItemsSelected));
         SelectedCountText = $"{L(Localization.Batch.Labels.SelectedCount)} {SelectedCount} 项";
     }
 

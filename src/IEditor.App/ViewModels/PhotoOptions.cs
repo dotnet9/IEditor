@@ -26,6 +26,8 @@ public partial class PhotoSizeOptionViewModel : ObservableObject
 
     public bool IsCustom { get; }
 
+    public string SubLabel => IsCustom ? "自定" : $"{WidthMm:0}×{HeightMm:0}";
+
     [ObservableProperty]
     private bool isSelected;
 }
@@ -54,11 +56,14 @@ public partial class BackgroundOptionViewModel : ObservableObject
             if (SetProperty(ref _color, value))
             {
                 OnPropertyChanged(nameof(AvaloniaColor));
+                OnPropertyChanged(nameof(AvaloniaBrush));
             }
         }
     }
 
     public Color AvaloniaColor => Color.ToAvaloniaColor();
+
+    public IBrush AvaloniaBrush => new SolidColorBrush(AvaloniaColor);
 
     public bool IsCustom { get; }
 

@@ -23,6 +23,8 @@ public partial class BatchSizeOptionViewModel : ObservableObject
 
     public bool IsFollowOriginal { get; }
 
+    public string SubLabel => IsFollowOriginal ? "保持比例" : $"{WidthMm:0}×{HeightMm:0}";
+
     [ObservableProperty]
     private bool isSelected;
 }

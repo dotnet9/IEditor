@@ -1,326 +1,564 @@
 <UserControl
     x:Class="IEditor.App.Views.PhotoStudioView"
     xmlns="https://github.com/avaloniaui"
+    xmlns:controls="using:Avalonia.Controls"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:cp="using:Avalonia.Controls"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:icons="using:IEditor.App.Icons"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:shapes="using:Avalonia.Controls.Shapes"
-    xmlns:u="using:Ursa.Controls"
+    xmlns:primitives="using:Avalonia.Controls.Primitives"
     xmlns:vm="using:IEditor.App.ViewModels"
     x:CompileBindings="True"
     x:DataType="vm:PhotoStudioViewModel"
-    d:DesignHeight="860"
-    d:DesignWidth="1320"
-    mc:Ignorable="d">
-  <Grid RowDefinitions="Auto,*,Auto" RowSpacing="16" Margin="16">
-    <Border
-        Background="{DynamicResource IEditorSurfaceBrush}"
-        BorderBrush="{DynamicResource IEditorBorderBrush}"
-        BorderThickness="1"
-        CornerRadius="8"
-        Padding="12,10">
-      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-        <StackPanel Spacing="2">
-          <TextBlock Classes="ie-section-title" Text="{Binding Breadcrumb}" />
-          <TextBlock Classes="ie-footnote" Text="{Binding Subtitle}" />
+    >
+  <Grid RowDefinitions="52,*,34">
+
+    <!-- ======== 顶栏 ======== -->
+    <Border Classes="ie-topbar">
+      <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="12">
+        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+          <TextBlock Classes="ie-crumb" Text="工作台 /" />
+          <TextBlock Classes="ie-crumb-current" Text="{Binding Title}" />
         </StackPanel>
-        <Border
-            Grid.Column="1"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            Padding="10,4"
-            Background="{DynamicResource IEditorAccentSoftBrush}"
-            BorderBrush="{DynamicResource IEditorAccentTintBrush}"
-            BorderThickness="1"
-            CornerRadius="999">
-          <TextBlock Classes="ie-footnote" Foreground="{DynamicResource IEditorAccentBrush}" Text="{Binding PageStatusBadge}" />
+        <Border Grid.Column="1" Classes="ie-chip chip-green">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <Ellipse Width="6" Height="6" Fill="{DynamicResource IEditorSuccessBrush}" />
+            <TextBlock Text="{Binding LivePreviewText}" />
+          </StackPanel>
         </Border>
-        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8">
-          <Button Classes="ie-icon-button" Command="{Binding HelpCommand}" ToolTip.Tip="{Binding HelpText}">
-            <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Help}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-          </Button>
-          <Button Classes="ie-icon-button" Command="{Binding ToggleThemeCommand}" ToolTip.Tip="{Binding ThemeSwitchText}">
-            <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Theme}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-          </Button>
-          <Button Classes="ie-primary-button" Command="{Binding SaveCommand}">
-            <StackPanel Orientation="Horizontal" Spacing="7">
-              <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Export}" Fill="White" />
-              <TextBlock Text="{Binding ExportImageText}" />
-            </StackPanel>
-          </Button>
+        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
         </StackPanel>
       </Grid>
     </Border>
 
-    <Grid Grid.Row="1" ColumnDefinitions="54,*,332" ColumnSpacing="16">
-      <Border
-          Background="{DynamicResource IEditorSurfaceBrush}"
-          BorderBrush="{DynamicResource IEditorBorderBrush}"
-          BorderThickness="1"
-          CornerRadius="8"
-          Padding="8">
-        <StackPanel HorizontalAlignment="Center" Spacing="6">
-          <Button Classes="ie-icon-button" Command="{Binding ActivateToolCommand}" CommandParameter="{x:Static vm:PhotoStudioTool.LoadImage}" ToolTip.Tip="{Binding LoadImageText}">
-            <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.LoadImage}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-          </Button>
-          <Border Width="24" Height="1" Background="{DynamicResource IEditorBorderBrush}" />
-          <Button Classes="ie-icon-button" Command="{Binding ActivateToolCommand}" CommandParameter="{x:Static vm:PhotoStudioTool.Crop}" ToolTip.Tip="{Binding CropText}">
-            <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Crop}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-          </Button>
-          <Button Classes="ie-icon-button" Command="{Binding ActivateToolCommand}" CommandParameter="{x:Static vm:PhotoStudioTool.RotateLeft}" ToolTip.Tip="{Binding RotateLeftText}">
-            <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.RotateLeft}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-          </Button>
-          <Button Classes="ie-icon-button" Command="{Binding ActivateToolCommand}" CommandParameter="{x:Static vm:PhotoStudioTool.RotateRight}" ToolTip.Tip="{Binding RotateRightText}">
-            <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.RotateRight}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-          </Button>
-          <Button Classes="ie-icon-button" Command="{Binding ActivateToolCommand}" CommandParameter="{x:Static vm:PhotoStudioTool.FlipHorizontal}" ToolTip.Tip="{Binding FlipHorizontalText}">
-            <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.FlipHorizontal}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-          </Button>
-          <Border Width="24" Height="1" Background="{DynamicResource IEditorBorderBrush}" />
-          <Button Classes="ie-icon-button" Command="{Binding ActivateToolCommand}" CommandParameter="{x:Static vm:PhotoStudioTool.Reset}" ToolTip.Tip="{Binding ResetViewText}">
-            <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Refresh}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-          </Button>
-        </StackPanel>
-      </Border>
+    <!-- ======== 内容区 ======== -->
+    <Border Grid.Row="1" Background="{DynamicResource IEditorDotGridBrush}">
+      <Grid ColumnDefinitions="54,*,332" ColumnSpacing="16" Margin="20">
 
-      <StackPanel Spacing="12">
-        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-          <Border Background="{DynamicResource IEditorSurfaceBrush}" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="1" CornerRadius="10">
-            <Grid ColumnDefinitions="Auto,Auto,Auto,Auto" VerticalAlignment="Center">
-              <Button Classes="ie-icon-button" Command="{Binding SetZoomCommand}" CommandParameter="-" ToolTip.Tip="{Binding PreviewZoomText}">
-                <TextBlock FontSize="15" Text="-" />
-              </Button>
-              <TextBlock Grid.Column="1" VerticalAlignment="Center" Margin="8,0" FontFamily="Consolas" Text="{Binding PreviewZoomText}" />
-              <Button Grid.Column="2" Classes="ie-icon-button" Command="{Binding SetZoomCommand}" CommandParameter="+" ToolTip.Tip="{Binding PreviewZoomText}">
-                <TextBlock FontSize="15" Text="+" />
-              </Button>
-              <Button Grid.Column="3" Classes="ie-icon-button" Command="{Binding SetZoomCommand}" CommandParameter="fit" ToolTip.Tip="{Binding FitToWindowText}">
-                <shapes:Path Width="14" Height="14" Data="{x:Static icons:AppIcons.Fit}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-              </Button>
-            </Grid>
-          </Border>
-          <Button
-              Classes="ie-ghost-button"
-              Command="{Binding ToggleGuidesCommand}"
-              ToolTip.Tip="{Binding GuidesText}">
-            <StackPanel Orientation="Horizontal" Spacing="7">
-              <shapes:Path Width="14" Height="14" Data="{x:Static icons:AppIcons.Guides}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-              <TextBlock Text="{Binding GuidesText}" />
-            </StackPanel>
-          </Button>
-          <Button
-              Classes="ie-ghost-button"
-              Command="{Binding ToggleCompareCommand}"
-              ToolTip.Tip="{Binding CompareOriginalText}">
-            <StackPanel Orientation="Horizontal" Spacing="7">
-              <shapes:Path Width="14" Height="14" Data="{x:Static icons:AppIcons.Compare}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-              <TextBlock Text="{Binding CompareOriginalText}" />
-            </StackPanel>
-          </Button>
-          <Border Background="{DynamicResource IEditorAccentSoftBrush}" BorderBrush="{DynamicResource IEditorAccentTintBrush}" BorderThickness="1" CornerRadius="999" Padding="10,4">
-            <TextBlock Classes="ie-footnote" Foreground="{DynamicResource IEditorAccentBrush}" Text="{Binding EngineReady}" />
-          </Border>
-        </StackPanel>
+        <!-- 工具栏 -->
+        <Border Classes="ie-card" Padding="8" VerticalAlignment="Top">
+          <StackPanel Spacing="6">
+            <ToggleButton
+                Classes="ie-rail-button"
+                IsChecked="{Binding IsCropSelected, Mode=OneWay}"
+                Command="{Binding ActivateToolCommand}"
+                CommandParameter="{x:Static vm:PhotoStudioTool.Crop}"
+                ToolTip.Tip="{Binding CropText}">
+              <Path Classes="ie-icon" Width="17" Height="17" Data="{x:Static icons:AppIcons.Crop}" Stroke="{Binding $parent[ToggleButton].Foreground}" />
+            </ToggleButton>
+            <Button
+                Classes="ie-rail-button"
+                Command="{Binding RotateLeftCommand}"
+                ToolTip.Tip="{Binding RotateLeftText}">
+              <Path Classes="ie-icon" Width="17" Height="17" Data="{x:Static icons:AppIcons.RotateLeft}" Stroke="{Binding $parent[Button].Foreground}" />
+            </Button>
+            <Button
+                Classes="ie-rail-button"
+                Command="{Binding RotateRightCommand}"
+                ToolTip.Tip="{Binding RotateRightText}">
+              <Path Classes="ie-icon" Width="17" Height="17" Data="{x:Static icons:AppIcons.RotateRight}" Stroke="{Binding $parent[Button].Foreground}" />
+            </Button>
+            <Button
+                Classes="ie-rail-button"
+                Command="{Binding FlipImageCommand}"
+                ToolTip.Tip="{Binding FlipHorizontalText}">
+              <Path Classes="ie-icon" Width="17" Height="17" Data="{x:Static icons:AppIcons.FlipHorizontal}" Stroke="{Binding $parent[Button].Foreground}" />
+            </Button>
+            <Border Width="24" Height="1" HorizontalAlignment="Center" Background="{DynamicResource IEditorBorderBrush}" />
+            <Button
+                Classes="ie-rail-button"
+                Command="{Binding ResetCommand}"
+                ToolTip.Tip="{Binding ResetViewText}">
+              <Path Classes="ie-icon" Width="17" Height="17" Data="{x:Static icons:AppIcons.Refresh}" Stroke="{Binding $parent[Button].Foreground}" />
+            </Button>
+          </StackPanel>
+        </Border>
 
-        <Border
-            Background="{DynamicResource IEditorSurfaceBrush}"
-            BorderBrush="{DynamicResource IEditorBorderBrush}"
-            BorderThickness="1"
-            CornerRadius="8"
-            MinHeight="600"
-            Padding="16">
-          <Grid>
+        <!-- 预览舞台 -->
+        <StackPanel Grid.Column="1" Spacing="12">
+          <StackPanel Orientation="Horizontal" Spacing="8">
             <Border
-                Background="{DynamicResource IEditorSurface2Brush}"
-                BorderBrush="{DynamicResource IEditorBorderBrush}"
+                Background="{DynamicResource IEditorSurfaceBrush}"
+                BorderBrush="{DynamicResource IEditorBorderStrongBrush}"
                 BorderThickness="1"
-                CornerRadius="6"
-                Padding="12"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-              <StackPanel Spacing="10" HorizontalAlignment="Center">
-                <u:ImageViewer Source="{Binding DisplayedPreviewBitmap}" Width="300" Height="400" />
-                <TextBlock Classes="ie-footnote" HorizontalAlignment="Center" Text="{Binding ProcessingSummary}" />
-                <TextBlock Classes="ie-footnote" HorizontalAlignment="Center" Text="{Binding BackgroundSummary}" />
+                CornerRadius="10"
+                Height="32">
+              <StackPanel Orientation="Horizontal">
+                <Button Classes="ie-icon-button" Width="30" Height="30" Command="{Binding SetZoomCommand}" CommandParameter="-">
+                  <TextBlock FontSize="15" Text="−" />
+                </Button>
+                <TextBlock
+                    VerticalAlignment="Center"
+                    Classes="ie-mono"
+                    MinWidth="46"
+                    TextAlignment="Center"
+                    Text="{Binding PreviewZoomText}" />
+                <Button Classes="ie-icon-button" Width="30" Height="30" Command="{Binding SetZoomCommand}" CommandParameter="+">
+                  <TextBlock FontSize="15" Text="＋" />
+                </Button>
+                <Button Classes="ie-icon-button" Width="44" Height="30" Command="{Binding SetZoomCommand}" CommandParameter="fit">
+                  <TextBlock FontSize="12" Text="{Binding FitToWindowText}" />
+                </Button>
               </StackPanel>
             </Border>
-          </Grid>
-        </Border>
-      </StackPanel>
+            <ToggleButton
+                Classes="ie-tool-button"
+                IsChecked="{Binding ShowGuides, Mode=TwoWay}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <Path Classes="ie-icon" Width="15" Height="15" Data="{x:Static icons:AppIcons.Guides}" Stroke="{Binding $parent[ToggleButton].Foreground}" />
+                <TextBlock Text="{Binding GuidesText}" />
+              </StackPanel>
+            </ToggleButton>
+            <Button
+                Classes="ie-tool-button"
+                PointerPressed="OnComparePressed"
+                PointerReleased="OnCompareReleased"
+                PointerExited="OnCompareLeft"
+                ToolTip.Tip="{Binding CompareOriginalText}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <Path Classes="ie-icon" Width="15" Height="15" Data="{x:Static icons:AppIcons.Compare}" Stroke="{Binding $parent[Button].Foreground}" />
+                <TextBlock Text="{Binding CompareOriginalText}" />
+              </StackPanel>
+            </Button>
+            <Panel />
+            <Border Classes="ie-chip chip-blue">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <Path Classes="ie-icon" Width="13" Height="13" Data="{x:Static icons:AppIcons.Zap}" Stroke="{DynamicResource IEditorAccentBrush}" />
+                <TextBlock Text="{Binding EngineReady}" />
+              </StackPanel>
+            </Border>
+          </StackPanel>
 
-      <StackPanel Spacing="14">
-        <Border Classes="ie-surface-card" Padding="0">
-          <Grid RowDefinitions="Auto,*">
-            <Border Padding="14,12" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="0,0,0,1">
-              <StackPanel Orientation="Horizontal" Spacing="8">
-                <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.PhotoStudio}" Fill="{DynamicResource IEditorAccentBrush}" />
-                <TextBlock Classes="ie-section-title" Text="{Binding SourceSectionTitle}" />
-                <TextBlock Classes="ie-footnote" Text="{Binding SourceSectionHint}" />
-              </StackPanel>
-            </Border>
-            <StackPanel Grid.Row="1" Spacing="10" Margin="14">
-              <u:PathPicker
-                  AllowMultiple="False"
-                  Command="{Binding OpenSourceCommand}"
-                  DefaultFileExtension="jpg"
-                  FileFilter="[ImageAll]"
-                  SelectedPathsText="{Binding SourcePath, Mode=TwoWay}"
-                  SuggestedStartPath="{Binding InputSuggestedStartPath}"
-                  UsePickerType="OpenFile" />
-              <TextBlock Classes="ie-muted" Text="{Binding SourceSummary}" />
-            </StackPanel>
-          </Grid>
-        </Border>
+          <Border Classes="ie-stage" MinHeight="600">
+            <Panel HorizontalAlignment="Center" VerticalAlignment="Center" Width="{Binding PhotoBoxWidth}" Height="400" RenderTransformOrigin="50%,50%">
+              <Panel.RenderTransform>
+                <ScaleTransform ScaleX="{Binding PreviewScale}" ScaleY="{Binding PreviewScale}" />
+              </Panel.RenderTransform>
 
-        <Border Classes="ie-surface-card" Padding="0">
-          <Grid RowDefinitions="Auto,*">
-            <Border Padding="14,12" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="0,0,0,1">
-              <StackPanel Orientation="Horizontal" Spacing="8">
-                <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Crop}" Fill="{DynamicResource IEditorAccentBrush}" />
-                <TextBlock Classes="ie-section-title" Text="{Binding SizeSectionTitle}" />
-                <TextBlock Classes="ie-footnote" Text="{Binding SizeSectionHint}" />
-              </StackPanel>
-            </Border>
-            <StackPanel Grid.Row="1" Spacing="10" Margin="14">
-              <ComboBox ItemsSource="{Binding SizeOptions}" SelectedItem="{Binding SelectedSizeOption, Mode=TwoWay}">
-                <ComboBox.ItemTemplate>
-                  <DataTemplate x:DataType="vm:PhotoSizeOptionViewModel">
-                    <StackPanel>
-                      <TextBlock Text="{Binding Title}" />
-                      <TextBlock Classes="ie-footnote" Text="{Binding Token}" />
-                    </StackPanel>
-                  </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
-              <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
-                <u:NumericDoubleUpDown
-                    InnerLeftContent="{Binding WidthMmText}"
-                    IsEnabled="{Binding IsCustomSize}"
-                    Value="{Binding WidthMm, Mode=TwoWay}" />
-                <u:NumericDoubleUpDown
-                    Grid.Column="1"
-                    InnerLeftContent="{Binding HeightMmText}"
-                    IsEnabled="{Binding IsCustomSize}"
-                    Value="{Binding HeightMm, Mode=TwoWay}" />
-              </Grid>
-              <u:NumericIntUpDown InnerLeftContent="{Binding DpiText}" Minimum="72" Step="10" Value="{Binding Dpi, Mode=TwoWay}" />
-            </StackPanel>
-          </Grid>
-        </Border>
+              <!-- 照片 -->
+              <Border
+                  Background="{Binding ActiveBackgroundBrush}"
+                  BorderThickness="0"
+                  CornerRadius="6"
+                  ClipToBounds="True"
+                  BoxShadow="0 10 34 0 #380A1F40">
+                <Panel>
+                  <Image
+                      Source="{Binding DisplayedPreviewBitmap}"
+                      Stretch="Uniform"
+                      IsVisible="{Binding HasPreview}" />
+                  <!-- 空态人像剪影 -->
+                  <Viewbox Stretch="Fill" IsVisible="{Binding IsPreviewEmpty}">
+                    <Canvas Width="300" Height="400">
+                      <Ellipse
+                          Canvas.Left="98"
+                          Canvas.Top="91"
+                          Width="104"
+                          Height="114"
+                          Fill="{DynamicResource IEditorSilhouetteBrush}" />
+                      <Path
+                          Data="M150,206 C105,206 76,240 68,296 L60,400 L240,400 L232,296 C224,240 195,206 150,206 Z"
+                          Fill="{DynamicResource IEditorSilhouetteBrush}" />
+                    </Canvas>
+                  </Viewbox>
 
-        <Border Classes="ie-surface-card" Padding="0">
-          <Grid RowDefinitions="Auto,*">
-            <Border Padding="14,12" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="0,0,0,1">
-              <StackPanel Orientation="Horizontal" Spacing="8">
-                <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Guides}" Fill="{DynamicResource IEditorAccentBrush}" />
-                <TextBlock Classes="ie-section-title" Text="{Binding BackgroundSectionTitle}" />
-                <TextBlock Classes="ie-footnote" Text="{Binding BackgroundSectionHint}" />
-              </StackPanel>
-            </Border>
-            <StackPanel Grid.Row="1" Spacing="10" Margin="14">
-              <ComboBox ItemsSource="{Binding BackgroundOptions}" SelectedItem="{Binding SelectedBackgroundOption, Mode=TwoWay}">
-                <ComboBox.ItemTemplate>
-                  <DataTemplate x:DataType="vm:BackgroundOptionViewModel">
+                  <!-- 对齐参考线 -->
+                  <Canvas
+                      Width="300"
+                      Height="400"
+                      IsHitTestVisible="False"
+                      IsVisible="{Binding ShowGuides}">
+                    <Ellipse
+                        Canvas.Left="66"
+                        Canvas.Top="48"
+                        Width="168"
+                        Height="204"
+                        Fill="{x:Null}"
+                        Stroke="#BFFFFFFF"
+                        StrokeThickness="2.6"
+                        StrokeDashArray="5,5" />
+                    <Line
+                        StartPoint="46,140"
+                        EndPoint="254,140"
+                        Stroke="#BFFFFFFF"
+                        StrokeThickness="2.6"
+                        StrokeDashArray="5,5" />
+                    <Ellipse
+                        Canvas.Left="66"
+                        Canvas.Top="48"
+                        Width="168"
+                        Height="204"
+                        Fill="{x:Null}"
+                        Stroke="#990F3278"
+                        StrokeThickness="1.2"
+                        StrokeDashArray="5,5" />
+                    <Line
+                        StartPoint="46,140"
+                        EndPoint="254,140"
+                        Stroke="#990F3278"
+                        StrokeThickness="1.2"
+                        StrokeDashArray="5,5" />
+                    <Line
+                        StartPoint="150,30"
+                        EndPoint="150,370"
+                        Stroke="#8C0F3278"
+                        StrokeThickness="1.2"
+                        StrokeDashArray="3,7" />
+                  </Canvas>
+
+                  <!-- 扫描动效（载入图片后显示） -->
+                  <Rectangle
+                      x:Name="ScanlineRect"
+                      Height="64"
+                      VerticalAlignment="Top"
+                      Fill="{DynamicResource IEditorScanBrush}"
+                      IsHitTestVisible="False"
+                      IsVisible="{Binding HasPreview}"
+                      Opacity="0.6">
+                    <Rectangle.RenderTransform>
+                      <TranslateTransform Y="-70" />
+                    </Rectangle.RenderTransform>
+                  </Rectangle>
+
+                  <!-- 尺寸角标 -->
+                  <Border
+                      Classes="ie-mono"
+                      Background="{DynamicResource IEditorDimChipBrush}"
+                      CornerRadius="8"
+                      Padding="9,4"
+                      Margin="10"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Bottom">
+                    <TextBlock
+                        Classes="ie-mono"
+                        FontSize="11"
+                        Foreground="{DynamicResource IEditorDimChipTextBrush}"
+                        Text="{Binding DimChipText}" />
+                  </Border>
+                </Panel>
+              </Border>
+
+              <!-- 取景角框 -->
+              <Border Classes="ie-corner" Margin="-8" HorizontalAlignment="Left" VerticalAlignment="Top" BorderThickness="2.5,2.5,0,0" CornerRadius="5,0,0,0" BoxShadow="0 0 6 0 #6635E0FF" />
+              <Border Classes="ie-corner" Margin="-8" HorizontalAlignment="Right" VerticalAlignment="Top" BorderThickness="0,2.5,2.5,0" CornerRadius="0,5,0,0" BoxShadow="0 0 6 0 #6635E0FF" />
+              <Border Classes="ie-corner" Margin="-8" HorizontalAlignment="Left" VerticalAlignment="Bottom" BorderThickness="2.5,0,0,2.5" CornerRadius="0,0,0,5" BoxShadow="0 0 6 0 #6635E0FF" />
+              <Border Classes="ie-corner" Margin="-8" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderThickness="0,0,2.5,2.5" CornerRadius="0,0,5,0" BoxShadow="0 0 6 0 #6635E0FF" />
+            </Panel>
+          </Border>
+          <TextBlock
+              HorizontalAlignment="Center"
+              Margin="0,0,0,2"
+              FontSize="11.5"
+              Foreground="{DynamicResource IEditorTextSecondaryBrush}"
+              IsVisible="{Binding IsPreviewEmpty}"><Run>拖入图片，或使用 </Run><Run FontWeight="SemiBold" Foreground="{DynamicResource IEditorAccentBrush}">文件 › 打开图片</Run><Run>（Ctrl+O）</Run></TextBlock>
+        </StackPanel>
+
+        <!-- 参数面板 -->
+        <ScrollViewer Grid.Column="2" HorizontalScrollBarVisibility="Disabled">
+          <StackPanel Spacing="14">
+
+            <!-- 源图片 -->
+            <Border Classes="ie-card">
+              <StackPanel>
+                <Border Classes="ie-card-header">
+                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                      <Border Width="14" Height="14" CornerRadius="999" Background="{Binding AvaloniaColor}" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="1" />
-                      <StackPanel>
-                        <TextBlock Text="{Binding Title}" />
-                        <TextBlock Classes="ie-footnote" Text="{Binding Token}" />
-                      </StackPanel>
+                      <Path Classes="ie-icon" Width="15" Height="15" Data="{x:Static icons:AppIcons.LoadImage}" Stroke="{DynamicResource IEditorAccentBrush}" />
+                      <TextBlock Classes="ie-section-title" Text="{Binding SourceSectionTitle}" />
                     </StackPanel>
-                  </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
-              <cp:ColorView
-                  Height="220"
-                  IsAccentColorsVisible="False"
-                  IsAlphaEnabled="False"
-                  IsAlphaVisible="False"
-                  IsColorComponentsVisible="False"
-                  IsColorModelVisible="False"
-                  IsColorPaletteVisible="False"
-                  IsColorSpectrumSliderVisible="False"
-                  IsComponentSliderVisible="False"
-                  IsComponentTextInputVisible="False"
-                  IsHexInputVisible="True"
-                  IsVisible="{Binding IsCustomBackground}"
-                  Color="{Binding CustomBackgroundColor, Mode=TwoWay}" />
-            </StackPanel>
-          </Grid>
-        </Border>
-
-        <Border Classes="ie-surface-card" Padding="0">
-          <Grid RowDefinitions="Auto,*">
-            <Border Padding="14,12" BorderBrush="{DynamicResource IEditorBorderBrush}" BorderThickness="0,0,0,1">
-              <StackPanel Orientation="Horizontal" Spacing="8">
-                <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Export}" Fill="{DynamicResource IEditorAccentBrush}" />
-                <TextBlock Classes="ie-section-title" Text="{Binding OutputSectionTitle}" />
-                <TextBlock Classes="ie-footnote" Text="{Binding OutputSectionHint}" />
+                    <TextBlock Grid.Column="2" Classes="ie-footnote" Text="{Binding SourceSectionHint}" />
+                  </Grid>
+                </Border>
+                <Border Classes="ie-card-body">
+                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                    <Border
+                        Width="52"
+                        Height="52"
+                        CornerRadius="10"
+                        ClipToBounds="True"
+                        Background="{DynamicResource IEditorSurface2Brush}"
+                        BorderBrush="{DynamicResource IEditorBorderBrush}"
+                        BorderThickness="1">
+                      <Panel>
+                        <Path
+                            Classes="ie-icon"
+                            Width="18"
+                            Height="18"
+                            Data="{x:Static icons:AppIcons.LoadImage}"
+                            Stroke="{DynamicResource IEditorTextTertiaryBrush}"
+                            IsVisible="{Binding IsPreviewEmpty}" />
+                        <Image Source="{Binding SourceThumb}" Stretch="UniformToFill" IsVisible="{Binding HasPreview}" />
+                      </Panel>
+                    </Border>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="3">
+                      <TextBlock
+                          FontWeight="SemiBold"
+                          FontSize="13"
+                          Text="{Binding SourceFileName}"
+                          TextTrimming="CharacterEllipsis" />
+                      <TextBlock
+                          Classes="ie-mono"
+                          Foreground="{DynamicResource IEditorTextTertiaryBrush}"
+                          Text="{Binding SourceInfoText}"
+                          TextTrimming="CharacterEllipsis" />
+                    </StackPanel>
+                  </Grid>
+                </Border>
               </StackPanel>
             </Border>
-            <StackPanel Grid.Row="1" Spacing="10" Margin="14">
-              <ComboBox ItemsSource="{Binding FormatOptions}" SelectedItem="{Binding SelectedFormatOption, Mode=TwoWay}">
-                <ComboBox.ItemTemplate>
-                  <DataTemplate x:DataType="vm:FormatOptionViewModel">
-                    <TextBlock Text="{Binding Title}" />
-                  </DataTemplate>
-                </ComboBox.ItemTemplate>
-              </ComboBox>
-              <StackPanel Spacing="4">
-                <TextBlock Classes="ie-footnote" Text="{Binding OutputQualityText}" />
-                <Slider Maximum="100" Minimum="60" Value="{Binding OutputQuality, Mode=TwoWay}" />
+
+            <!-- 尺寸规格 -->
+            <Border Classes="ie-card">
+              <StackPanel>
+                <Border Classes="ie-card-header">
+                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <Path Classes="ie-icon" Width="15" Height="15" Data="{x:Static icons:AppIcons.Crop}" Stroke="{DynamicResource IEditorAccentBrush}" />
+                      <TextBlock Classes="ie-section-title" Text="{Binding SizeSectionTitle}" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="2" Classes="ie-footnote" Text="{Binding SizeSectionHint}" />
+                  </Grid>
+                </Border>
+                <Border Classes="ie-card-body">
+                  <StackPanel Spacing="12">
+                    <ItemsControl ItemsSource="{Binding SizeOptions}">
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                          <UniformGrid Columns="4" />
+                        </ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:PhotoSizeOptionViewModel">
+                          <ToggleButton
+                              Classes="ie-spec-card"
+                              Margin="0,0,5,0"
+                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                              Command="{Binding $parent[ItemsControl].((vm:PhotoStudioViewModel)DataContext).SelectSizeCommand}"
+                              CommandParameter="{Binding}">
+                            <Panel>
+                              <StackPanel>
+                                <TextBlock Classes="title" Text="{Binding Title}" />
+                                <TextBlock Classes="sub" Text="{Binding SubLabel}" />
+                              </StackPanel>
+                              <Ellipse
+                                  Width="7"
+                                  Height="7"
+                                  Margin="0,2,2,0"
+                                  HorizontalAlignment="Right"
+                                  VerticalAlignment="Top"
+                                  Fill="{DynamicResource IEditorAccentBrush}"
+                                  IsVisible="{Binding IsSelected}" />
+                            </Panel>
+                          </ToggleButton>
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                      <Border Classes="ie-field" IsEnabled="{Binding IsCustomSize}">
+                        <StackPanel Spacing="6">
+                          <TextBlock Classes="ie-muted" Text="宽度" />
+                          <Border Classes="ie-input-group">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                              <TextBlock Classes="ie-input-prefix" Text="宽" />
+                              <TextBox Grid.Column="1" Classes="ie-flat" Text="{Binding WidthMmInput, Mode=TwoWay}" />
+                              <TextBlock Grid.Column="2" Classes="ie-input-suffix" Text="mm" />
+                            </Grid>
+                          </Border>
+                        </StackPanel>
+                      </Border>
+                      <Border Grid.Column="1" Classes="ie-field" IsEnabled="{Binding IsCustomSize}">
+                        <StackPanel Spacing="6">
+                          <TextBlock Classes="ie-muted" Text="高度" />
+                          <Border Classes="ie-input-group">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                              <TextBlock Classes="ie-input-prefix" Text="高" />
+                              <TextBox Grid.Column="1" Classes="ie-flat" Text="{Binding HeightMmInput, Mode=TwoWay}" />
+                              <TextBlock Grid.Column="2" Classes="ie-input-suffix" Text="mm" />
+                            </Grid>
+                          </Border>
+                        </StackPanel>
+                      </Border>
+                      <StackPanel Grid.Column="2" Spacing="6">
+                        <TextBlock Classes="ie-muted" Text="{Binding DpiText}" />
+                        <Border Classes="ie-stepper">
+                          <Grid ColumnDefinitions="Auto,*,Auto">
+                            <Button Classes="ie-stepper-button" Height="32" Command="{Binding ChangeDpiCommand}" CommandParameter="-" Content="−" />
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Classes="ie-mono"
+                                TextAlignment="Center"
+                                Text="{Binding Dpi}" />
+                            <Button Grid.Column="2" Classes="ie-stepper-button" Height="32" Command="{Binding ChangeDpiCommand}" CommandParameter="+" Content="＋" />
+                          </Grid>
+                        </Border>
+                      </StackPanel>
+                    </Grid>
+
+                    <Border
+                        Background="{DynamicResource IEditorSurface2Brush}"
+                        BorderBrush="{DynamicResource IEditorBorderStrongBrush}"
+                        BorderThickness="1"
+                        CornerRadius="10"
+                        Padding="12,8">
+                      <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <Path Classes="ie-icon" Width="14" Height="14" Data="{x:Static icons:AppIcons.Zap}" Stroke="{DynamicResource IEditorAccentBrush}" />
+                        <TextBlock Classes="ie-muted" Text="{Binding OutputSizeText}" />
+                        <TextBlock
+                            Classes="ie-mono"
+                            FontWeight="Bold"
+                            Foreground="{DynamicResource IEditorAccentBrush}"
+                            Text="{Binding OutputPxText}" />
+                        <TextBlock
+                            Classes="ie-mono"
+                            Foreground="{DynamicResource IEditorTextTertiaryBrush}"
+                            Text="{Binding OutputMmText}" />
+                      </StackPanel>
+                    </Border>
+
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                      <TextBlock Classes="ie-footnote" Margin="0,0,2,0" VerticalAlignment="Center" Text="{Binding MoreSizesText}" />
+                      <Border Classes="ie-chip chip-locked"><TextBlock Text="护照 35×45" /></Border>
+                      <Border Classes="ie-chip chip-locked"><TextBlock Text="社保 26×32" /></Border>
+                      <Border Classes="ie-chip chip-locked"><TextBlock Text="考试 33×48" /></Border>
+                    </StackPanel>
+                  </StackPanel>
+                </Border>
               </StackPanel>
-              <u:PathPicker
-                  AllowMultiple="False"
-                  DefaultFileExtension="jpg"
-                  FileFilter="[ImageJpg][ImagePng]"
-                  SelectedPathsText="{Binding OutputPath, Mode=TwoWay}"
-                  SuggestedFileName="{Binding SuggestedOutputFileName}"
-                  SuggestedStartPath="{Binding OutputSuggestedStartPath}"
-                  UsePickerType="SaveFile" />
-              <TextBox Text="{Binding FilenameTemplate, Mode=TwoWay}" />
-            </StackPanel>
-          </Grid>
-        </Border>
+            </Border>
 
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <Button Classes="ie-primary-button" Command="{Binding SaveCommand}">
-            <StackPanel Orientation="Horizontal" Spacing="7">
-              <shapes:Path Width="15" Height="15" Data="{x:Static icons:AppIcons.Export}" Fill="White" />
-              <TextBlock Text="{Binding SaveExportText}" />
-            </StackPanel>
-          </Button>
-          <Button Classes="ie-secondary-button" Command="{Binding GeneratePreviewCommand}">
-            <StackPanel Orientation="Horizontal" Spacing="7">
-              <shapes:Path Width="14" Height="14" Data="{x:Static icons:AppIcons.Preview}" Fill="{DynamicResource IEditorTextSecondaryBrush}" />
-              <TextBlock Text="{Binding LoadImageText}" />
-            </StackPanel>
-          </Button>
-          <Button Classes="ie-secondary-button" Command="{Binding ResetCommand}">
-            <TextBlock Text="{Binding ResetViewText}" />
-          </Button>
-        </StackPanel>
-      </StackPanel>
-    </Grid>
+            <!-- 背景颜色 -->
+            <Border Classes="ie-card">
+              <StackPanel>
+                <Border Classes="ie-card-header">
+                  <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                      <Path Classes="ie-icon" Width="15" Height="15" Data="{x:Static icons:AppIcons.Palette}" Stroke="{DynamicResource IEditorAccentBrush}" />
+                      <TextBlock Classes="ie-section-title" Text="{Binding BackgroundSectionTitle}" />
+                    </StackPanel>
+                    <TextBlock Grid.Column="2" Classes="ie-footnote" Text="{Binding ActiveBackgroundName}" />
+                  </Grid>
+                </Border>
+                <Border Classes="ie-card-body">
+                  <StackPanel Spacing="12">
+                    <ItemsControl ItemsSource="{Binding BackgroundOptions}">
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                          <StackPanel Orientation="Horizontal" Spacing="10" />
+                        </ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:BackgroundOptionViewModel">
+                          <ToggleButton
+                              Classes="ie-swatch"
+                              Classes.rainbow="{Binding IsCustom}"
+                              Background="{Binding AvaloniaBrush}"
+                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                              Command="{Binding $parent[ItemsControl].((vm:PhotoStudioViewModel)DataContext).SelectBackgroundCommand}"
+                              CommandParameter="{Binding}"
+                              ToolTip.Tip="{Binding Title}" />
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
-    <Border
-        Grid.Row="2"
-        Background="{DynamicResource IEditorSurfaceBrush}"
-        BorderBrush="{DynamicResource IEditorBorderBrush}"
-        BorderThickness="1"
-        CornerRadius="8"
-        Padding="12,8">
-      <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="14">
-        <StackPanel Orientation="Horizontal" Spacing="8">
-          <TextBlock Classes="ie-footnote" Text="{Binding PageStatusBadge}" />
-          <TextBlock Classes="ie-footnote" Text="·" />
-          <TextBlock Classes="ie-footnote" Text="{Binding PreviewZoomText}" />
+                    <Border Classes="ie-input-group">
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto,Auto" ColumnSpacing="10">
+                      <TextBlock Classes="ie-input-prefix" Text="#" />
+                      <TextBox
+                          Grid.Column="1"
+                          Classes="ie-flat"
+                          MaxLength="6"
+                          Text="{Binding HexText, Mode=TwoWay}" />
+                      <Border
+                          Grid.Column="2"
+                          Width="14"
+                          Height="14"
+                          Margin="0,0,5,0"
+                          CornerRadius="4"
+                          VerticalAlignment="Center"
+                          Background="{Binding ActiveBackgroundBrush}"
+                          BorderBrush="{DynamicResource IEditorSwatchBorderBrush}"
+                          BorderThickness="1" />
+                      <TextBlock Grid.Column="3" Classes="ie-input-suffix" Text="HEX" />
+                      <Button
+                          Grid.Column="4"
+                          Classes="ie-icon-button"
+                          Click="OnOpenColorPickerClick"
+                          IsVisible="{Binding IsCustomBackground}"
+                          ToolTip.Tip="颜色选择器">
+                        <Path Classes="ie-icon" Width="14" Height="14" Data="{x:Static icons:AppIcons.Palette}" Stroke="{Binding $parent[Button].Foreground}" />
+                        <primitives:FlyoutBase.AttachedFlyout>
+                          <Flyout Placement="BottomEdgeAlignedLeft">
+                            <Border
+                                Background="{DynamicResource IEditorSurfaceBrush}"
+                                BorderBrush="{DynamicResource IEditorBorderBrush}"
+                                BorderThickness="1"
+                                BoxShadow="0 18 50 0 #330A1628"
+                                CornerRadius="12"
+                                Padding="12"
+                                Width="360">
+                              <controls:ColorPicker
+                                  Color="{Binding CustomBackgroundColor, Mode=TwoWay}"
+                                  HorizontalAlignment="Stretch"
+                                  IsAccentColorsVisible="False"
+                                  IsAlphaEnabled="False"
+                                  IsAlphaVisible="False"
+                                  IsColorModelVisible="False"
+                                  IsColorPaletteVisible="True"
+                                  IsColorPreviewVisible="True"
+                                  IsColorSpectrumVisible="True"
+                                  IsColorSpectrumSliderVisible="True"
+                                  IsComponentSliderVisible="False"
+                                  IsComponentTextInputVisible="False"
+                                  IsHexInputVisible="True"
+                                  VerticalAlignment="Stretch" />
+                            </Border>
+                          </Flyout>
+                        </primitives:FlyoutBase.AttachedFlyout>
+                      </Button>
+                    </Grid>
+                  </Border>
+
+                    <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="10">
+                      <Path
+                          Classes="ie-icon"
+                          Width="17"
+                          Height="17"
+                          VerticalAlignment="Top"
+                          Margin="0,2,0,0"
+                          Data="{x:Static icons:AppIcons.SmartCutout}"
+                          Stroke="{DynamicResource IEditorCyanBrush}" />
+                      <StackPanel Grid.Column="1" Spacing="2">
+                        <TextBlock Classes="ie-row-title" Text="{Binding SmartCutoutTitleText}" />
+                        <TextBlock Classes="ie-footnote" Text="{Binding SmartCutoutDescriptionText}" />
+                      </StackPanel>
+                      <ToggleSwitch Grid.Column="3" IsChecked="{Binding IsSmartCutoutEnabled, Mode=TwoWay}" />
+                    </Grid>
+                  </StackPanel>
+                </Border>
+              </StackPanel>
+            </Border>
+
+
+          </StackPanel>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+
+    <!-- ======== 状态栏 ======== -->
+    <Border Grid.Row="2" Classes="ie-statusbar">
+      <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="16">
+        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+          <Ellipse Classes="ie-dot" Classes.busy="{Binding IsBusy}" />
+          <TextBlock FontSize="12" Foreground="{DynamicResource IEditorTextSecondaryBrush}" Text="{Binding StatusText}" />
         </StackPanel>
-        <TextBlock Grid.Column="1" Classes="ie-footnote" Text="{Binding ProcessingSummary}" />
-        <TextBlock Grid.Column="3" Classes="ie-footnote" Text="{Binding BackgroundSummary}" />
-        <TextBlock Grid.Column="4" Classes="ie-footnote" Text="{Binding ProcessingEngineText}" />
+        <TextBlock
+            Grid.Column="1"
+            VerticalAlignment="Center"
+            Classes="ie-mono"
+            Foreground="{DynamicResource IEditorTextTertiaryBrush}"
+            Text="{Binding SizeStatusText}" />
+        <TextBlock Grid.Column="3" VerticalAlignment="Center" Classes="ie-footnote" Text="Magick.NET" />
+        <TextBlock Grid.Column="4" VerticalAlignment="Center" Classes="ie-footnote" Text="{Binding FormatStatusText}" />
       </Grid>
     </Border>
   </Grid>

@@ -4,6 +4,19 @@
   "cultureName": "zh-CN",
   "Localization": {
     "Common": {
+      "Menu": {
+        "File": "文件",
+        "Edit": "编辑",
+        "View": "视图",
+        "Exit": "退出",
+        "OpenImage": "打开图片…",
+        "About": "关于 IEditor",
+        "ZoomIn": "放大",
+        "ZoomOut": "缩小",
+        "FitWindow": "适应窗口",
+        "Filename": "文件名",
+        "StageHint": "拖入图片，或使用 文件 › 打开图片（Ctrl+O）"
+      },
       "Actions": {
         "Add": "添加",
         "Apply": "应用",
@@ -100,7 +113,7 @@
         "WidthMm": "宽（毫米）"
       },
       "Page": {
-        "BackgroundSection": "背景",
+        "BackgroundSection": "背景颜色",
         "BackgroundSmartDescription": "自动抠出人像，任意替换底色",
         "BackgroundSmartTitle": "智能抠图换底",
         "Breadcrumb": "工作台 / 证件照处理",
@@ -112,10 +125,11 @@
         "LivePreview": "实时预览",
         "LoadImage": "载入图片",
         "OutputHint": "保存到本地",
-        "OutputSection": "输出",
+        "OutputSection": "输出设置",
+        "OutputSize": "输出尺寸",
         "OutputSettings": "输出设置",
         "MoreSizes": "更多规格",
-        "SizeSection": "尺寸",
+        "SizeSection": "尺寸规格",
         "SmartCutoutComingSoon": "即将上线",
         "FlipHorizontal": "水平镜像",
         "Guides": "参考线",

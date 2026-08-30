@@ -8,6 +8,21 @@
 
 namespace Localization.Common
 {
+    public static class Menu
+    {
+        public static readonly string File = "Localization.Common.Menu.File";
+        public static readonly string Edit = "Localization.Common.Menu.Edit";
+        public static readonly string View = "Localization.Common.Menu.View";
+        public static readonly string Exit = "Localization.Common.Menu.Exit";
+        public static readonly string OpenImage = "Localization.Common.Menu.OpenImage";
+        public static readonly string About = "Localization.Common.Menu.About";
+        public static readonly string ZoomIn = "Localization.Common.Menu.ZoomIn";
+        public static readonly string ZoomOut = "Localization.Common.Menu.ZoomOut";
+        public static readonly string FitWindow = "Localization.Common.Menu.FitWindow";
+        public static readonly string Filename = "Localization.Common.Menu.Filename";
+        public static readonly string StageHint = "Localization.Common.Menu.StageHint";
+    }
+
     public static class Actions
     {
         public static readonly string Add = "Localization.Common.Actions.Add";
@@ -139,6 +154,7 @@ namespace Localization.PhotoStudio
         public static readonly string MoreSizes = "Localization.PhotoStudio.Page.MoreSizes";
         public static readonly string OutputHint = "Localization.PhotoStudio.Page.OutputHint";
         public static readonly string OutputSection = "Localization.PhotoStudio.Page.OutputSection";
+        public static readonly string OutputSize = "Localization.PhotoStudio.Page.OutputSize";
         public static readonly string OutputSettings = "Localization.PhotoStudio.Page.OutputSettings";
         public static readonly string ResetView = "Localization.PhotoStudio.Page.ResetView";
         public static readonly string RotateLeft = "Localization.PhotoStudio.Page.RotateLeft";

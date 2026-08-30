@@ -1,11 +1,14 @@
-<u:UrsaWindow
+<Window
     x:Class="IEditor.App.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:vm="using:IEditor.App.ViewModels"
-    xmlns:u="using:Ursa.Controls"
     xmlns:views="using:IEditor.App.Views"
+    x:CompileBindings="True"
+    x:DataType="vm:MainViewModel"
     Background="{DynamicResource IEditorWindowBackgroundBrush}"
+    ExtendClientAreaTitleBarHeightHint="42"
+    ExtendClientAreaToDecorationsHint="True"
     FontFamily="Microsoft YaHei UI, Microsoft YaHei, Segoe UI"
     Height="860"
     Icon="/Assets/logo.ico"
@@ -13,16 +16,355 @@
     MinWidth="1100"
     Title="{Binding WindowTitle}"
     Width="1320"
-    WindowStartupLocation="CenterScreen"
-    x:DataType="vm:MainViewModel">
-  <u:UrsaWindow.TitleBarContent>
-    <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-      <Image Source="/Assets/logo.png" Width="22" Height="22" />
-      <StackPanel Spacing="1">
-        <TextBlock FontSize="13" FontWeight="SemiBold" Text="{Binding WindowTitle}" />
-        <TextBlock FontSize="11" Opacity="0.72" Text="{Binding WindowSubtitle}" />
-      </StackPanel>
-    </StackPanel>
-  </u:UrsaWindow.TitleBarContent>
-  <views:MainView />
-</u:UrsaWindow>
+    WindowDecorations="BorderOnly"
+    WindowStartupLocation="CenterScreen">
+  <Panel>
+    <Grid RowDefinitions="42,Auto,*">
+      <!-- 自定义标题栏（品牌区） -->
+      <Grid
+          Background="{DynamicResource IEditorTitlebarBrush}"
+          DoubleTapped="OnTitleBarDoubleTapped"
+          PointerPressed="OnTitleBarPointerPressed">
+        <StackPanel
+            Margin="10,0,0,0"
+            Orientation="Horizontal"
+            Spacing="10"
+            VerticalAlignment="Center">
+          <Image
+              Width="34"
+              Height="34"
+              Source="/Assets/logo.png" />
+          <StackPanel VerticalAlignment="Center" Spacing="1">
+            <TextBlock FontSize="15" FontWeight="Bold" Text="{Binding WindowTitle}" />
+            <TextBlock
+                Classes="ie-footnote"
+                FontSize="11"
+                Text="{Binding BrandSubtitle}" />
+          </StackPanel>
+        </StackPanel>
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+          <Button
+              Classes="ie-window-button"
+              Click="OnMinimizeClick"
+              ToolTip.Tip="最小化">
+            <Path
+                Classes="ie-icon"
+                Width="11"
+                Height="11"
+                Data="M1.5,6 H10.5"
+                Stroke="{Binding $parent[Button].Foreground}"
+                StrokeThickness="1.2" />
+          </Button>
+          <Button
+              Classes="ie-window-button"
+              Click="OnMaximizeClick"
+              ToolTip.Tip="最大化 / 还原">
+            <Path
+                Classes="ie-icon"
+                Width="11"
+                Height="11"
+                Data="M2,2.5 H9.5 V10 H2 Z"
+                Stroke="{Binding $parent[Button].Foreground}"
+                StrokeThickness="1.2" />
+          </Button>
+          <Button
+              Classes="ie-window-button close"
+              Click="OnCloseClick"
+              ToolTip.Tip="关闭">
+            <Path
+                Classes="ie-icon"
+                Width="11"
+                Height="11"
+                Data="M2,2 L10,10 M10,2 L2,10"
+                Stroke="{Binding $parent[Button].Foreground}"
+                StrokeThickness="1.2" />
+          </Button>
+        </StackPanel>
+      </Grid>
+
+      <!-- 菜单栏：低频命令收纳 -->
+      <Menu Grid.Row="1" FontSize="12.5">
+        <MenuItem Header="文件">
+          <MenuItem
+              Header="打开图片…"
+              Command="{Binding OpenImageCommand}"
+              HotKey="Ctrl+O" />
+          <MenuItem
+              Header="添加图片…"
+              Command="{Binding AddImagesCommand}"
+              HotKey="Ctrl+Shift+O" />
+          <Separator />
+          <MenuItem
+              Header="导出图片…"
+              Command="{Binding PhotoShowExportDialogCommand}"
+              HotKey="Ctrl+S" />
+          <MenuItem
+              Header="导出为 ZIP"
+              Command="{Binding BatchExportZipCommand}" />
+          <Separator />
+          <MenuItem
+              Header="设置"
+              Command="{Binding NavigateSettingsCommand}">
+            <MenuItem.Icon>
+              <TextBlock Text="✓" IsVisible="{Binding IsSettingsPageActive}" />
+            </MenuItem.Icon>
+          </MenuItem>
+          <Separator />
+          <MenuItem Header="退出" Click="OnExitClick" InputGesture="Alt+F4" />
+        </MenuItem>
+        <MenuItem Header="编辑">
+          <MenuItem
+              Header="向左旋转"
+              Command="{Binding PhotoRotateLeftCommand}"
+              />
+          <MenuItem
+              Header="向右旋转"
+              Command="{Binding PhotoRotateRightCommand}"
+              />
+          <MenuItem
+              Header="水平镜像"
+              Command="{Binding PhotoFlipCommand}"
+              HotKey="Ctrl+H" />
+          <Separator />
+          <MenuItem
+              Header="重置"
+              Command="{Binding PhotoResetCommand}"
+              HotKey="Ctrl+R" />
+        </MenuItem>
+        <MenuItem Header="工作区">
+          <MenuItem
+              Header="证件照处理"
+              Command="{Binding NavigatePhotoStudioCommand}">
+            <MenuItem.Icon>
+              <TextBlock Text="✓" IsVisible="{Binding IsPhotoPageActive}" />
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem Command="{Binding NavigateBatchProcessingCommand}">
+            <MenuItem.Header>
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <TextBlock Text="批量处理" />
+                <TextBlock
+                    Grid.Column="1"
+                    FontSize="10"
+                    Foreground="{DynamicResource IEditorTextTertiaryBrush}"
+                    Text="规划中" />
+              </Grid>
+            </MenuItem.Header>
+            <MenuItem.Icon>
+              <TextBlock Text="✓" IsVisible="{Binding IsBatchPageActive}" />
+            </MenuItem.Icon>
+          </MenuItem>
+          <MenuItem
+              Header="智能抠图"
+              Command="{Binding SmartCutoutCommand}" />
+          <MenuItem IsEnabled="False">
+            <MenuItem.Header>
+              <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                <TextBlock Text="图片工具箱" />
+                <TextBlock
+                    Grid.Column="1"
+                    FontSize="10"
+                    Foreground="{DynamicResource IEditorTextTertiaryBrush}"
+                    Text="即将上线" />
+              </Grid>
+            </MenuItem.Header>
+          </MenuItem>
+          <Separator />
+        </MenuItem>
+        <MenuItem Header="视图">
+          <MenuItem
+              Header="放大"
+              Command="{Binding PhotoZoomCommand}"
+              CommandParameter="+"
+              />
+          <MenuItem
+              Header="缩小"
+              Command="{Binding PhotoZoomCommand}"
+              CommandParameter="-"
+              />
+          <MenuItem
+              Header="适应窗口"
+              Command="{Binding PhotoZoomCommand}"
+              CommandParameter="fit"
+              HotKey="Ctrl+0" />
+          <Separator />
+          <MenuItem
+              Header="显示参考线"
+              Command="{Binding PhotoToggleGuidesCommand}"
+              HotKey="Ctrl+G"
+              ToggleType="CheckBox"
+              IsChecked="{Binding PhotoPage.ShowGuides, Mode=TwoWay}" />
+          <MenuItem
+              Header="原图对比（按住）"
+              Command="{Binding PhotoToggleCompareCommand}" />
+          <Separator />
+          <MenuItem Header="主题">
+            <MenuItem
+                Header="浅色"
+                Command="{Binding SetThemeLightCommand}"
+                ToggleType="Radio"
+                GroupName="ThemeGroup"
+                IsChecked="{Binding IsLightThemeChecked, Mode=OneWay}" />
+            <MenuItem IsEnabled="False">
+              <MenuItem.Header>
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                  <TextBlock Text="深色" />
+                  <TextBlock
+                      Grid.Column="1"
+                      FontSize="10"
+                      Foreground="{DynamicResource IEditorTextTertiaryBrush}"
+                      Text="即将上线" />
+                </Grid>
+              </MenuItem.Header>
+            </MenuItem>
+            <MenuItem
+                Header="跟随系统"
+                Command="{Binding SetThemeSystemCommand}"
+                ToggleType="Radio"
+                GroupName="ThemeGroup"
+                IsChecked="{Binding IsSystemThemeChecked, Mode=OneWay}" />
+          </MenuItem>
+        </MenuItem>
+        <MenuItem Header="帮助">
+          <MenuItem
+              Header="帮助"
+              Command="{Binding PhotoPage.HelpCommand}"
+              HotKey="F1" />
+          <MenuItem
+              Header="检查更新…"
+              Command="{Binding CheckUpdateCommand}" />
+          <Separator />
+          <MenuItem Header="关于 IEditor" IsEnabled="False" />
+          <MenuItem
+              Header="开源仓库"
+              Command="{Binding SettingsPage.OpenRepositoryCommand}" />
+        </MenuItem>
+      </Menu>
+
+      <views:MainView Grid.Row="2" />
+
+      <!-- 导出对话框：格式 / 质量 / 位置 / 文件名 在保存时调整 -->
+      <Border
+          IsVisible="{Binding PhotoPage.IsExportDialogOpen, Mode=OneWay}"
+          ZIndex="300"
+          Background="#730A1628">
+        <Panel VerticalAlignment="Center" HorizontalAlignment="Center">
+          <Border
+              Width="440"
+              Background="{DynamicResource IEditorSurfaceBrush}"
+              BorderBrush="{DynamicResource IEditorBorderBrush}"
+              BorderThickness="1"
+              CornerRadius="14"
+              BoxShadow="0 18 50 0 #4D0A1628">
+            <StackPanel>
+              <Border Classes="ie-card-header">
+                <Grid ColumnDefinitions="Auto,*,Auto">
+                  <Path
+                      Classes="ie-icon"
+                      Width="16"
+                      Height="16"
+                      Data="M12 4v11 M7.5 11.5 12 16l4.5-4.5 M4.5 19.5h15"
+                      Stroke="{DynamicResource IEditorAccentBrush}" />
+                  <TextBlock Grid.Column="1" Margin="9,0,0,0" FontSize="14" Text="导出图片" />
+                  <Button
+                      Grid.Column="2"
+                      Classes="ie-icon-button"
+                      Command="{Binding PhotoPage.CloseExportDialogCommand}">
+                    <Path
+                        Classes="ie-icon"
+                        Width="15"
+                        Height="15"
+                        Data="m6 6 12 12M18 6 6 18"
+                        Stroke="{Binding $parent[Button].Foreground}" />
+                  </Button>
+                </Grid>
+              </Border>
+              <StackPanel Margin="16" Spacing="14">
+                <StackPanel Spacing="6">
+                  <TextBlock Classes="ie-muted" Text="文件格式" />
+                  <ListBox
+                      Classes="ie-segment-list"
+                      HorizontalAlignment="Left"
+                      ItemsSource="{Binding PhotoPage.FormatOptions}"
+                      SelectedItem="{Binding PhotoPage.SelectedFormatOption, Mode=TwoWay}">
+                    <ListBox.ItemsPanel>
+                      <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="4" />
+                      </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                      <DataTemplate x:DataType="vm:FormatOptionViewModel">
+                        <TextBlock Text="{Binding Title}" />
+                      </DataTemplate>
+                    </ListBox.ItemTemplate>
+                  </ListBox>
+                </StackPanel>
+                <StackPanel Spacing="6">
+                  <Grid ColumnDefinitions="*,Auto">
+                    <TextBlock Classes="ie-muted" Text="输出质量" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Classes="ie-mono"
+                        Text="{Binding PhotoPage.OutputQuality}" />
+                  </Grid>
+                  <Slider
+                      Maximum="100"
+                      Minimum="60"
+                      Value="{Binding PhotoPage.QualitySliderValue, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel Spacing="6">
+                  <TextBlock Classes="ie-muted" Text="保存位置" />
+                  <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <TextBox
+                        Classes="ie-flat"
+                        IsReadOnly="True"
+                        Text="{Binding PhotoPage.OutputFolder, Mode=OneWay}" />
+                    <Button
+                        Grid.Column="1"
+                        Classes="ie-secondary-button"
+                        Width="52"
+                        Height="34"
+                        Click="OnBrowseOutputClick">
+                      <TextBlock Text="浏览" />
+                    </Button>
+                  </Grid>
+                </StackPanel>
+                <StackPanel Spacing="6">
+                  <TextBlock Classes="ie-muted" Text="文件名" />
+                  <TextBox
+                      CornerRadius="10"
+                      IsReadOnly="True"
+                      Text="{Binding PhotoPage.SuggestedOutputFileName, Mode=OneWay}" />
+                </StackPanel>
+                <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+                  <Button
+                      Grid.Column="1"
+                      Classes="ie-secondary-button"
+                      MinWidth="76"
+                      Command="{Binding PhotoPage.CloseExportDialogCommand}">
+                    <TextBlock Text="取消" />
+                  </Button>
+                  <Button
+                      Grid.Column="2"
+                      Classes="ie-primary-button"
+                      MinWidth="76"
+                      Command="{Binding PhotoPage.SaveCommand}">
+                    <TextBlock Text="保存" />
+                  </Button>
+                </Grid>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+        </Panel>
+      </Border>
+    </Grid>
+
+    <!-- 窗口顶部品牌渐变线 -->
+    <Border
+        Height="3"
+        VerticalAlignment="Top"
+        Background="{DynamicResource IEditorAccentGradientBrush}"
+        IsHitTestVisible="False"
+        ZIndex="99" />
+  </Panel>
+</Window>

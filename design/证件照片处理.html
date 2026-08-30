@@ -13,9 +13,8 @@
 
   <!-- 自定义标题栏 -->
   <div class="titlebar">
-    <img src="../logo.svg" alt="IEditor">
-    <span class="win-title">IEditor</span>
-    <span class="win-module">证件照处理</span>
+    <img class="brand-logo" src="../logo.svg" alt="IEditor">
+    <div class="brand-text"><b>IEditor</b><small>智能图像工作台</small></div>
     <div class="win-controls">
       <button class="wc" title="最小化" type="button"><svg viewBox="0 0 12 12"><path d="M1 6h10" stroke="currentColor" stroke-width="1.2"/></svg></button>
       <button class="wc" title="最大化" type="button"><svg viewBox="0 0 12 12"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></button>
@@ -23,52 +22,79 @@
     </div>
   </div>
 
-  <div class="app">
-
-  <!-- ======== 侧边导航 ======== -->
-  <aside class="sidebar">
-    <div class="brand">
-      <img src="../logo.svg" alt="IEditor">
-      <div class="bt"><b>IEditor</b><small>智能图像工作台</small></div>
+  <!-- 菜单栏：收纳低频命令，保持工作区清爽 -->
+  <nav class="menubar">
+    <div class="menu">
+      <span class="menu-item">文件</span>
+      <div class="menu-dropdown">
+        <a class="menu-entry" href="#"><span class="check"></span>打开图片…<code>Ctrl+O</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>添加图片…<code>Ctrl+Shift+O</code></a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry" href="#" data-export><span class="check"></span>导出图片…<code>Ctrl+S</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>导出为 ZIP</a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry" href="#"><span class="check"></span>退出<code>Alt+F4</code></a>
+      </div>
     </div>
-    <div class="nav-label">工作区</div>
-    <a class="nav-item active" href="证件照处理.html">
-      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.5" cy="11" r="2"/><path d="M5.6 15.8c.5-1.5 1.6-2.3 2.9-2.3s2.4.8 2.9 2.3"/><path d="M14 9.5h4.2M14 13h3"/></svg>
-      证件照处理
-    </a>
-    <a class="nav-item" href="批量处理.html">
-      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
-      批量处理 <em class="soon">规划中</em>
-    </a>
-    <button class="nav-item disabled" type="button">
-      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 13.6 8l4.4 1.6-4.4 1.6L12 15.7l-1.6-4.5L6 9.6 10.4 8Z"/><path d="m18.6 14.2.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z"/></svg>
-      智能抠图 <em class="soon">即将上线</em>
-    </button>
-    <button class="nav-item disabled" type="button">
-      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>
-      图片工具箱 <em class="soon">即将上线</em>
-    </button>
-    <div class="sidebar-foot">
-      <a class="nav-item" href="设置.html">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg>
-        设置
-      </a>
-      <div class="version">v0.3.0 · 界面原型</div>
+    <div class="menu">
+      <span class="menu-item">编辑</span>
+      <div class="menu-dropdown">
+        <a class="menu-entry" href="#"><span class="check"></span>向左旋转<code>Ctrl+[</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>向右旋转<code>Ctrl+]</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>水平镜像<code>Ctrl+H</code></a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry" href="#"><span class="check"></span>重置<code>Ctrl+R</code></a>
+      </div>
     </div>
-  </aside>
+    <div class="menu">
+      <span class="menu-item">工作区</span>
+      <div class="menu-dropdown">
+        <a class="menu-entry" href="证件照片处理.html"><span class="check">✓</span>证件照处理</a>
+        <a class="menu-entry" href="批量处理.html"><span class="check"></span>批量处理<code>规划中</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>智能抠图</a>
+        <a class="menu-entry" href="#"><span class="check"></span>图片工具箱<code>即将上线</code></a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry" href="设置.html"><span class="check"></span>设置</a>
+      </div>
+    </div>
+    <div class="menu">
+      <span class="menu-item">视图</span>
+      <div class="menu-dropdown">
+        <a class="menu-entry" href="#"><span class="check"></span>放大<code>Ctrl+=</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>缩小<code>Ctrl+-</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>适应窗口<code>Ctrl+0</code></a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry" href="#"><span class="check">✓</span>显示参考线<code>Ctrl+G</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>原图对比（按住）</a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry has-sub" href="#"><span class="check"></span>主题
+          <div class="submenu">
+            <a class="menu-entry" href="#"><span class="check">✓</span>浅色</a>
+            <a class="menu-entry disabled" href="#"><span class="check"></span>深色<code>即将上线</code></a>
+            <a class="menu-entry" href="#"><span class="check"></span>跟随系统</a>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="menu">
+      <span class="menu-item">帮助</span>
+      <div class="menu-dropdown">
+        <a class="menu-entry" href="#"><span class="check"></span>帮助<code>F1</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>检查更新…</a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry" href="#"><span class="check"></span>关于 IEditor</a>
+        <a class="menu-entry" href="#"><span class="check"></span>开源仓库</a>
+      </div>
+    </div>
+    <span class="hint">低频命令已收纳至菜单，快捷键见各菜单项</span>
+  </nav>
 
-  <!-- ======== 主区 ======== -->
+    <!-- ======== 主区 ======== -->
   <div class="main">
     <header class="topbar">
       <span class="crumb">工作台 /<b>证件照处理</b></span>
       <span class="chip blue"><span class="dot ok"></span>实时预览</span>
       <span class="spacer"></span>
-      <button class="icon-btn" title="帮助" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M9.6 9.4a2.5 2.5 0 0 1 4.9.6c0 1.7-2.5 2-2.5 3.5"/><circle cx="12" cy="16.6" r=".6" fill="currentColor"/></svg></button>
-      <button class="icon-btn" title="切换主题" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13.6A8 8 0 1 1 10.4 4 6.4 6.4 0 0 0 20 13.6Z"/></svg></button>
-      <button class="btn primary" type="button">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/></svg>
-        导出图片
-      </button>
     </header>
 
     <main class="content">
@@ -76,7 +102,6 @@
 
         <!-- 工具栏 -->
         <div class="card rail">
-          <button class="rail-btn" title="载入图片" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="1.8"/><path d="m5.5 17.5 4-4a1.4 1.4 0 0 1 2 0l4.5 4.5"/><path d="m14.5 15.5 1.5-1.5a1.4 1.4 0 0 1 2 0l2.5 2.5"/></svg></button>
           <hr>
           <button class="rail-btn on" title="裁剪" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 2.5v13a2 2 0 0 0 2 2h13"/><path d="M17.5 21.5v-13a2 2 0 0 0-2-2h-13"/></svg></button>
           <button class="rail-btn" title="向左旋转" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6L3.5 8.5"/><path d="M3.5 3.5v5h5"/></svg></button>
@@ -108,6 +133,7 @@
           </div>
 
           <div class="stage">
+            <div class="stage-hint">拖入图片，或使用 <b>文件 › 打开图片</b>（Ctrl+O）</div>
             <div class="photo" id="photo" style="background:#438EDB">
               <svg class="person" viewBox="0 0 300 400" aria-hidden="true">
                 <defs>
@@ -150,7 +176,6 @@
                   <svg viewBox="0 0 300 400"><rect width="300" height="400" fill="#dce8f8"/><ellipse cx="150" cy="150" rx="52" ry="57" fill="#a8bad4"/><path d="M150 206 C105 206 76 240 68 296 L60 400 H240 L232 296 C224 240 195 206 150 206 Z" fill="#a8bad4"/></svg>
                 </div>
                 <div class="meta"><b>photo_2026.jpg</b><span>1200 × 1600 · 2.1 MB</span></div>
-                <button class="btn" style="height:30px;padding:0 11px;font-size:12px" type="button">更换</button>
               </div>
             </div>
           </section>
@@ -223,56 +248,12 @@
                   <div class="t" style="font-weight:500">智能抠图换底</div>
                   <div class="d" style="font-size:12px;color:var(--text-3)">自动抠出人像，任意替换底色</div>
                 </div>
-                <span class="chip amber">即将上线</span>
-                <label class="switch"><input type="checkbox" disabled><i></i></label>
+                <label class="switch"><input type="checkbox"><i></i></label>
               </div>
             </div>
           </section>
 
-          <section class="card">
-            <div class="card-h">
-              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/></svg>
-              输出设置<span class="hint">保存到本地</span>
-            </div>
-            <div class="card-b">
-              <div class="field">
-                <label>文件格式</label>
-                <div class="seg" id="fmtSeg">
-                  <button data-value="jpg" class="on" type="button">JPG</button>
-                  <button data-value="png" type="button">PNG</button>
-                </div>
-              </div>
-              <div class="field">
-                <label style="display:flex;justify-content:space-between">输出质量 <b id="qVal" style="font-family:var(--mono);font-weight:600">92</b></label>
-                <input type="range" id="qRange" min="60" max="100" value="92">
-              </div>
-              <div class="field">
-                <label>保存位置</label>
-                <div style="display:flex;gap:8px">
-                  <input class="input mono" value="D:\Pictures\证件照" readonly>
-                  <button class="btn" type="button" title="浏览"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 7a2 2 0 0 1 2-2h4.2l2 2.3h6.8a2 2 0 0 1 2 2V17a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2Z"/></svg></button>
-                </div>
-              </div>
-              <div class="field">
-                <label>文件名模板</label>
-                <input class="input mono" value="证件照_{规格}_{底色}" spellcheck="false">
-              </div>
-            </div>
-          </section>
 
-          <div class="actions">
-            <button class="btn lg primary block" type="button">
-              <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/></svg>
-              保存导出
-            </button>
-            <div class="actions-row">
-              <button class="btn" type="button">
-                <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13.5h5L11 21l8-10.5h-5Z"/></svg>
-                生成预览
-              </button>
-              <button class="btn" type="button">重置</button>
-            </div>
-          </div>
         </div>
       </div>
     </main>
@@ -285,8 +266,44 @@
       <span class="meta" id="stFmt">JPG · 质量 92 · 约 86 KB</span>
     </footer>
   </div>
-</div>
-</div>
+    <!-- 导出对话框：格式 / 质量 / 位置 在保存时调整 -->
+    <div class="overlay" id="exportDialog">
+      <div class="dialog">
+        <div class="dialog-h">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/></svg>
+          <b>导出图片</b>
+          <button class="icon-btn" data-close title="关闭" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+        </div>
+        <div class="dialog-b">
+          <div class="field">
+            <label>文件格式</label>
+            <div class="seg">
+              <button class="on" type="button">JPG</button>
+              <button type="button">PNG</button>
+            </div>
+          </div>
+          <div class="field">
+            <label style="display:flex;justify-content:space-between">输出质量 <b style="font-family:var(--mono)">92</b></label>
+            <input type="range" min="60" max="100" value="92">
+          </div>
+          <div class="field">
+            <label>保存位置</label>
+            <div style="display:flex;gap:8px">
+              <input class="input mono" value="D:\Pictures\证件照" readonly>
+              <button class="btn" style="height:34px" type="button">浏览</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>文件名</label>
+            <input class="input mono" value="证件照_1寸_标准蓝.jpg">
+          </div>
+          <div class="dialog-actions">
+            <button class="btn" data-close type="button">取消</button>
+            <button class="btn primary" type="button">保存</button>
+          </div>
+        </div>
+      </div>
+    </div>
 </div>
 
 <script src="assets/app.js"></script>
@@ -392,6 +409,17 @@
 
   update();
 })();
+</script>
+<script>
+  (function () {
+    var dlg = document.getElementById('exportDialog');
+    document.querySelectorAll('[data-export]').forEach(function (el) {
+      el.addEventListener('click', function (e) { e.preventDefault(); dlg.style.display = 'flex'; });
+    });
+    dlg.querySelectorAll('[data-close]').forEach(function (el) {
+      el.addEventListener('click', function () { dlg.style.display = 'none'; });
+    });
+  })();
 </script>
 </body>
 </html>

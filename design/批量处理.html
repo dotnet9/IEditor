@@ -13,9 +13,8 @@
 
   <!-- 自定义标题栏 -->
   <div class="titlebar">
-    <img src="../logo.svg" alt="IEditor">
-    <span class="win-title">IEditor</span>
-    <span class="win-module">批量处理</span>
+    <img class="brand-logo" src="../logo.svg" alt="IEditor">
+    <div class="brand-text"><b>IEditor</b><small>智能图像工作台</small></div>
     <div class="win-controls">
       <button class="wc" title="最小化" type="button"><svg viewBox="0 0 12 12"><path d="M1 6h10" stroke="currentColor" stroke-width="1.2"/></svg></button>
       <button class="wc" title="最大化" type="button"><svg viewBox="0 0 12 12"><rect x="1.5" y="1.5" width="9" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.2"/></svg></button>
@@ -23,54 +22,79 @@
     </div>
   </div>
 
-  <div class="app">
-
-  <!-- ======== 侧边导航 ======== -->
-  <aside class="sidebar">
-    <div class="brand">
-      <img src="../logo.svg" alt="IEditor">
-      <div class="bt"><b>IEditor</b><small>智能图像工作台</small></div>
+  <!-- 菜单栏：收纳低频命令，保持工作区清爽 -->
+  <nav class="menubar">
+    <div class="menu">
+      <span class="menu-item">文件</span>
+      <div class="menu-dropdown">
+        <a class="menu-entry" href="#"><span class="check"></span>打开图片…<code>Ctrl+O</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>添加图片…<code>Ctrl+Shift+O</code></a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry" href="#"><span class="check"></span>导出图片…<code>Ctrl+S</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>导出为 ZIP</a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry" href="#"><span class="check"></span>退出<code>Alt+F4</code></a>
+      </div>
     </div>
-    <div class="nav-label">工作区</div>
-    <a class="nav-item" href="证件照处理.html">
-      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8.5" cy="11" r="2"/><path d="M5.6 15.8c.5-1.5 1.6-2.3 2.9-2.3s2.4.8 2.9 2.3"/><path d="M14 9.5h4.2M14 13h3"/></svg>
-      证件照处理
-    </a>
-    <a class="nav-item active" href="批量处理.html">
-      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>
-      批量处理 <em class="soon">规划中</em>
-    </a>
-    <button class="nav-item disabled" type="button">
-      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 13.6 8l4.4 1.6-4.4 1.6L12 15.7l-1.6-4.5L6 9.6 10.4 8Z"/><path d="m18.6 14.2.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z"/></svg>
-      智能抠图 <em class="soon">即将上线</em>
-    </button>
-    <button class="nav-item disabled" type="button">
-      <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg>
-      图片工具箱 <em class="soon">即将上线</em>
-    </button>
-    <div class="sidebar-foot">
-      <a class="nav-item" href="设置.html">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9M17 7h3M4 12h3M11 12h9M4 17h11M19 17h1"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg>
-        设置
-      </a>
-      <div class="version">v0.3.0 · 界面原型</div>
+    <div class="menu">
+      <span class="menu-item">编辑</span>
+      <div class="menu-dropdown">
+        <a class="menu-entry" href="#"><span class="check"></span>向左旋转<code>Ctrl+[</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>向右旋转<code>Ctrl+]</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>水平镜像<code>Ctrl+H</code></a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry" href="#"><span class="check"></span>重置<code>Ctrl+R</code></a>
+      </div>
     </div>
-  </aside>
+    <div class="menu">
+      <span class="menu-item">工作区</span>
+      <div class="menu-dropdown">
+        <a class="menu-entry" href="证件照片处理.html"><span class="check"></span>证件照处理</a>
+        <a class="menu-entry" href="批量处理.html"><span class="check">✓</span>批量处理<code>规划中</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>智能抠图</a>
+        <a class="menu-entry" href="#"><span class="check"></span>图片工具箱<code>即将上线</code></a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry" href="设置.html"><span class="check"></span>设置</a>
+      </div>
+    </div>
+    <div class="menu">
+      <span class="menu-item">视图</span>
+      <div class="menu-dropdown">
+        <a class="menu-entry" href="#"><span class="check"></span>放大<code>Ctrl+=</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>缩小<code>Ctrl+-</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>适应窗口<code>Ctrl+0</code></a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry" href="#"><span class="check">✓</span>显示参考线<code>Ctrl+G</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>原图对比（按住）</a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry has-sub" href="#"><span class="check"></span>主题
+          <div class="submenu">
+            <a class="menu-entry" href="#"><span class="check">✓</span>浅色</a>
+            <a class="menu-entry disabled" href="#"><span class="check"></span>深色<code>即将上线</code></a>
+            <a class="menu-entry" href="#"><span class="check"></span>跟随系统</a>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="menu">
+      <span class="menu-item">帮助</span>
+      <div class="menu-dropdown">
+        <a class="menu-entry" href="#"><span class="check"></span>帮助<code>F1</code></a>
+        <a class="menu-entry" href="#"><span class="check"></span>检查更新…</a>
+        <div class="menu-sep"></div>
+        <a class="menu-entry" href="#"><span class="check"></span>关于 IEditor</a>
+        <a class="menu-entry" href="#"><span class="check"></span>开源仓库</a>
+      </div>
+    </div>
+    <span class="hint">低频命令已收纳至菜单，快捷键见各菜单项</span>
+  </nav>
 
-  <!-- ======== 主区 ======== -->
+    <!-- ======== 主区 ======== -->
   <div class="main">
     <header class="topbar">
       <span class="crumb">工作台 /<b>批量处理</b></span>
       <span class="chip amber"><svg class="ic" style="width:12px;height:12px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5"/><circle cx="12" cy="16.6" r=".6" fill="currentColor"/><path d="M10.3 3.8 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.8a2 2 0 0 0-3.4 0Z"/></svg>规划中 · 设计稿</span>
       <span class="spacer"></span>
-      <button class="btn" type="button">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
-        添加图片
-      </button>
-      <button class="btn primary" type="button">
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7.5 11.5 4.5 4.5 4.5-4.5"/><path d="M4.5 19.5h15"/></svg>
-        全部导出
-      </button>
     </header>
 
     <main class="content">
@@ -178,7 +202,6 @@
                 移除
               </button>
               <span class="spacer"></span>
-              <button class="btn" style="height:30px;font-size:12px" type="button">导出为 ZIP</button>
             </div>
           </section>
         </div>
@@ -257,7 +280,6 @@
       <span class="meta">并发 4</span>
     </footer>
   </div>
-</div>
 </div>
 </div>
 

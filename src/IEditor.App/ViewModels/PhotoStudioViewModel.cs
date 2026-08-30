@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IEditor.App.Converters;
 using IEditor.App.Models;
@@ -55,6 +57,17 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
     private string processingSummary = string.Empty;
     private string backgroundSummary = string.Empty;
     private bool isBusy;
+    private int rotationDegrees;
+    private bool flipHorizontal;
+    private long? lastPreviewBytes;
+    private string hexText = string.Empty;
+    private string sourceInfoText = string.Empty;
+    private string outputPxText = string.Empty;
+    private string outputMmText = string.Empty;
+    private string dimChipText = string.Empty;
+    private string sizeStatusText = string.Empty;
+    private string formatStatusText = string.Empty;
+    private readonly DispatcherTimer previewTimer;
 
     public PhotoStudioViewModel(IPhotoStudioService photoStudioService, AppPreferencesService preferencesService)
     {
@@ -77,6 +90,12 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         customBackgroundColor = Colors.White;
         widthMm = 25;
         heightMm = 35;
+        previewTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(400) };
+        previewTimer.Tick += (_, _) =>
+        {
+            previewTimer.Stop();
+            _ = GeneratePreviewAsync();
+        };
         InitializeLocalizedText();
     }
 
@@ -97,6 +116,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
                 UpdateSizeFields(value);
                 UpdateSuggestedFileName();
                 UpdateDerivedText();
+                SchedulePreview();
             }
         }
     }
@@ -121,6 +141,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
 
                 UpdateSuggestedFileName();
                 UpdateDerivedText();
+                SchedulePreview();
             }
         }
     }
@@ -150,6 +171,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             {
                 UpdateSuggestedFileName();
                 UpdateDerivedText();
+                SchedulePreview();
             }
         }
     }
@@ -163,6 +185,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             {
                 UpdateSuggestedFileName();
                 UpdateDerivedText();
+                SchedulePreview();
             }
         }
     }
@@ -175,6 +198,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             if (SetProperty(ref dpi, value))
             {
                 UpdateDerivedText();
+                SchedulePreview();
             }
         }
     }
@@ -191,9 +215,57 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
                     SelectedBackgroundOption.SetColor(value.ToRgbColor());
                 }
 
+                UpdateSuggestedFileName();
                 UpdateDerivedText();
+                SchedulePreview();
             }
         }
+    }
+
+    public string HexText
+    {
+        get => hexText;
+        set
+        {
+            if (SetProperty(ref hexText, value) && !_suppressHexSync)
+            {
+                ApplyHexColor(value);
+            }
+        }
+    }
+
+    private bool _suppressHexSync;
+
+    private void SyncHexText()
+    {
+        var hex = ActiveBackgroundColor.ToHexString()[1..];
+        if (!string.Equals(HexText, hex, StringComparison.OrdinalIgnoreCase))
+        {
+            _suppressHexSync = true;
+            HexText = hex;
+            _suppressHexSync = false;
+        }
+    }
+
+    private void ApplyHexColor(string value)
+    {
+        var candidate = value.Trim().TrimStart('#');
+        if (candidate.Length != 6 || !System.Text.RegularExpressions.Regex.IsMatch(candidate, "^[0-9a-fA-F]{6}$"))
+        {
+            return;
+        }
+
+        var color = Color.Parse("#" + candidate);
+        if (SelectedBackgroundOption is not { IsCustom: true })
+        {
+            var custom = BackgroundOptions.FirstOrDefault(item => item.IsCustom);
+            if (custom is not null)
+            {
+                SelectedBackgroundOption = custom;
+            }
+        }
+
+        CustomBackgroundColor = color;
     }
 
     public string? SourcePath
@@ -322,6 +394,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             if (SetProperty(ref comparePreview, value))
             {
                 OnPropertyChanged(nameof(DisplayedPreviewBitmap));
+                UpdateDerivedText();
             }
         }
     }
@@ -350,13 +423,137 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
     public bool IsBusy
     {
         get => isBusy;
-        private set => SetProperty(ref isBusy, value);
+        private set
+        {
+            if (SetProperty(ref isBusy, value))
+            {
+                OnPropertyChanged(nameof(IsIdle));
+            }
+        }
     }
+
+    public bool IsIdle => !IsBusy;
+
+    [ObservableProperty]
+    private bool isExportDialogOpen;
+
+    [ObservableProperty]
+    private bool isSmartCutoutEnabled;
+
+    partial void OnIsSmartCutoutEnabledChanged(bool value)
+    {
+        SchedulePreview();
+    }
+
+    [RelayCommand]
+    private void ShowExportDialog() => IsExportDialogOpen = true;
+
+    [RelayCommand]
+    private void CloseExportDialog() => IsExportDialogOpen = false;
 
     public PhotoStudioTool SelectedTool
     {
         get => selectedTool;
-        set => SetProperty(ref selectedTool, value);
+        set
+        {
+            if (SetProperty(ref selectedTool, value))
+            {
+                OnPropertyChanged(nameof(IsCropSelected));
+            }
+        }
+    }
+
+    public bool IsCropSelected => SelectedTool == PhotoStudioTool.Crop;
+
+    public bool HasPreview => PreviewBitmap is not null;
+
+    public bool IsPreviewEmpty => PreviewBitmap is null;
+
+    public Bitmap? SourceThumb => OriginalBitmap;
+
+    public string SourceFileName => string.IsNullOrWhiteSpace(SourcePath)
+        ? L(Localization.PhotoStudio.Summary.NoImageSelected)
+        : Path.GetFileName(SourcePath);
+
+    public string SourceInfoText
+    {
+        get => sourceInfoText;
+        private set => SetProperty(ref sourceInfoText, value);
+    }
+
+    public string OutputPxText
+    {
+        get => outputPxText;
+        private set => SetProperty(ref outputPxText, value);
+    }
+
+    public string OutputMmText
+    {
+        get => outputMmText;
+        private set => SetProperty(ref outputMmText, value);
+    }
+
+    public string DimChipText
+    {
+        get => dimChipText;
+        private set => SetProperty(ref dimChipText, value);
+    }
+
+    public string SizeStatusText
+    {
+        get => sizeStatusText;
+        private set => SetProperty(ref sizeStatusText, value);
+    }
+
+    public string FormatStatusText
+    {
+        get => formatStatusText;
+        private set => SetProperty(ref formatStatusText, value);
+    }
+
+    public IBrush ActiveBackgroundBrush => new SolidColorBrush(CustomBackgroundColor);
+
+    public double PhotoBoxWidth => Math.Clamp(
+        Math.Round(400 * WidthMm / Math.Max(HeightMm, 0.1)),
+        160,
+        480);
+
+    public double QualitySliderValue
+    {
+        get => OutputQuality;
+        set => OutputQuality = (uint)Math.Clamp(value, 60, 100);
+    }
+
+    public string WidthMmInput
+    {
+        get => WidthMm.ToString("0.#");
+        set
+        {
+            if (double.TryParse(value, out var parsed) && parsed is > 0 and <= 2000)
+            {
+                WidthMm = Math.Round(parsed, 1);
+            }
+            else
+            {
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    public string HeightMmInput
+    {
+        get => HeightMm.ToString("0.#");
+        set
+        {
+            if (double.TryParse(value, out var parsed) && parsed is > 0 and <= 2000)
+            {
+                HeightMm = Math.Round(parsed, 1);
+            }
+            else
+            {
+                OnPropertyChanged();
+            }
+        }
     }
 
     public Bitmap? PreviewBitmap
@@ -373,6 +570,9 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             _previewBitmap = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(DisplayedPreviewBitmap));
+            OnPropertyChanged(nameof(HasPreview));
+            OnPropertyChanged(nameof(IsPreviewEmpty));
+            OnPropertyChanged(nameof(SourceThumb));
             old?.Dispose();
         }
     }
@@ -391,6 +591,8 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             _originalBitmap = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(DisplayedPreviewBitmap));
+            OnPropertyChanged(nameof(SourceThumb));
+            OnPropertyChanged(nameof(SourceInfoText));
             old?.Dispose();
         }
     }
@@ -441,6 +643,9 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
     public string OutputSectionTitle { get; private set; } = string.Empty;
     public string OutputSectionHint { get; private set; } = string.Empty;
     public string EngineReady { get; private set; } = string.Empty;
+    public string LivePreviewText { get; private set; } = string.Empty;
+    public string MoreSizesText { get; private set; } = string.Empty;
+    public string OutputSizeText { get; private set; } = string.Empty;
     public string LoadImageText { get; private set; } = string.Empty;
     public string CompareOriginalText { get; private set; } = string.Empty;
     public string GuidesText { get; private set; } = string.Empty;
@@ -458,6 +663,14 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
     public string FilenameTemplateText { get; private set; } = string.Empty;
     public string CropText { get; private set; } = string.Empty;
     public string ProcessingEngineText { get; private set; } = string.Empty;
+    public string ReplaceText { get; private set; } = string.Empty;
+    public string GeneratePreviewText { get; private set; } = string.Empty;
+    public string BrowseText { get; private set; } = string.Empty;
+    public string SmartCutoutTitleText { get; private set; } = string.Empty;
+    public string SmartCutoutDescriptionText { get; private set; } = string.Empty;
+    public string ComingSoonText { get; private set; } = string.Empty;
+
+    public string ActiveBackgroundName => SelectedBackgroundOption?.Title ?? string.Empty;
     public string WidthMmText { get; private set; } = string.Empty;
     public string HeightMmText { get; private set; } = string.Empty;
     public string DpiText { get; private set; } = string.Empty;
@@ -467,6 +680,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
 
     protected override void OnDisposed()
     {
+        previewTimer.Stop();
         PreviewBitmap?.Dispose();
         OriginalBitmap?.Dispose();
         base.OnDisposed();
@@ -491,6 +705,9 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         OutputSectionTitle = L(Localization.PhotoStudio.Page.OutputSection);
         OutputSectionHint = L(Localization.PhotoStudio.Page.OutputHint);
         EngineReady = L(Localization.PhotoStudio.Page.EngineReady);
+        LivePreviewText = L(Localization.PhotoStudio.Page.LivePreview);
+        MoreSizesText = L(Localization.PhotoStudio.Page.MoreSizes);
+        OutputSizeText = L(Localization.PhotoStudio.Page.OutputSize);
         LoadImageText = L(Localization.PhotoStudio.Page.LoadImage);
         CompareOriginalText = L(Localization.PhotoStudio.Page.CompareOriginal);
         GuidesText = L(Localization.PhotoStudio.Page.Guides);
@@ -515,6 +732,12 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         FormatJpgText = L(Localization.Common.Formats.Jpg);
         FormatPngText = L(Localization.Common.Formats.Png);
         SaveExportText = L(Localization.Common.Actions.SaveExport);
+        ReplaceText = L(Localization.Common.Actions.Replace);
+        GeneratePreviewText = L(Localization.Common.Actions.GeneratePreview);
+        BrowseText = L(Localization.Common.Actions.Browse);
+        SmartCutoutTitleText = L(Localization.PhotoStudio.Page.BackgroundSmartTitle);
+        SmartCutoutDescriptionText = L(Localization.PhotoStudio.Page.BackgroundSmartDescription);
+        ComingSoonText = L(Localization.Common.States.ComingSoon);
 
         RefreshOptions();
         UpdateDerivedText();
@@ -529,6 +752,11 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             return;
         }
 
+        SetSourcePath(path);
+    }
+
+    public void SetSourcePath(string path)
+    {
         SourcePath = path;
         var directory = Path.GetDirectoryName(path) ?? Environment.CurrentDirectory;
         InputSuggestedStartPath = directory;
@@ -541,6 +769,14 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         StatusText = L(Localization.PhotoStudio.Status.SourceSelected);
         OutputPath ??= Path.Combine(OutputFolder ?? directory, SuggestedOutputFileName);
         _ = GeneratePreviewAsync();
+    }
+
+    public void SetCompare(bool comparing)
+    {
+        if (PreviewBitmap is not null || OriginalBitmap is not null)
+        {
+            ComparePreview = comparing;
+        }
     }
 
     [RelayCommand]
@@ -557,6 +793,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         {
             OriginalBitmap ??= LoadBitmap(SourcePath!);
             var result = await _photoStudioService.ProcessAsync(BuildRequest(PhotoOutputFormat.Png));
+            lastPreviewBytes = result.Data.Length;
             PreviewBitmap = CreateBitmap(result.Data);
             UpdateDerivedText();
             StatusText = string.Format(L(Localization.PhotoStudio.Status.PreviewGenerated), result.WidthPx, result.HeightPx);
@@ -598,9 +835,11 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             var request = BuildRequest(OutputFormat);
             var result = await _photoStudioService.ProcessAsync(request);
             await File.WriteAllBytesAsync(targetPath, result.Data);
+            lastPreviewBytes = result.Data.Length;
             PreviewBitmap = CreateBitmap(result.Data);
             OutputPath = targetPath;
             OutputSuggestedStartPath = Path.GetDirectoryName(targetPath) ?? OutputSuggestedStartPath;
+            CloseExportDialogCommand.Execute(null);
             StatusText = string.Format(L(Localization.PhotoStudio.Status.SavedFormat), targetPath);
         }
         catch (Exception ex)
@@ -629,8 +868,12 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         ComparePreview = false;
         PreviewZoomPercent = 100;
         SelectedTool = PhotoStudioTool.Crop;
+        IsSmartCutoutEnabled = false;
         CustomBackgroundColor = Colors.White;
         OutputPath = null;
+        rotationDegrees = 0;
+        flipHorizontal = false;
+        lastPreviewBytes = null;
         RefreshOptions();
         StatusText = L(Localization.PhotoStudio.Status.Reset);
         UpdateDerivedText();
@@ -690,6 +933,62 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         }
     }
 
+    [RelayCommand]
+    private void SelectSize(PhotoSizeOptionViewModel? option)
+    {
+        if (option is not null)
+        {
+            SelectedSizeOption = option;
+        }
+    }
+
+    [RelayCommand]
+    private void SelectBackground(BackgroundOptionViewModel? option)
+    {
+        if (option is not null)
+        {
+            SelectedBackgroundOption = option;
+        }
+    }
+
+    [RelayCommand]
+    private void ChangeDpi(string direction)
+    {
+        Dpi = Math.Clamp(Dpi + (direction == "+" ? 30 : -30), 72, 1200);
+    }
+
+    [RelayCommand]
+    private void RotateLeft()
+    {
+        rotationDegrees = (rotationDegrees + 270) % 360;
+        SchedulePreview();
+    }
+
+    [RelayCommand]
+    private void RotateRight()
+    {
+        rotationDegrees = (rotationDegrees + 90) % 360;
+        SchedulePreview();
+    }
+
+    [RelayCommand]
+    private void FlipImage()
+    {
+        flipHorizontal = !flipHorizontal;
+        SchedulePreview();
+    }
+
+    private void SchedulePreview()
+    {
+        if (string.IsNullOrWhiteSpace(SourcePath) || IsBusy)
+        {
+            return;
+        }
+
+        previewTimer.Stop();
+        previewTimer.Start();
+    }
+
     private void OnSourcePathUpdated()
     {
         PreviewBitmap = null;
@@ -717,19 +1016,23 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
     private void RefreshOptions()
     {
         _selectedSizeToken ??= SelectedSizeOption?.Token ?? "1寸";
-        _selectedBackgroundToken ??= SelectedBackgroundOption?.Token ?? "白色";
+        _selectedBackgroundToken ??= SelectedBackgroundOption?.Token ?? "蓝色";
 
         SizeOptions =
         [
             new PhotoSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.OneInch), "1寸", 25, 35, false),
             new PhotoSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.TwoInch), "2寸", 35, 49, false),
+            new PhotoSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.SmallTwoInch), "小2寸", 33, 48, false),
             new PhotoSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.Custom), "自定义", WidthMm, HeightMm, true)
         ];
 
         BackgroundOptions =
         [
             new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.WhiteName), "白色", RgbColor.White, false),
-            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.BlueName), "蓝色", RgbColor.Blue, false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.BlueName), "蓝色", new RgbColor(67, 142, 219), false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.RedName), "中国红", new RgbColor(190, 11, 36), false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.GrayLightName), "浅灰", new RgbColor(237, 241, 246), false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.GrayDarkName), "深灰", new RgbColor(58, 70, 87), false),
             new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.Custom), "自定义", CustomBackgroundColor.ToRgbColor(), true)
         ];
 
@@ -812,12 +1115,47 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             SelectedBackgroundOption?.Title ?? string.Empty,
             ActiveBackgroundColor.ToHexString());
 
+        OutputPxText = $"{size.WidthPx} × {size.HeightPx} px";
+        OutputMmText = $"{WidthMm:0.#} × {HeightMm:0.#} mm";
+        SizeStatusText = $"{size.WidthPx}×{size.HeightPx} px @ {Dpi} DPI";
+        DimChipText = ComparePreview && OriginalBitmap is { } original
+            ? $"原图 · {original.PixelSize.Width} × {original.PixelSize.Height}"
+            : $"{size.WidthPx} × {size.HeightPx} px · {Dpi} DPI";
+        FormatStatusText = BuildFormatStatusText();
+        SyncHexText();
+
+        if (OriginalBitmap is { } bitmap)
+        {
+            var length = string.IsNullOrWhiteSpace(SourcePath) ? 0 : new FileInfo(SourcePath).Length;
+            SourceInfoText = $"{bitmap.PixelSize.Width} × {bitmap.PixelSize.Height} · {length / 1024d / 1024d:0.#} MB";
+        }
+        else
+        {
+            SourceInfoText = string.Empty;
+        }
+
         OnPropertyChanged(nameof(IsCustomSize));
         OnPropertyChanged(nameof(IsCustomBackground));
         OnPropertyChanged(nameof(IsJpegFormat));
         OnPropertyChanged(nameof(IsPngFormat));
         OnPropertyChanged(nameof(PreviewScale));
         OnPropertyChanged(nameof(PreviewZoomText));
+        OnPropertyChanged(nameof(ActiveBackgroundBrush));
+        OnPropertyChanged(nameof(ActiveBackgroundColor));
+        OnPropertyChanged(nameof(ActiveBackgroundName));
+        OnPropertyChanged(nameof(PhotoBoxWidth));
+        OnPropertyChanged(nameof(SourceFileName));
+    }
+
+    private string BuildFormatStatusText()
+    {
+        var format = OutputFormat == PhotoOutputFormat.Jpeg ? FormatJpgText : FormatPngText;
+        var estimate = lastPreviewBytes is { } bytes
+            ? $" · 约 {(bytes / 1024d):0} KB"
+            : OutputFormat == PhotoOutputFormat.Jpeg
+                ? $" · 约 {Math.Round(OutputQuality * 0.94)} KB"
+                : string.Empty;
+        return $"{format} · 质量 {OutputQuality}{estimate}";
     }
 
     private PhotoProcessingRequest BuildRequest(PhotoOutputFormat outputFormat) =>
@@ -826,7 +1164,10 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             CurrentSize,
             ActiveBackgroundColor,
             outputFormat,
-            OutputQuality);
+            OutputQuality,
+            rotationDegrees,
+            flipHorizontal,
+            IsSmartCutoutEnabled);
 
     private static Bitmap CreateBitmap(byte[] data)
     {

@@ -521,6 +521,12 @@ public partial class SettingsViewModel : WorkspacePageViewModel
     }
 
     [RelayCommand]
+    private void AdjustDefaultDpi(string direction)
+    {
+        DefaultDpi = Math.Clamp(DefaultDpi + (direction == "+" ? 30 : -30), 72, 1200);
+    }
+
+    [RelayCommand]
     private void OpenRepository()
     {
         try
@@ -593,9 +599,9 @@ public partial class SettingsViewModel : WorkspacePageViewModel
 
         ThemeOptions =
         [
-            new ThemeOptionViewModel(L(Localization.Common.Theme.System), AppThemeMode.System),
             new ThemeOptionViewModel(L(Localization.Common.Theme.Light), AppThemeMode.Light),
-            new ThemeOptionViewModel(L(Localization.Common.Theme.Dark), AppThemeMode.Dark)
+            new ThemeOptionViewModel(L(Localization.Common.Theme.Dark), AppThemeMode.Dark, false),
+            new ThemeOptionViewModel(L(Localization.Common.Theme.System), AppThemeMode.System)
         ];
 
         AccentColorOptions =
@@ -639,7 +645,7 @@ public partial class SettingsViewModel : WorkspacePageViewModel
             }
         }
 
-        if (persist && value is not null)
+        if (persist && value is not null && value.IsEnabled)
         {
             _preferencesService.Preferences.ThemeMode = value.Value;
             _preferencesService.ApplyAndSave();

@@ -20,6 +20,10 @@ public partial class AccentColorOptionViewModel : ObservableObject
 
     public Color AvaloniaColor => Color.ToAvaloniaColor();
 
+    public IBrush AvaloniaBrush => new SolidColorBrush(AvaloniaColor);
+
+    public override string ToString() => Title;
+
     [ObservableProperty]
     private bool isSelected;
 }
@@ -36,21 +40,26 @@ public partial class LanguageOptionViewModel : ObservableObject
 
     public string CultureName { get; }
 
+    public override string ToString() => Title;
+
     [ObservableProperty]
     private bool isSelected;
 }
 
 public partial class ThemeOptionViewModel : ObservableObject
 {
-    public ThemeOptionViewModel(string title, AppThemeMode value)
+    public ThemeOptionViewModel(string title, AppThemeMode value, bool isEnabled = true)
     {
         Title = title;
         Value = value;
+        IsEnabled = isEnabled;
     }
 
     public string Title { get; }
 
     public AppThemeMode Value { get; }
+
+    public bool IsEnabled { get; }
 
     [ObservableProperty]
     private bool isSelected;

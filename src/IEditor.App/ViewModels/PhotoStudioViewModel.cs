@@ -55,6 +55,8 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
     private bool showGuides;
     private bool comparePreview;
     private int previewZoomPercent;
+    private double previewOffsetX;
+    private double previewOffsetY;
     private PhotoStudioTool selectedTool;
     private string sourceSummary = string.Empty;
     private string processingSummary = string.Empty;
@@ -70,6 +72,9 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
     private string dimChipText = string.Empty;
     private string sizeStatusText = string.Empty;
     private string formatStatusText = string.Empty;
+    private bool previewDirty;
+    private bool suppressPreviewScheduling;
+    private bool previewInteractionActive;
     private readonly DispatcherTimer previewTimer;
 
     public PhotoStudioViewModel(IPhotoStudioService photoStudioService, AppPreferencesService preferencesService)
@@ -93,7 +98,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         customBackgroundColor = Colors.White;
         widthMm = 25;
         heightMm = 35;
-        previewTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(400) };
+        previewTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
         previewTimer.Tick += (_, _) =>
         {
             previewTimer.Stop();
@@ -418,11 +423,39 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             {
                 OnPropertyChanged(nameof(PreviewScale));
                 OnPropertyChanged(nameof(PreviewZoomText));
+                if (!suppressPreviewScheduling)
+                {
+                    SchedulePreview();
+                }
             }
         }
     }
 
     public string PreviewZoomText => $"{PreviewZoomPercent}%";
+
+    public double PreviewOffsetX
+    {
+        get => previewOffsetX;
+        set
+        {
+            if (SetProperty(ref previewOffsetX, value) && !suppressPreviewScheduling)
+            {
+                SchedulePreview();
+            }
+        }
+    }
+
+    public double PreviewOffsetY
+    {
+        get => previewOffsetY;
+        set
+        {
+            if (SetProperty(ref previewOffsetY, value) && !suppressPreviewScheduling)
+            {
+                SchedulePreview();
+            }
+        }
+    }
 
     public bool IsJpegFormat => OutputFormat == PhotoOutputFormat.Jpeg;
 
@@ -806,15 +839,55 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         }
     }
 
+    public void BeginPreviewInteraction()
+    {
+        if (previewInteractionActive)
+        {
+            return;
+        }
+
+        previewInteractionActive = true;
+        previewTimer.Stop();
+    }
+
+    public void EndPreviewInteraction()
+    {
+        if (!previewInteractionActive)
+        {
+            return;
+        }
+
+        previewInteractionActive = false;
+
+        if (previewDirty && !string.IsNullOrWhiteSpace(SourcePath))
+        {
+            previewTimer.Stop();
+            previewTimer.Start();
+        }
+    }
+
+    public void CancelPreviewInteraction()
+    {
+        previewInteractionActive = false;
+        previewTimer.Stop();
+    }
+
     [RelayCommand]
     private async Task GeneratePreviewAsync()
     {
-        if (IsBusy || string.IsNullOrWhiteSpace(SourcePath))
+        if (string.IsNullOrWhiteSpace(SourcePath))
         {
             StatusText = L(Localization.PhotoStudio.Status.SourcePathRequired);
             return;
         }
 
+        if (IsBusy)
+        {
+            previewDirty = true;
+            return;
+        }
+
+        previewDirty = false;
         IsBusy = true;
         try
         {
@@ -832,6 +905,11 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         finally
         {
             IsBusy = false;
+            if (previewDirty && !string.IsNullOrWhiteSpace(SourcePath))
+            {
+                previewTimer.Stop();
+                previewTimer.Start();
+            }
         }
     }
 
@@ -876,6 +954,11 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         finally
         {
             IsBusy = false;
+            if (previewDirty && !string.IsNullOrWhiteSpace(SourcePath))
+            {
+                previewTimer.Stop();
+                previewTimer.Start();
+            }
         }
     }
 
@@ -889,6 +972,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
     private void Reset()
     {
         var preferences = _preferencesService.Preferences;
+        CancelPreviewInteraction();
         SourcePath = null;
         OutputFolder = preferences.DefaultSaveLocation;
         InputSuggestedStartPath = preferences.DefaultSaveLocation;
@@ -899,7 +983,12 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         Dpi = preferences.DefaultDpi;
         ShowGuides = preferences.ShowGuides;
         ComparePreview = false;
-        PreviewZoomPercent = 100;
+        RunWithPreviewSchedulingSuppressed(() =>
+        {
+            PreviewZoomPercent = 100;
+            PreviewOffsetX = 0;
+            PreviewOffsetY = 0;
+        });
         SelectedTool = PhotoStudioTool.Crop;
         IsSmartCutoutEnabled = false;
         CustomBackgroundColor = Colors.White;
@@ -907,6 +996,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         rotationDegrees = 0;
         flipHorizontal = false;
         lastPreviewBytes = null;
+        previewDirty = false;
         RefreshOptions();
         StatusText = L(Localization.PhotoStudio.Status.Reset);
         UpdateDerivedText();
@@ -947,11 +1037,16 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
     [RelayCommand]
     private void SetZoom(string direction)
     {
+        if (direction == "fit")
+        {
+            ResetPreviewTransform();
+            return;
+        }
+
         PreviewZoomPercent = direction switch
         {
             "+" => Math.Min(200, PreviewZoomPercent + 25),
             "-" => Math.Max(50, PreviewZoomPercent - 25),
-            "fit" => 100,
             _ => PreviewZoomPercent
         };
     }
@@ -1014,13 +1109,17 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
 
     private void SchedulePreview()
     {
-        if (string.IsNullOrWhiteSpace(SourcePath) || IsBusy)
+        if (suppressPreviewScheduling || string.IsNullOrWhiteSpace(SourcePath))
         {
             return;
         }
 
+        previewDirty = true;
         previewTimer.Stop();
-        previewTimer.Start();
+        if (!IsBusy && !previewInteractionActive)
+        {
+            previewTimer.Start();
+        }
     }
 
     private void EnsureSmartCutoutEnabledForBackgroundChange()
@@ -1033,8 +1132,17 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
 
     private void OnSourcePathUpdated()
     {
+        CancelPreviewInteraction();
         PreviewBitmap = null;
         OriginalBitmap = null;
+        previewDirty = false;
+
+        RunWithPreviewSchedulingSuppressed(() =>
+        {
+            PreviewZoomPercent = 100;
+            PreviewOffsetX = 0;
+            PreviewOffsetY = 0;
+        });
 
         if (string.IsNullOrWhiteSpace(SourcePath))
         {
@@ -1053,6 +1161,60 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
 
         OutputSuggestedStartPath = OutputFolder ?? InputSuggestedStartPath;
         UpdateSuggestedFileName();
+    }
+
+    public void AdjustPreviewZoom(int delta)
+    {
+        if (delta == 0)
+        {
+            return;
+        }
+
+        PreviewZoomPercent = Math.Clamp(PreviewZoomPercent + delta, 50, 200);
+    }
+
+    public void MovePreviewOffset(double deltaX, double deltaY)
+    {
+        if (deltaX == 0d && deltaY == 0d)
+        {
+            return;
+        }
+
+        RunWithPreviewSchedulingSuppressed(() =>
+        {
+            PreviewOffsetX += deltaX;
+            PreviewOffsetY += deltaY;
+        });
+        SchedulePreview();
+    }
+
+    public void ResetPreviewTransform(bool schedulePreview = true)
+    {
+        RunWithPreviewSchedulingSuppressed(() =>
+        {
+            PreviewZoomPercent = 100;
+            PreviewOffsetX = 0;
+            PreviewOffsetY = 0;
+        });
+
+        if (schedulePreview)
+        {
+            SchedulePreview();
+        }
+    }
+
+    private void RunWithPreviewSchedulingSuppressed(Action action)
+    {
+        var previous = suppressPreviewScheduling;
+        suppressPreviewScheduling = true;
+        try
+        {
+            action();
+        }
+        finally
+        {
+            suppressPreviewScheduling = previous;
+        }
     }
 
     private void RefreshOptions()
@@ -1209,7 +1371,10 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             OutputQuality,
             rotationDegrees,
             flipHorizontal,
-            IsSmartCutoutEnabled);
+            IsSmartCutoutEnabled,
+            PreviewScale,
+            PreviewOffsetX,
+            PreviewOffsetY);
 
     private static Bitmap CreateBitmap(byte[] data)
     {

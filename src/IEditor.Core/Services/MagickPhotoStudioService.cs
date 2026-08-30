@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using ImageMagick;
 using IEditor.Core.Models;
 
@@ -46,15 +47,21 @@ public sealed class MagickPhotoStudioService : IPhotoStudioService
         }
 
         source.Density = new Density(request.TargetSize.Dpi, request.TargetSize.Dpi);
-        source.Resize(new MagickGeometry((uint)widthPx, (uint)heightPx) { FillArea = true });
-        source.Crop((uint)widthPx, (uint)heightPx, Gravity.Center);
-        source.ResetPage();
 
-        cancellationToken.ThrowIfCancellationRequested();
+        var baseScale = Math.Min(widthPx / (double)source.Width, heightPx / (double)source.Height);
+        var zoomFactor = Math.Clamp(request.ZoomFactor, 0.05d, 8d);
+        var scale = baseScale * zoomFactor;
+        var drawWidth = Math.Max(1u, (uint)Math.Round(source.Width * scale, MidpointRounding.AwayFromZero));
+        var drawHeight = Math.Max(1u, (uint)Math.Round(source.Height * scale, MidpointRounding.AwayFromZero));
+
+        source.Resize(new MagickGeometry(drawWidth, drawHeight) { IgnoreAspectRatio = true });
+        source.ResetPage();
 
         using var canvas = new MagickImage(request.BackgroundColor.ToMagickColor(), (uint)widthPx, (uint)heightPx);
         canvas.Density = new Density(request.TargetSize.Dpi, request.TargetSize.Dpi);
-        canvas.Composite(source, Gravity.Center, CompositeOperator.Over);
+        var offsetX = (int)Math.Round((widthPx - drawWidth) / 2d + request.OffsetX, MidpointRounding.AwayFromZero);
+        var offsetY = (int)Math.Round((heightPx - drawHeight) / 2d + request.OffsetY, MidpointRounding.AwayFromZero);
+        canvas.Composite(source, offsetX, offsetY, CompositeOperator.Over);
         canvas.Quality = request.OutputFormat == PhotoOutputFormat.Jpeg ? request.JpegQuality : 100;
 
         using var output = new MemoryStream();
@@ -68,10 +75,10 @@ public sealed class MagickPhotoStudioService : IPhotoStudioService
         image.Alpha(AlphaOption.Set);
 
         var background = EstimateBackgroundColor(image, out var spread);
-        image.ColorFuzz = new Percentage(Math.Clamp(6d + spread / 8d, 6d, 18d));
+        image.ColorFuzz = new Percentage(Math.Clamp(2d + spread / 24d, 2d, 6d));
         var target = background.ToMagickColor();
 
-        foreach (var (x, y) in GetBorderSeeds((int)image.Width, (int)image.Height))
+        foreach (var (x, y) in GetSmartCutoutSeeds(image, background, spread))
         {
             image.FloodFill(MagickColors.Transparent, x, y, target);
         }
@@ -129,6 +136,35 @@ public sealed class MagickPhotoStudioService : IPhotoStudioService
             (byte)Math.Clamp(Math.Round(averageB), 0, 255));
     }
 
+    private static IEnumerable<(int X, int Y)> GetSmartCutoutSeeds(MagickImage image, RgbColor background, double spread)
+    {
+        var width = (int)image.Width;
+        var height = (int)image.Height;
+        var threshold = Math.Clamp(10d + spread / 12d, 10d, 24d);
+
+        var candidates = new[]
+        {
+            (0, 0),
+            (Math.Max(0, width / 2), 0),
+            (Math.Max(0, width - 1), 0),
+            (0, Math.Max(0, height / 2)),
+            (Math.Max(0, width - 1), Math.Max(0, height / 2)),
+            (0, Math.Max(0, height - 1)),
+            (Math.Max(0, width / 2), Math.Max(0, height - 1)),
+            (Math.Max(0, width - 1), Math.Max(0, height - 1))
+        };
+
+        using var pixels = image.GetPixels();
+        foreach (var candidate in candidates.Distinct())
+        {
+            var sample = ReadPixel(pixels, candidate.Item1, candidate.Item2);
+            if (MaxChannelDistance(sample, background) <= threshold)
+            {
+                yield return candidate;
+            }
+        }
+    }
+
     private static IEnumerable<(int X, int Y)> GetBorderSeeds(int width, int height)
     {
         var stepX = Math.Max(1, width / 12);
@@ -155,6 +191,11 @@ public sealed class MagickPhotoStudioService : IPhotoStudioService
             ToByte(pixel.GetChannel(1)),
             ToByte(pixel.GetChannel(2)));
     }
+
+    private static int MaxChannelDistance(RgbColor left, RgbColor right) =>
+        Math.Max(
+            Math.Abs(left.R - right.R),
+            Math.Max(Math.Abs(left.G - right.G), Math.Abs(left.B - right.B)));
 
     private static byte ToByte(ushort value) => (byte)Math.Clamp((int)Math.Round(value / 257d), 0, 255);
 }

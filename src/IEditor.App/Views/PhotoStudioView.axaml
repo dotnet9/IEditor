@@ -128,21 +128,27 @@
           </StackPanel>
 
           <Border Classes="ie-stage" MinHeight="600">
-            <Panel HorizontalAlignment="Center" VerticalAlignment="Center" Width="{Binding PhotoBoxWidth}" Height="400" RenderTransformOrigin="50%,50%">
-              <Panel.RenderTransform>
-                <ScaleTransform ScaleX="{Binding PreviewScale}" ScaleY="{Binding PreviewScale}" />
-              </Panel.RenderTransform>
+            <Panel HorizontalAlignment="Center" VerticalAlignment="Center" Width="{Binding PhotoBoxWidth}" Height="400">
 
               <!-- 照片 -->
               <Border
+                  x:Name="PhotoStage"
                   Background="{Binding ActiveBackgroundBrush}"
                   BorderThickness="0"
                   CornerRadius="6"
                   ClipToBounds="True"
-                  BoxShadow="0 10 34 0 #380A1F40">
+                  BoxShadow="0 10 34 0 #380A1F40"
+                  Cursor="SizeAll"
+                  PointerPressed="OnPhotoStagePointerPressed"
+                  PointerMoved="OnPhotoStagePointerMoved"
+                  PointerReleased="OnPhotoStagePointerReleased"
+                  PointerCaptureLost="OnPhotoStagePointerCaptureLost"
+                  PointerWheelChanged="OnPhotoStagePointerWheelChanged">
                 <Panel>
                   <Image
+                      x:Name="PreviewImage"
                       Source="{Binding DisplayedPreviewBitmap}"
+                      RenderTransformOrigin="0.5,0.5"
                       Stretch="Uniform"
                       IsVisible="{Binding HasPreview}" />
                   <!-- 空态人像剪影 -->

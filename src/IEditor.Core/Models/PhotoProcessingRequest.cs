@@ -8,4 +8,7 @@ public sealed record PhotoProcessingRequest(
     uint JpegQuality = 92,
     int RotationDegrees = 0,
     bool FlipHorizontal = false,
-    bool EnableSmartCutout = false);
+    bool EnableSmartCutout = false,
+    double ZoomFactor = 1d,
+    double OffsetX = 0d,
+    double OffsetY = 0d);

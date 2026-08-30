@@ -24,5 +24,6 @@
     <semi:SemiPopupAnimations />
     <semi:ColorPickerSemiTheme />
     <StyleInclude Source="avares://IEditor.App/Styles/Index.axaml" />
+    <StyleInclude Source="avares://IEditor.App/Styles/DialogOverlay.axaml" />
   </Application.Styles>
 </Application>

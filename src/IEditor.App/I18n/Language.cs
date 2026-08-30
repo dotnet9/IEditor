@@ -8,6 +8,11 @@
 
 namespace Localization.Common
 {
+    public static class Filenames
+    {
+        public static readonly string Default = "Localization.Common.Filenames.Default";
+    }
+
     public static class Menu
     {
         public static readonly string File = "Localization.Common.Menu.File";
@@ -129,6 +134,7 @@ namespace Localization.PhotoStudio
         public static readonly string BackgroundHint = "Localization.PhotoStudio.Labels.BackgroundHint";
         public static readonly string Dpi = "Localization.PhotoStudio.Labels.Dpi";
         public static readonly string FileFormat = "Localization.PhotoStudio.Labels.FileFormat";
+        public static readonly string Filename = "Localization.PhotoStudio.Labels.Filename";
         public static readonly string FilenameTemplate = "Localization.PhotoStudio.Labels.FilenameTemplate";
         public static readonly string HeightMm = "Localization.PhotoStudio.Labels.HeightMm";
         public static readonly string OutputQuality = "Localization.PhotoStudio.Labels.OutputQuality";

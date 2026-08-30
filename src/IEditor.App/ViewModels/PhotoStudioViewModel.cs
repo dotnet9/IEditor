@@ -9,10 +9,13 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using IEditor.App.Converters;
+using IEditor.App.Helpers;
 using IEditor.App.Models;
 using IEditor.App.Services;
+using IEditor.App.ViewModels.Dialogs;
 using IEditor.Core.Models;
 using IEditor.Core.Services;
+using Ursa.Controls;
 
 namespace IEditor.App.ViewModels;
 
@@ -435,9 +438,6 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
     public bool IsIdle => !IsBusy;
 
     [ObservableProperty]
-    private bool isExportDialogOpen;
-
-    [ObservableProperty]
     private bool isSmartCutoutEnabled;
 
     partial void OnIsSmartCutoutEnabledChanged(bool value)
@@ -446,10 +446,32 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
     }
 
     [RelayCommand]
-    private void ShowExportDialog() => IsExportDialogOpen = true;
+    private async Task ShowExportDialog()
+    {
+        if (IsBusy)
+        {
+            return;
+        }
 
-    [RelayCommand]
-    private void CloseExportDialog() => IsExportDialogOpen = false;
+        var dialogViewModel = new ExportDialogViewModel(this);
+        try
+        {
+            await OverlayDialog.ShowCustomAsync<DialogResult>(
+                dialogViewModel,
+                DialogHostIds.MainWindow,
+                new OverlayDialogOptions
+                {
+                    CanDragMove = false,
+                    CanLightDismiss = false,
+                    IsCloseButtonVisible = false,
+                    StyleClass = "IEditorExportDialog"
+                });
+        }
+        finally
+        {
+            dialogViewModel.Dispose();
+        }
+    }
 
     public PhotoStudioTool SelectedTool
     {
@@ -808,19 +830,18 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         }
     }
 
-    [RelayCommand]
-    private async Task SaveAsync()
+    public async Task<bool> SaveExportAsync()
     {
         if (IsBusy)
         {
-            return;
+            return false;
         }
 
         var targetPath = ResolveOutputPath();
         if (targetPath is null)
         {
             StatusText = L(Localization.PhotoStudio.Status.OutputPathMissing);
-            return;
+            return false;
         }
 
         IsBusy = true;
@@ -839,17 +860,24 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             PreviewBitmap = CreateBitmap(result.Data);
             OutputPath = targetPath;
             OutputSuggestedStartPath = Path.GetDirectoryName(targetPath) ?? OutputSuggestedStartPath;
-            CloseExportDialogCommand.Execute(null);
             StatusText = string.Format(L(Localization.PhotoStudio.Status.SavedFormat), targetPath);
+            return true;
         }
         catch (Exception ex)
         {
             StatusText = string.Format(L(Localization.PhotoStudio.Status.SaveFailed), ex.Message);
+            return false;
         }
         finally
         {
             IsBusy = false;
         }
+    }
+
+    [RelayCommand]
+    private async Task SaveAsync()
+    {
+        await SaveExportAsync();
     }
 
     [RelayCommand]

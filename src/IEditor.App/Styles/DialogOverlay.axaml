@@ -1,0 +1,26 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:u="https://irihi.tech/ursa">
+  <Style Selector="Border.ie-dialog">
+    <Setter Property="Background" Value="{DynamicResource IEditorSurfaceBrush}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource IEditorBorderBrush}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="14" />
+    <Setter Property="BoxShadow" Value="0 18 50 0 #4D0A1628" />
+  </Style>
+
+  <Style Selector="u|CustomDialogControl.IEditorExportDialog /template/ Border#PART_Border">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="BorderBrush" Value="Transparent" />
+    <Setter Property="BorderThickness" Value="0" />
+    <Setter Property="BoxShadow" Value="0 0 0 0 Transparent" />
+  </Style>
+
+  <Style Selector="u|CustomDialogControl.IEditorExportDialog /template/ Panel#PART_TitleArea">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+
+  <Style Selector="u|CustomDialogControl.IEditorExportDialog /template/ Button#PART_CloseButton">
+    <Setter Property="IsVisible" Value="False" />
+  </Style>
+</Styles>

@@ -3,7 +3,10 @@
   "description": "IEditor 简体中文资源",
   "cultureName": "zh-CN",
   "Localization": {
-    "Common": {
+      "Common": {
+      "Filenames": {
+        "Default": "证件照"
+      },
       "Menu": {
         "File": "文件",
         "Edit": "编辑",
@@ -104,6 +107,7 @@
         "BackgroundHint": "当前底色",
         "Dpi": "分辨率",
         "FileFormat": "文件格式",
+        "Filename": "文件名",
         "FilenameTemplate": "文件名模板",
         "HeightMm": "高（毫米）",
         "OutputQuality": "输出质量",

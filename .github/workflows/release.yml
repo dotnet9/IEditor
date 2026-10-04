@@ -1,4 +1,4 @@
-name: release
+﻿name: release
 
 # Pushing a v* (or bare numeric) tag publishes: self-contained publishes for
 # win-x64 / linux-x64 / osx-x64 / osx-arm64, zipped with SHA-256 checksums,
@@ -72,11 +72,17 @@ jobs:
           "APP_VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           Write-Host "Version: $version"
 
-      - name: Publish
+      - name: Install NativeAOT prerequisites (Linux)
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+
+      - name: Publish (NativeAOT with full reflection metadata)
         shell: pwsh
         run: >
           dotnet publish src/IEditor.App/IEditor.App.csproj -c Release
           -r ${{ matrix.rid }} --self-contained true -p:Version=$env:APP_VERSION
+          -p:PublishAot=true -p:PublishTrimmed=true -p:PublishSingleFile=false
+          -p:IlcGenerateCompleteTypeMetadata=true -p:IlcTrimMetadata=false -p:IlcSingleThreaded=true
           -o "artifacts/publish/${{ matrix.rid }}/IEditor.App"
 
       - name: Package (zip + SHA-256, Windows)

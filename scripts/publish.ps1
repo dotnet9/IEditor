@@ -20,5 +20,6 @@ if ([string]::IsNullOrWhiteSpace($Version)) {
 }
 Write-Host "发布 $RuntimeIdentifier (Version=$Version)"
 
-dotnet publish (Join-Path $repositoryRoot "src/IEditor.App/IEditor.App.csproj") -c Release -r $RuntimeIdentifier --self-contained true -p:Version=$Version -o (Join-Path $repositoryRoot "artifacts/publish/$RuntimeIdentifier/IEditor.App")
+# 全平台 NativeAOT：完整反射元数据保全，单线程 ILC 更稳
+dotnet publish (Join-Path $repositoryRoot "src/IEditor.App/IEditor.App.csproj") -c Release -r $RuntimeIdentifier --self-contained true -p:Version=$Version -p:PublishAot=true -p:PublishTrimmed=true -p:PublishSingleFile=false -p:IlcGenerateCompleteTypeMetadata=true -p:IlcTrimMetadata=false -p:IlcSingleThreaded=true -o (Join-Path $repositoryRoot "artifacts/publish/$RuntimeIdentifier/IEditor.App")
 if ($LASTEXITCODE -ne 0) { throw "publish failed for $RuntimeIdentifier" }

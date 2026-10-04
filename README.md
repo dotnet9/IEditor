@@ -30,3 +30,7 @@
 ```bash
 dotnet run --project src/IEditor.App/IEditor.App.csproj
 ```
+
+## 发布
+
+标准发布流程与发布说明规范见 [docs/RELEASE.md](docs/RELEASE.md)。

@@ -61,6 +61,35 @@ public partial class MainViewModel : LocalizedViewModel, IDisposable
 
         SelectedNavigationItem = NavigationItems[0];
         InitializeLocalizedText();
+        _ = RunScheduledUpdateCheckAsync();
+    }
+
+    /// <summary>「每周检查一次，仅提醒不自动下载」：到期就跳到设置页执行一次检查，结果落在设置页状态栏。</summary>
+    private async Task RunScheduledUpdateCheckAsync()
+    {
+        try
+        {
+            AppPreferences preferences = _preferencesService.Preferences;
+            if (!preferences.AutoCheckUpdate)
+            {
+                return;
+            }
+
+            if (preferences.LastAutoCheckUpdateAt is { } last
+                && DateTime.UtcNow - last.ToUniversalTime() < TimeSpan.FromDays(7))
+            {
+                return;
+            }
+
+            preferences.LastAutoCheckUpdateAt = DateTime.UtcNow;
+            _preferencesService.Save();
+            SelectedNavigationItem = NavigationItems[4];
+            await _settingsPage.CheckUpdateCommand.ExecuteAsync(null);
+        }
+        catch
+        {
+            // 自动检查失败静默，不打扰用户
+        }
     }
 
     public ObservableCollection<NavigationItemViewModel> NavigationItems { get; }

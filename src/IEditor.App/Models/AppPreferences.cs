@@ -49,6 +49,10 @@ public partial class AppPreferences : ObservableObject
     [ObservableProperty]
     private bool autoCheckUpdate = true;
 
+    /// <summary>上次自动检查更新的时间（UTC）；「每周检查一次」的节流依据。</summary>
+    [ObservableProperty]
+    private DateTime? lastAutoCheckUpdateAt;
+
     [ObservableProperty]
     private int batchConcurrency = 4;
 

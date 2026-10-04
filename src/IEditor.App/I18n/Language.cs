@@ -72,6 +72,7 @@ namespace Localization.Common
     public static class States
     {
         public static readonly string AutoSaved = "Localization.Common.States.AutoSaved";
+        public static readonly string CheckingUpdate = "Localization.Common.States.CheckingUpdate";
         public static readonly string ComingSoon = "Localization.Common.States.ComingSoon";
         public static readonly string Completed = "Localization.Common.States.Completed";
         public static readonly string Disabled = "Localization.Common.States.Disabled";
@@ -82,6 +83,9 @@ namespace Localization.Common
         public static readonly string Ready = "Localization.Common.States.Ready";
         public static readonly string Selected = "Localization.Common.States.Selected";
         public static readonly string Unselected = "Localization.Common.States.Unselected";
+        public static readonly string UpdateAvailable = "Localization.Common.States.UpdateAvailable";
+        public static readonly string UpdateCheckFailed = "Localization.Common.States.UpdateCheckFailed";
+        public static readonly string UpToDate = "Localization.Common.States.UpToDate";
         public static readonly string Waiting = "Localization.Common.States.Waiting";
     }
 

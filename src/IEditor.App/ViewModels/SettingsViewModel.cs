@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Reflection;
 using CommunityToolkit.Mvvm.Input;
 using IEditor.App.Models;
 using IEditor.App.Services;
@@ -12,6 +13,7 @@ namespace IEditor.App.ViewModels;
 public partial class SettingsViewModel : WorkspacePageViewModel
 {
     private readonly AppPreferencesService _preferencesService;
+    private readonly UpdateChecker _updateChecker = new("dotnet9", "IEditor");
     private ThemeOptionViewModel? selectedThemeOption;
     private AccentColorOptionViewModel? selectedAccentColorOption;
     private LanguageOptionViewModel? selectedLanguageOption;
@@ -62,7 +64,9 @@ public partial class SettingsViewModel : WorkspacePageViewModel
     private string browseText = string.Empty;
     private string checkUpdateText = string.Empty;
     private string openRepositoryButtonText = string.Empty;
-    private string versionBadgeText = "v0.3.0";
+    private string versionBadgeText = "v" + (Assembly.GetEntryAssembly()?.GetName().Version is { } assemblyVersion
+        ? new Version(assemblyVersion.Major, assemblyVersion.Minor, Math.Max(assemblyVersion.Build, 0)).ToString(3)
+        : "0.3.0");
     private string processingEngineBadgeText = string.Empty;
 
     public SettingsViewModel(AppPreferencesService preferencesService)
@@ -515,9 +519,48 @@ public partial class SettingsViewModel : WorkspacePageViewModel
     }
 
     [RelayCommand]
-    private void CheckUpdate()
+    private async Task CheckUpdateAsync()
     {
-        StatusText = L(Localization.Common.States.ComingSoon);
+        Version current = Assembly.GetEntryAssembly()?.GetName().Version ?? new Version(0, 3, 0);
+        StatusText = L(Localization.Common.States.CheckingUpdate);
+        UpdateCheckResult result = await _updateChecker.CheckAsync(current);
+        if (!result.Succeeded)
+        {
+            StatusText = string.Format(
+                CultureInfo.CurrentCulture,
+                L(Localization.Common.States.UpdateCheckFailed),
+                result.Error);
+            return;
+        }
+
+        if (result.Update is { } update)
+        {
+            // 仅提醒不自动下载：提示并打开发布页
+            StatusText = string.Format(
+                CultureInfo.CurrentCulture,
+                L(Localization.Common.States.UpdateAvailable),
+                update.Tag);
+            OpenUrl(update.PageUrl);
+            return;
+        }
+
+        StatusText = L(Localization.Common.States.UpToDate);
+    }
+
+    private void OpenUrl(string url)
+    {
+        try
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
+        }
+        catch
+        {
+            StatusText = L(Localization.Common.States.ComingSoon);
+        }
     }
 
     [RelayCommand]

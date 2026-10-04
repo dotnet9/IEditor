@@ -99,17 +99,15 @@ jobs:
           $sha = (Get-FileHash -LiteralPath "$out/$name.zip" -Algorithm SHA256).Hash.ToLowerInvariant()
           "$sha  $name.zip" | Set-Content -LiteralPath "$out/$name.zip.sha256" -Encoding ASCII
 
-      - name: Package (zip + SHA-256, Unix)
-        if: runner.os != 'Windows'
+      - name: 打包 Linux deb 安装包
+        if: runner.os == 'Linux'
+        shell: pwsh
+        run: pwsh scripts/package_linux_deb.ps1 -RuntimeIdentifier '${{ matrix.rid }}' -Version $env:APP_VERSION -Force
+
+      - name: 打包 macOS dmg 安装镜像
+        if: runner.os == 'MacOSX'
         shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p artifacts/release
-          name="IEditor-v${APP_VERSION}-${{ matrix.rid }}"
-          (cd "artifacts/publish/${{ matrix.rid }}/IEditor.App" && zip -qr "${{ github.workspace }}/artifacts/release/${name}.zip" .)
-          test -f "artifacts/release/${name}.zip"
-          sha=$(shasum -a 256 "artifacts/release/${name}.zip" | awk '{ print $1 }')
-          printf '%s  %s.zip\n' "$sha" "$name" > "artifacts/release/${name}.zip.sha256"
+        run: chmod +x scripts/package_macos_dmg.sh && ./scripts/package_macos_dmg.sh '${{ matrix.rid }}' "$APP_VERSION"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -176,4 +174,6 @@ jobs:
           generate_release_notes: true
           files: |
             artifacts/release/*.zip
+            artifacts/release/*.deb
+            artifacts/release/*.dmg
             artifacts/release/*.sha256

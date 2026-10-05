@@ -14,7 +14,7 @@
 #endif
 
 [Setup]
-AppId={{{E7A1C2D4-3B5F-4A6E-9C8D-0B1A2C3D4E5F}}
+AppId={{E7A1C2D4-3B5F-4A6E-9C8D-0B1A2C3D4E5F}}
 AppName=IEditor
 AppVersion={#AppVersion}
 AppPublisher=Dotnet9

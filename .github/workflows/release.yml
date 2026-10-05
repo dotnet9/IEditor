@@ -87,19 +87,27 @@ jobs:
           -p:IlcGenerateCompleteTypeMetadata=true -p:IlcTrimMetadata=false -p:IlcSingleThreaded=true
           -o "artifacts/publish/${{ matrix.rid }}/IEditor.App"
 
-      - name: Package (zip + SHA-256, Windows)
+      - name: Build Windows installer (Inno Setup)
+        if: runner.os == 'Windows'
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: scripts/IEditor.iss
+          options: >-
+            /DAppVersion=${{ env.APP_VERSION }}
+\            /DSourceDir=${{ github.workspace }}\artifacts\publish\win-x64\IEditor.App
+\            /DOutputDir=${{ github.workspace }}\artifacts\release
+
+      - name: Compute installer SHA-256 (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $out = "artifacts/release"
-          New-Item -ItemType Directory -Path $out -Force | Out-Null
-          $name = "IEditor-v$env:APP_VERSION-${{ matrix.rid }}"
-          Compress-Archive -Path "artifacts/publish/${{ matrix.rid }}/IEditor.App/*" -DestinationPath "$out/$name.zip" -Force
-          if (-not (Test-Path -LiteralPath "$out/$name.zip" -PathType Leaf)) {
-            throw "Archive was not produced: $name.zip"
+          $installerName = "IEditor-v$env:APP_VERSION-win-x64-setup.exe"
+          $installerPath = Join-Path "artifacts/release" $installerName
+          if (-not (Test-Path -LiteralPath $installerPath -PathType Leaf)) {
+            throw "Installer was not produced: $installerPath"
           }
-          $sha = (Get-FileHash -LiteralPath "$out/$name.zip" -Algorithm SHA256).Hash.ToLowerInvariant()
-          "$sha  $name.zip" | Set-Content -LiteralPath "$out/$name.zip.sha256" -Encoding ASCII
+          $sha = (Get-FileHash -LiteralPath $installerPath -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$sha  $installerName" | Set-Content -LiteralPath "$installerPath.sha256" -Encoding ASCII
 
       - name: 打包 Linux deb 安装包
         if: runner.os == 'Linux'

@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CodeWF.Tools.UpdateChecking" Version="1.3.16" />
+    <PackageReference Include="CodeWF.Tools.UpdateChecking" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
     <PackageReference Include="Avalonia.Controls.ColorPicker" />

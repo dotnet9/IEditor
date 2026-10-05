@@ -1,10 +1,11 @@
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
 using CommunityToolkit.Mvvm.Input;
 using IEditor.App.Models;
 using IEditor.App.Services;
+using CodeWF.Tools.UpdateChecking;
 using IEditor.Core.Models;
 using Lang.Avalonia;
 

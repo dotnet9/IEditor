@@ -4,7 +4,7 @@
     <CentralPackageVersionOverrideEnabled>true</CentralPackageVersionOverrideEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="CodeWF.Toolkit.Core" Version="1.0.0.0-preview.1" />
+    <PackageVersion Include="CodeWF.Toolkit.Core" Version="1.0.0.1" />
     <PackageVersion Include="Avalonia" Version="12.1.4" />
     <PackageVersion Include="Avalonia.Controls.ColorPicker" Version="12.1.4" />
     <PackageVersion Include="Avalonia.Desktop" Version="12.1.4" />
@@ -12,7 +12,7 @@
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="Irihi.Ursa" Version="2.2.0" />
     <PackageVersion Include="Irihi.Ursa.Themes.Semi" Version="2.2.0" />
-    <PackageVersion Include="CodeWF.Avalonia.Lang" Version="12.1.4.0-preview.1" />
+    <PackageVersion Include="CodeWF.Avalonia.Lang" Version="12.1.4.1" />
     
     <PackageVersion Include="Magick.NET-Q16-AnyCPU" Version="14.16.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />

@@ -11,13 +11,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CodeWF.Tools.UpdateChecking" />
+    <PackageReference Include="CodeWF.Toolkit.Core" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
     <PackageReference Include="Avalonia.Controls.ColorPicker" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="Lang.Avalonia" />
-    <PackageReference Include="Lang.Avalonia.Json" />
+    <PackageReference Include="CodeWF.Avalonia.Lang" />
     <PackageReference Include="Irihi.Ursa" />
     <PackageReference Include="Irihi.Ursa.Themes.Semi" />
     <PackageReference Include="Semi.Avalonia" />

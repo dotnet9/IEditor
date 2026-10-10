@@ -5,9 +5,9 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.Input;
 using IEditor.App.Models;
 using IEditor.App.Services;
-using CodeWF.Tools.UpdateChecking;
+using CodeWF.Toolkit.Core.UpdateChecking;
 using IEditor.Core.Models;
-using Lang.Avalonia;
+using CodeWF.Avalonia.Lang;
 
 namespace IEditor.App.ViewModels;
 

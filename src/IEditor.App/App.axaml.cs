@@ -5,8 +5,8 @@ using IEditor.App.Services;
 using IEditor.App.ViewModels;
 using IEditor.App.Views;
 using IEditor.Core.Services;
-using Lang.Avalonia;
-using Lang.Avalonia.Json;
+using CodeWF.Avalonia.Lang;
+using CodeWF.Avalonia.Lang.Json;
 using System.Globalization;
 using System.IO;
 

@@ -1,7 +1,8 @@
-<Window
+<codewf:CodeWFWindow
     x:Class="IEditor.App.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:codewf="https://codewf.com"
     xmlns:helpers="using:IEditor.App.Helpers"
     xmlns:dialogViews="using:IEditor.App.Views.Dialogs"
     xmlns:dialogVm="using:IEditor.App.ViewModels.Dialogs"
@@ -11,8 +12,6 @@
     x:CompileBindings="True"
     x:DataType="vm:MainViewModel"
     Background="{DynamicResource IEditorWindowBackgroundBrush}"
-    ExtendClientAreaTitleBarHeightHint="42"
-    ExtendClientAreaToDecorationsHint="True"
     FontFamily="Microsoft YaHei UI, Microsoft YaHei, Segoe UI"
     Height="860"
     Icon="/Assets/logo.ico"
@@ -20,74 +19,35 @@
     MinWidth="1100"
     Title="{Binding WindowTitle}"
     Width="1320"
-    WindowDecorations="BorderOnly"
+    TitleBarHeight="42"
+    TitleBarBackground="{DynamicResource IEditorTitlebarBrush}"
+    TitleBarBorderBrush="{DynamicResource IEditorAccentGradientBrush}"
+    TitleBarBorderThickness="0,0,0,3"
     WindowStartupLocation="CenterScreen">
+  <codewf:CodeWFWindow.LeftContent>
+    <!-- 自定义标题栏（品牌区） -->
+    <StackPanel
+        Margin="10,0,0,0"
+        Orientation="Horizontal"
+        Spacing="10"
+        VerticalAlignment="Center">
+      <Image
+          Width="34"
+          Height="34"
+          Source="/Assets/logo.png" />
+      <StackPanel VerticalAlignment="Center" Spacing="1">
+        <TextBlock FontSize="15" FontWeight="Bold" Text="{Binding WindowTitle}" />
+        <TextBlock
+            Classes="ie-footnote"
+            FontSize="11"
+            Text="{Binding BrandSubtitle}" />
+      </StackPanel>
+    </StackPanel>
+  </codewf:CodeWFWindow.LeftContent>
   <Grid>
-    <Grid RowDefinitions="42,Auto,*">
-      <!-- 自定义标题栏（品牌区） -->
-      <Grid
-          Background="{DynamicResource IEditorTitlebarBrush}"
-          DoubleTapped="OnTitleBarDoubleTapped"
-          PointerPressed="OnTitleBarPointerPressed">
-        <StackPanel
-            Margin="10,0,0,0"
-            Orientation="Horizontal"
-            Spacing="10"
-            VerticalAlignment="Center">
-          <Image
-              Width="34"
-              Height="34"
-              Source="/Assets/logo.png" />
-          <StackPanel VerticalAlignment="Center" Spacing="1">
-            <TextBlock FontSize="15" FontWeight="Bold" Text="{Binding WindowTitle}" />
-            <TextBlock
-                Classes="ie-footnote"
-                FontSize="11"
-                Text="{Binding BrandSubtitle}" />
-          </StackPanel>
-        </StackPanel>
-        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-          <Button
-              Classes="ie-window-button"
-              Click="OnMinimizeClick"
-              ToolTip.Tip="最小化">
-            <Path
-                Classes="ie-icon"
-                Width="11"
-                Height="11"
-                Data="M1.5,6 H10.5"
-                Stroke="{Binding $parent[Button].Foreground}"
-                StrokeThickness="1.2" />
-          </Button>
-          <Button
-              Classes="ie-window-button"
-              Click="OnMaximizeClick"
-              ToolTip.Tip="最大化 / 还原">
-            <Path
-                Classes="ie-icon"
-                Width="11"
-                Height="11"
-                Data="M2,2.5 H9.5 V10 H2 Z"
-                Stroke="{Binding $parent[Button].Foreground}"
-                StrokeThickness="1.2" />
-          </Button>
-          <Button
-              Classes="ie-window-button close"
-              Click="OnCloseClick"
-              ToolTip.Tip="关闭">
-            <Path
-                Classes="ie-icon"
-                Width="11"
-                Height="11"
-                Data="M2,2 L10,10 M10,2 L2,10"
-                Stroke="{Binding $parent[Button].Foreground}"
-                StrokeThickness="1.2" />
-          </Button>
-        </StackPanel>
-      </Grid>
-
+    <Grid RowDefinitions="Auto,*">
       <!-- 菜单栏：低频命令收纳 -->
-      <Menu Grid.Row="1" FontSize="12.5">
+      <Menu Grid.Row="0" FontSize="12.5">
         <MenuItem Header="文件">
           <MenuItem
               Header="打开图片…"
@@ -240,7 +200,7 @@
         </MenuItem>
       </Menu>
 
-      <views:MainView Grid.Row="2" />
+      <views:MainView Grid.Row="1" />
     </Grid>
 
     <u:OverlayDialogHost
@@ -253,13 +213,5 @@
         </DataTemplate>
       </u:OverlayDialogHost.DialogDataTemplates>
     </u:OverlayDialogHost>
-
-    <!-- 窗口顶部品牌渐变线 -->
-    <Border
-        Height="3"
-        VerticalAlignment="Top"
-        Background="{DynamicResource IEditorAccentGradientBrush}"
-        IsHitTestVisible="False"
-        ZIndex="99" />
   </Grid>
-</Window>
+</codewf:CodeWFWindow>

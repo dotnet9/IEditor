@@ -6,7 +6,7 @@
     <AssemblyName>IEditor.App</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>..\..\logo.ico</ApplicationIcon>
-    <Version>0.3.3</Version>
+    <Version>0.3.4</Version>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
@@ -16,6 +16,7 @@
     <PackageReference Include="Avalonia.Fonts.Inter" />
     <PackageReference Include="Avalonia.Controls.ColorPicker" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="CodeWF.Avalonia.Controls" />
     <PackageReference Include="CodeWF.Avalonia.Lang" />
     <PackageReference Include="Irihi.Ursa" />
     <PackageReference Include="Irihi.Ursa.Themes.Semi" />

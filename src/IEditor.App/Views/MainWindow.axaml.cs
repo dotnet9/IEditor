@@ -2,14 +2,14 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using CodeWF.Avalonia.Controls.Controls;
 using IEditor.App.ViewModels;
 
 namespace IEditor.App.Views;
 
-public partial class MainWindow : Window
+public partial class MainWindow : CodeWFWindow
 {
     public static MainWindow? Instance { get; private set; }
 
@@ -20,28 +20,6 @@ public partial class MainWindow : Window
     }
 
     private MainViewModel? ViewModel => DataContext as MainViewModel;
-
-    private void OnTitleBarPointerPressed(object? sender, PointerPressedEventArgs e)
-    {
-        if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
-        {
-            BeginMoveDrag(e);
-        }
-    }
-
-    private void OnTitleBarDoubleTapped(object? sender, TappedEventArgs e)
-    {
-        WindowState = WindowState == WindowState.Maximized
-            ? WindowState.Normal
-            : WindowState.Maximized;
-    }
-
-    private void OnMinimizeClick(object? sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
-
-    private void OnMaximizeClick(object? sender, RoutedEventArgs e) =>
-        WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
-
-    private void OnCloseClick(object? sender, RoutedEventArgs e) => Close();
 
     private void OnExitClick(object? sender, RoutedEventArgs e) => Close();
 

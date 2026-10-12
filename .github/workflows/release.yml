@@ -1,8 +1,8 @@
 ﻿name: release
 
-# Pushing a v* (or bare numeric) tag publishes: self-contained publishes for
-# win-x64 / linux-x64 / osx-x64 / osx-arm64, zipped with SHA-256 checksums,
-# followed by a GitHub Release.
+# Pushing a v* (or bare numeric) tag publishes AOT-trimmed installers for
+# win-x64 (Inno Setup setup.exe) / linux-x64 / linux-arm64 (deb) /
+# osx-x64 / osx-arm64 (dmg) with SHA-256 checksums, followed by a GitHub Release.
 on:
   push:
     tags:

@@ -18,5 +18,5 @@ if ($Version -notmatch '^\d+(\.\d+){1,3}$') { throw "Invalid version: $Version" 
 Write-Host "发布 $RuntimeIdentifier (Version=$Version)"
 
 # 全平台 NativeAOT：完整反射元数据保全，单线程 ILC 更稳
-dotnet publish (Join-Path $repositoryRoot "src/IEditor.App/IEditor.App.csproj") -c Release -r $RuntimeIdentifier --self-contained true -p:Version=$Version -p:DebugType=portable -p:DebugSymbols=true -p:PublishAot=true -p:PublishTrimmed=true -p:PublishSingleFile=false -p:IlcGenerateCompleteTypeMetadata=true -p:IlcTrimMetadata=false -p:IlcSingleThreaded=true -o (Join-Path $repositoryRoot "artifacts/publish/$RuntimeIdentifier/IEditor.App")
+dotnet publish (Join-Path $repositoryRoot "src/IEditor.App/IEditor.App.csproj") -c Release -r $RuntimeIdentifier --self-contained true -m:1 -p:Version=$Version -p:DebugType=portable -p:DebugSymbols=true -p:PublishAot=true -p:PublishTrimmed=true -p:PublishSingleFile=false -p:IlcGenerateCompleteTypeMetadata=true -p:IlcTrimMetadata=false -p:IlcSingleThreaded=true -o (Join-Path $repositoryRoot "artifacts/publish/$RuntimeIdentifier/IEditor.App")
 if ($LASTEXITCODE -ne 0) { throw "publish failed for $RuntimeIdentifier" }

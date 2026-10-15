@@ -6,7 +6,7 @@
     <AssemblyName>IEditor.App</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>..\..\logo.ico</ApplicationIcon>
-    <Version>0.3.9</Version>
+    <Version>0.3.10</Version>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <!-- CI（release.yml）按 RID 做 NativeAOT 发布；裁剪配置与免裁清单与 Vex 对齐 -->
     <IsTrimmable>true</IsTrimmable>

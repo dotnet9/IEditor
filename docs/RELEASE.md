@@ -1,6 +1,6 @@
-# IEditor 发布流程
+﻿# IEditor 发布流程
 
-版本唯一来源为 `src/IEditor.App/IEditor.App.csproj`，版本标签必须匹配，如 `0.3.9` 对应 `v0.3.9`。精选发布说明放在 `.github/release-notes/v0.3.9.md`。
+版本唯一来源为 `src/IEditor.App/IEditor.App.csproj`，版本标签必须匹配，如 `0.3.10` 对应 `v0.3.10`。精选发布说明放在 `.github/release-notes/v0.3.10.md`。
 
 ## 本机验证
 
@@ -29,8 +29,8 @@ dotnet publish scripts/ui-verification/UiVerification.csproj -c Release -r win-x
 
 ```powershell
 git push origin main
-git tag -a v0.3.9 -F .github/release-notes/v0.3.9.md
-git push origin v0.3.9
+git tag -a v0.3.10 -F .github/release-notes/v0.3.10.md
+git push origin v0.3.10
 ```
 
 本地开发可用 `temp_nugets` 目录验证新包，不提交本地源配置或跨仓库项目引用。正式 CI 使用 nuget.org；共享包可用后再触发版本标签。

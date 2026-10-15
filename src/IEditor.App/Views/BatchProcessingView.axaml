@@ -34,7 +34,7 @@
       <Grid ColumnDefinitions="*,320" ColumnSpacing="16" Margin="20">
 
         <!-- 左列 -->
-        <StackPanel Spacing="14">
+        <Grid RowDefinitions="Auto,*" RowSpacing="14">
           <!-- 导入区 -->
           <Border Classes="ie-card" Padding="22">
             <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16" VerticalAlignment="Center">
@@ -56,7 +56,7 @@
           </Border>
 
           <!-- 处理队列 -->
-          <Border Classes="ie-card">
+          <Border Grid.Row="1" Classes="ie-card" VerticalAlignment="Top">
             <Grid RowDefinitions="Auto,Auto,*,Auto">
               <Border Classes="ie-card-header">
                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
@@ -82,7 +82,7 @@
                 </Grid>
               </Border>
 
-              <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+              <ScrollViewer x:Name="BatchQueueScrollViewer" Grid.Row="2" VerticalScrollBarVisibility="Auto">
                 <ItemsControl ItemsSource="{Binding QueueItems}">
                   <ItemsControl.ItemTemplate>
                     <DataTemplate x:DataType="vm:BatchProcessingItemViewModel">
@@ -158,10 +158,11 @@
               </Border>
             </Grid>
           </Border>
-        </StackPanel>
+        </Grid>
 
         <!-- 右列 -->
-        <StackPanel Grid.Column="1" Spacing="14">
+        <ScrollViewer Grid.Column="1" x:Name="BatchOptionsScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+        <StackPanel Spacing="14">
           <!-- 统一尺寸 -->
           <Border Classes="ie-card">
             <StackPanel>
@@ -303,12 +304,13 @@
                     <TextBlock Classes="ie-row-title" Text="{Binding OpenFolderWhenDoneLabelText}" />
                     <TextBlock Classes="ie-footnote" Text="{Binding OpenFolderWhenDoneDescriptionText}" />
                   </StackPanel>
-                  <ToggleSwitch OnContent="" OffContent="" Grid.Column="1" IsChecked="{Binding OpenFolderWhenDone, Mode=TwoWay}" />
+                  <ToggleSwitch x:Name="BatchOpenFolderToggle" OnContent="" OffContent="" Grid.Column="1" IsChecked="{Binding OpenFolderWhenDone, Mode=TwoWay}" />
                 </Grid>
               </Border>
             </StackPanel>
           </Border>
         </StackPanel>
+        </ScrollViewer>
       </Grid>
     </Border>
 

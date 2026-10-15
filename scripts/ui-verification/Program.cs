@@ -177,6 +177,29 @@ model.SetThemeDarkCommand.Execute(null); Pump(); Capture(window, "batch-loaded-d
 batch.RemoveItemCommand.Execute(batch.QueueItems[0]); Check(batch.QueueItems.Count == 2, "Row removal releases only the requested image");
 var corrupt = Path.Combine(inputs, "broken.png"); File.WriteAllText(corrupt, "invalid image");
 batch.AddImagePaths([corrupt]); Check(batch.QueueItems.Last().IsFailed && batch.QueueItems.Count == 3, "Corrupt images stay visible as failed rows");
+var queueInputs = Enumerable.Range(0, 28).Select(index => Path.Combine(inputs, "queue-" + index + ".png")).ToArray();
+foreach (var path in queueInputs) File.Copy(sourcePaths[0], path, true);
+batch.AddImagePaths(queueInputs);
+foreach (var culture in new[] { "zh-CN", "en-US" })
+{
+    I18nManager.Instance.Culture = CultureInfo.GetCultureInfo(culture);
+    window.Width = window.MinWidth; window.Height = window.MinHeight; Pump();
+    var options = window.GetVisualDescendants().OfType<ScrollViewer>().Single(control => control.Name == "BatchOptionsScrollViewer");
+    var openFolder = window.GetVisualDescendants().OfType<ToggleSwitch>().Single(control => control.Name == "BatchOpenFolderToggle");
+    options.ScrollToEnd(); Pump();
+    var point = openFolder.TranslatePoint(default, window)!.Value;
+    Check(point.Y >= 0 && point.Y + openFolder.Bounds.Height <= window.Bounds.Height - 34, "Minimum-window batch options remain reachable: " + culture);
+    var original = batch.OpenFolderWhenDone;
+    var click = point + new Vector(openFolder.Bounds.Width / 2, openFolder.Bounds.Height / 2);
+    window.MouseDown(click, Avalonia.Input.MouseButton.Left); window.MouseUp(click, Avalonia.Input.MouseButton.Left); Pump();
+    Check(batch.OpenFolderWhenDone != original, "Actual minimum-window option click updates the view model: " + culture);
+    Capture(window, "batch-minimum-" + culture + ".png");
+    var queue = window.GetVisualDescendants().OfType<ScrollViewer>().Single(control => control.Name == "BatchQueueScrollViewer");
+    Check(queue.Extent.Height > queue.Viewport.Height && queue.Viewport.Height > 0, "Large queue has a finite scrollable viewport: " + culture);
+    queue.ScrollToEnd(); Pump();
+    Check(queue.Offset.Y > 0, "Minimum-window queue reaches its final rows: " + culture);
+    Capture(window, "batch-queue-scroll-" + culture + ".png");
+}
 window.Close(); Console.WriteLine("IEditor UI verification passed: " + output);
 
 void Check(bool value, string message) { if (!value) throw new InvalidOperationException(message); Console.WriteLine("PASS " + message); }

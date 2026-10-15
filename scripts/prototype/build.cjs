@@ -3,7 +3,12 @@ const fs=require('fs');const path=require('path');
 const root=path.resolve(__dirname,'../..');const source=path.join(__dirname,'source');const output=path.join(root,'design/index.html');
 const check=process.argv.includes('--check');
 const asset=name=>fs.readFileSync(path.join(source,name),'utf8').replace(/^\uFEFF/,'').replace(/\r\n/g,'\n');
-const image=name=>'data:image/'+(name.endsWith('.svg')?'svg+xml':'png')+';base64,'+fs.readFileSync(path.join(root,name)).toString('base64');
+// SVG 按文本规范换行；位图保留原始字节，跨平台检出产生相同的交付 HTML。
+const image=name=>{
+ const file=path.join(root,name),svg=name.endsWith('.svg');
+ const bytes=svg?Buffer.from(fs.readFileSync(file,'utf8').replace(/^\uFEFF/,'').replace(/\r\n?/g,'\n'),'utf8'):fs.readFileSync(file);
+ return 'data:image/'+(svg?'svg+xml':'png')+';base64,'+bytes.toString('base64');
+};
 const pages={};for(const route of ['photo','batch','settings']){
  let html=asset(route+'.html');
  html=html.replace(/<link rel="stylesheet" href="([^"]+)">/g,(_,file)=>'<style>'+asset(file)+'</style>');

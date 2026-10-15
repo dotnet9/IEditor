@@ -47,9 +47,12 @@ public partial class App : Application
 
     private static void RegisterLocalization()
     {
+        // macOS 标准应用包把宿主资源放在 Contents/Resources，其他部署使用相邻目录。
+        var bundledResources = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "Resources", "I18n"));
         var langPlugin = new JsonLangPlugin
         {
-            ResourceFolder = Path.Combine(AppContext.BaseDirectory, "I18n")
+            ResourceFolder = OperatingSystem.IsMacOS() && Directory.Exists(bundledResources)
+                ? bundledResources : Path.Combine(AppContext.BaseDirectory, "I18n")
         };
 
         I18nManager.Instance.Register(langPlugin, new CultureInfo("zh-CN"), out _);

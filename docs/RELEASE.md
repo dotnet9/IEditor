@@ -44,3 +44,7 @@ git push origin v0.3.6
 | osx-arm64 | macos-15 | arm64 dmg |
 
 发布资产仅包含上述安装包与 SHA-256 文件；界面证据作为独立 Actions artifact 保留。Release 说明优先精选文件，其次附注标签，禁止以缺失说明静默继续。发布后核对五个平台安装包、校验文件和全部工作流结果。
+
+发布前 `verify_release_installers.ps1` 严格检查五个平台各有一个非空、版本匹配的安装包及对应真实 SHA-256，拒绝 ZIP 和任何额外文件。PDB、DBG、dSYM 不进入安装包。macOS 翻译位于 `Contents/Resources/I18n`，默认 ad-hoc 签名或使用配置的 Developer ID；签名或严格验证失败会终止打包，ad-hoc 签名不等于 Apple 公证。
+
+Linux deb 提供命令行启动器、桌面菜单和图标，安装容量按剔除调试符号后的真实文件计算。本机验证了 staging 结构、启动参数与剔符号行为；Windows 不执行真实 dpkg 或 macOS 签名，实际打包结果以对应原生 runner 为准。

@@ -1,4 +1,4 @@
-﻿name: release
+name: release
 
 # 版本标签触发五个平台的原生 AOT 验证与 exe、deb、dmg 安装包发布。
 on:
@@ -218,6 +218,10 @@ jobs:
             if ([string]::IsNullOrWhiteSpace($tagMessage)) { throw 'Release notes are required.' }
             $tagMessage | Set-Content -LiteralPath $bodyPath -Encoding utf8
           }
+
+      - name: 校验五平台安装包与 SHA-256
+        shell: pwsh
+        run: ./scripts/verify_release_installers.ps1 -Version '${{ steps.version.outputs.version }}'
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

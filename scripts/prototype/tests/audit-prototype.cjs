@@ -27,7 +27,15 @@ const { chromium }=require('playwright');const path=require('path');const fs=req
    await frame.locator('#qRange').evaluate(el=>{el.value='80';el.dispatchEvent(new Event('input',{bubbles:true}));});if(await frame.locator('#qVal').innerText()!=='80')throw Error('Quality did not change');await frame.locator('#exportDialog [data-close]').first().click();
    await frame.locator('#btnGuides').click();if(!await frame.locator('#guides').evaluate(el=>el.classList.contains('hidden')))throw Error('Guide toggle failed');
   }
-  await frame.locator('[data-language-open]').click();if(!await frame.locator('.title-language-menu').isVisible())throw Error('Language menu did not open');await frame.locator('[data-culture="en-US"]').click();if(await frame.locator('.title-language-menu').isVisible())throw Error('Language menu did not close');
+  // 逐项实际点击，首项位于菜单栏上方，可发现标题栏层叠上下文遮挡。
+  const menuCultures=await frame.locator('.title-language-menu [data-culture]').evaluateAll(items=>items.map(item=>item.dataset.culture));
+  if(menuCultures.length!==2||!menuCultures.includes('zh-CN')||!menuCultures.includes('en-US'))throw Error('Language choices differ from the application');
+  for(const culture of [...menuCultures,...menuCultures]){
+   await frame.locator('[data-language-open]').click();if(!await frame.locator('.title-language-menu').isVisible())throw Error('Language menu did not open: '+route);
+   await frame.locator('[data-culture="'+culture+'"]').click();
+   if(await frame.locator('.title-language-menu').isVisible())throw Error('Language menu did not close: '+route);
+   if((await frame.evaluate(()=>window.IEditorPrototype.getState())).language!==culture)throw Error('Language menu did not switch the existing workspace: '+route+'/'+culture);
+  }
   const previousMode=await frame.locator('[data-theme-cycle]').getAttribute('data-mode');for(let index=0;index<3;index++)await frame.locator('[data-theme-cycle]').click();if(await frame.locator('[data-theme-cycle]').getAttribute('data-mode')!==previousMode)throw Error('Three-state theme cycle failed');
   if(await frame.locator('.titlebar .win-controls button').count()!==3)throw Error('Missing desktop caption buttons');
   await frame.evaluate(()=>window.IEditorPrototype.openAbout());if(!await frame.locator('.about-titlebar').isVisible()||!await frame.locator('.about-meta').innerText().then(text=>text.includes('2026-10-15 00:00:00')))throw Error('About desktop chrome or sample build time missing');for(const language of ['zh-CN','en-US']){

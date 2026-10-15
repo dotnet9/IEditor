@@ -2,7 +2,9 @@
 const fs=require('fs');const path=require('path');
 const root=path.resolve(__dirname,'../..');const source=path.join(__dirname,'source');const output=path.join(root,'design/index.html');
 const check=process.argv.includes('--check');
-const asset=name=>fs.readFileSync(path.join(source,name),'utf8').replace(/^\uFEFF/,'').replace(/\r\n/g,'\n');
+const productVersion=fs.readFileSync(path.join(root,'src/IEditor.App/IEditor.App.csproj'),'utf8').match(/<Version>(\d+\.\d+\.\d+)<\/Version>/)?.[1];
+if(!productVersion)throw Error('Product version is missing');
+const asset=name=>fs.readFileSync(path.join(source,name),'utf8').replace(/^\uFEFF/,'').replace(/\r\n/g,'\n').replaceAll('__APP_VERSION__',productVersion);
 // SVG 按文本规范换行；位图保留原始字节，跨平台检出产生相同的交付 HTML。
 const image=name=>{
  const file=path.join(root,name),svg=name.endsWith('.svg');

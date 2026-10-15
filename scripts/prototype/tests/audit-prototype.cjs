@@ -1,6 +1,7 @@
 const { chromium }=require('playwright');const path=require('path');const fs=require('fs');const {pathToFileURL}=require('url');
 (async()=>{
  const root=path.resolve(__dirname,'../../..');const output=process.env.IEDITOR_AUDIT_OUTPUT||path.join(root,'artifacts/prototype-audit');fs.mkdirSync(output,{recursive:true});
+ const productVersion=fs.readFileSync(path.join(root,'src/IEditor.App/IEditor.App.csproj'),'utf8').match(/<Version>(\d+\.\d+\.\d+)<\/Version>/)?.[1];
  const isolated=path.join(output,'offline-copy');fs.mkdirSync(isolated,{recursive:true});const html=path.join(isolated,'index.html');fs.copyFileSync(path.join(root,'design/index.html'),html);
  const browser=await chromium.launch({headless:true,...(process.env.CI?{}:{channel:'msedge'})});const context=await browser.newContext({viewport:{width:1320,height:860},deviceScaleFactor:1,offline:true});
  const page=await context.newPage();const errors=[];const external=[];page.on('pageerror',e=>errors.push(e.stack));page.on('request',request=>{if(/^https?:/.test(request.url()))external.push(request.url());});
@@ -50,7 +51,21 @@ const { chromium }=require('playwright');const path=require('path');const fs=req
    await frame.evaluate(state=>window.IEditorPrototype.set(state),{language,mode:'Light',palette:'DotNet'});
    for(const state of ['checking','available','downloading','downloaded','canceled','failed']){await frame.evaluate(value=>window.IEditorPrototype.setUpdate(value),state);if(!await frame.locator('[data-update-action]').innerText())throw Error('Missing update action');}
    await frame.locator('.product-about').screenshot({path:path.join(output,'about-'+language+'.png'),animations:'disabled'});
-  }await frame.locator('.about-close').click();
+  }if(!await frame.locator('.about-meta').innerText().then(text=>text.includes('v'+productVersion)))throw Error('Prototype and product versions differ');await frame.locator('.about-close').click();
+  if(route==='batch'){
+   await page.setViewportSize({width:1100,height:760});
+   for(const language of ['zh-CN','en-US']){
+    await frame.evaluate(state=>window.IEditorPrototype.set(state),{language,mode:'Light',palette:'DotNet'});
+    await frame.locator('.batch-options').evaluate(element=>element.scrollTop=element.scrollHeight);
+    const reachable=await frame.locator('.batch-options .switch').last().evaluate(element=>{const point=element.getBoundingClientRect(),panel=element.closest('.batch-options').getBoundingClientRect();return point.top>=panel.top&&point.bottom<=panel.bottom;});
+    if(!reachable)throw Error('Minimum-window batch option is clipped: '+language);
+    const original=await frame.locator('.batch-options input[type=checkbox]').last().isChecked();
+    await frame.locator('.batch-options .switch').last().click();
+    if(await frame.locator('.batch-options input[type=checkbox]').last().isChecked()===original)throw Error('Minimum-window option click did not update its value');
+    await page.screenshot({path:path.join(output,'batch-minimum-'+language+'.png'),animations:'disabled'});
+   }
+   await page.setViewportSize({width:1320,height:860});
+  }
   const remaining=await frame.evaluate(()=>{const result=[];const walker=document.createTreeWalker(document.querySelector('.window'),NodeFilter.SHOW_TEXT);let node;while(node=walker.nextNode())if(!node.parentElement.closest('script,style,svg,select')&&node.parentElement.checkVisibility()&&/[\u4e00-\u9fff]/.test(node.textContent))result.push(node.textContent.trim());return [...new Set(result)].filter(Boolean);});
   fs.writeFileSync(path.join(output,route+'-remaining-chinese.json'),JSON.stringify(remaining,null,2));
   if(remaining.length)throw Error('Untranslated visible content in '+route+': '+remaining.join('; '));

@@ -905,7 +905,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         finally
         {
             IsBusy = false;
-            if (previewDirty && !string.IsNullOrWhiteSpace(SourcePath))
+            if (previewDirty && !previewInteractionActive && !string.IsNullOrWhiteSpace(SourcePath))
             {
                 previewTimer.Stop();
                 previewTimer.Start();
@@ -954,7 +954,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         finally
         {
             IsBusy = false;
-            if (previewDirty && !string.IsNullOrWhiteSpace(SourcePath))
+            if (previewDirty && !previewInteractionActive && !string.IsNullOrWhiteSpace(SourcePath))
             {
                 previewTimer.Stop();
                 previewTimer.Start();

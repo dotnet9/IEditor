@@ -344,7 +344,7 @@
         "MenuHint": "Commands and keyboard shortcuts are available in the menus",
         "TemplateHint": "Tokens: {size} {color} {date} {index}",
         "SettingsSaved": "All changes saved automatically",
-        "PrototypeVersion": "v0.3.6 · Prototype",
+        "PrototypeVersion": "v0.3.7 · Prototype",
         "EmptyHint": "Drop an image here, or use",
         "OpenMenuPath": "File › Open image",
         "CustomShort": "Custom",

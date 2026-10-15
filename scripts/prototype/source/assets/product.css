@@ -20,3 +20,5 @@ body[data-capture] .desk { padding:0; }.window { min-height:0; }body[data-captur
 .switch input:checked + i { background:#35B34A; }
 
 .main,.content { min-height:0; }
+
+.about-titlebar{height:32px;margin:-28px -28px 24px;padding-left:16px;display:flex;align-items:center;justify-content:space-between;background:var(--surface-2);border-bottom:1px solid var(--border);font-size:12px}.about-titlebar>div{display:flex;height:32px}.about-titlebar button{width:34px;height:32px;border:0;border-radius:0;background:transparent;color:var(--text-1);font:18px "Segoe UI",sans-serif;cursor:pointer}.about-titlebar button:last-child:hover{background:#c42b1c;color:white}.product-about{border-radius:0}.product-about.about-maximized{width:90vw;height:90vh}

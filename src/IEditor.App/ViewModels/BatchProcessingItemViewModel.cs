@@ -130,7 +130,8 @@ public partial class BatchProcessingItemViewModel : ObservableObject, IDisposabl
             bitmap.PixelSize.Width,
             bitmap.PixelSize.Height,
             sourcePath,
-            bitmap) { IsSelected = true };
+            bitmap)
+        { IsSelected = true };
     }
 
     public void Dispose()

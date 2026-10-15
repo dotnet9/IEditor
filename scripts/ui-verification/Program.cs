@@ -86,11 +86,12 @@ for (var index = 0; index < 3; index++)
 }
 var photo = model.PhotoPage; photo.SetSourcePath(Path.Combine(inputs, "sample-0.png")); WaitUntil(() => !photo.IsBusy && photo.PreviewBitmap is not null);
 Check(photo.PreviewBitmap!.PixelSize.Width == 295 && photo.PreviewBitmap.PixelSize.Height == 413, "Real image preview matches one-inch 300 DPI output");
+// 先暂停防抖预览，再变更一组参数，避免定时器与显式预览争用导出。
+photo.BeginPreviewInteraction(); WaitUntil(() => !photo.IsBusy);
 photo.SelectedSizeOption = photo.SizeOptions.Single(item => item.IsCustom); photo.WidthMm = 30; photo.HeightMm = 40;
 photo.Dpi = 150; photo.OutputFormat = PhotoOutputFormat.Png; photo.ShowGuides = false;
-WaitUntil(() => !photo.IsBusy); Complete(photo.GeneratePreviewCommand.ExecuteAsync(null));
-photo.BeginPreviewInteraction(); WaitUntil(() => !photo.IsBusy);
-photo.OutputPath = Path.Combine(output, "exports", "single.png"); var save = photo.SaveExportAsync(); Complete(save); Check(save.Result, "Single export succeeds");
+Complete(photo.GeneratePreviewCommand.ExecuteAsync(null));
+photo.OutputPath = Path.Combine(output, "exports", "single.png"); var save = photo.SaveExportAsync(); Complete(save); Check(save.Result, "Single export succeeds: " + photo.StatusText);
 using (var exported = new MagickImage(photo.OutputPath))
 {
     Check(exported.Width == 177 && exported.Height == 236, "Changing size and DPI changes the exported pixels");

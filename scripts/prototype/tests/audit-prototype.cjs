@@ -26,7 +26,8 @@ const { chromium }=require('playwright');const path=require('path');const fs=req
    await frame.locator('#qRange').evaluate(el=>{el.value='80';el.dispatchEvent(new Event('input',{bubbles:true}));});if(await frame.locator('#qVal').innerText()!=='80')throw Error('Quality did not change');await frame.locator('#exportDialog [data-close]').first().click();
    await frame.locator('#btnGuides').click();if(!await frame.locator('#guides').evaluate(el=>el.classList.contains('hidden')))throw Error('Guide toggle failed');
   }
-  await frame.evaluate(()=>window.IEditorPrototype.openAbout());for(const language of ['zh-CN','en-US']){
+  if(await frame.locator('.titlebar .win-controls button').count()!==3)throw Error('Missing desktop caption buttons');
+  await frame.evaluate(()=>window.IEditorPrototype.openAbout());if(!await frame.locator('.about-titlebar').isVisible()||!await frame.locator('.about-meta').innerText().then(text=>text.includes('2026-10-15 00:00:00')))throw Error('About desktop chrome or sample build time missing');for(const language of ['zh-CN','en-US']){
    await frame.evaluate(state=>window.IEditorPrototype.set(state),{language,mode:'Light',palette:'DotNet'});
    for(const state of ['checking','available','downloading','downloaded','canceled','failed']){await frame.evaluate(value=>window.IEditorPrototype.setUpdate(value),state);if(!await frame.locator('[data-update-action]').innerText())throw Error('Missing update action');}
    await frame.locator('.product-about').screenshot({path:path.join(output,'about-'+language+'.png'),animations:'disabled'});

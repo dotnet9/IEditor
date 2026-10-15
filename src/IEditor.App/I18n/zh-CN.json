@@ -344,7 +344,7 @@
         "MenuHint": "低频命令已收纳至菜单，快捷键见各菜单项",
         "TemplateHint": "支持 {size} {color} {date} {index} 变量",
         "SettingsSaved": "所有设置已自动保存",
-        "PrototypeVersion": "v0.3.6 · 界面原型",
+        "PrototypeVersion": "v0.3.7 · 界面原型",
         "EmptyHint": "拖入图片，或使用",
         "OpenMenuPath": "文件 › 打开图片",
         "CustomShort": "自定",

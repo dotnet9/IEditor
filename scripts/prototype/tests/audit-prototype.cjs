@@ -13,7 +13,8 @@ const { chromium }=require('playwright');const path=require('path');const fs=req
   for(const language of ['zh-CN','en-US'])for(const palette of ['DotNet','Aurora','Ember','Default','Aquatic','Desert','Dusk','NightSky'])for(const mode of ['Light','Dark']){
    await frame.evaluate(state=>window.IEditorPrototype.set(state),{language,palette,mode});
    const state=await frame.evaluate(()=>window.IEditorPrototype.getState());if(state.language!==language||state.palette!==palette||state.mode!==mode)throw Error('State failed '+route);
-   if(await frame.locator('.product-tools [data-palette] option').count()!==8||await frame.locator('.product-tools [data-mode] option').count()!==3)throw Error('Appearance options missing');
+   if(await frame.locator('.title-palette-swatches [data-palette-key]').count()!==8||await frame.locator('.product-tools select').count()!==0)throw Error('Compact appearance tools missing');
+   if(await frame.locator('[data-theme-cycle]').getAttribute('data-mode')!==mode)throw Error('Theme button state');
    if(!await frame.locator('main').innerText())throw Error('Empty workspace');
    if(palette==='DotNet'){
     const file=route+'-'+language+'-'+mode;await page.screenshot({path:path.join(output,file+'.png'),animations:'disabled'});
@@ -26,13 +27,15 @@ const { chromium }=require('playwright');const path=require('path');const fs=req
    await frame.locator('#qRange').evaluate(el=>{el.value='80';el.dispatchEvent(new Event('input',{bubbles:true}));});if(await frame.locator('#qVal').innerText()!=='80')throw Error('Quality did not change');await frame.locator('#exportDialog [data-close]').first().click();
    await frame.locator('#btnGuides').click();if(!await frame.locator('#guides').evaluate(el=>el.classList.contains('hidden')))throw Error('Guide toggle failed');
   }
+  await frame.locator('[data-language-open]').click();if(!await frame.locator('.title-language-menu').isVisible())throw Error('Language menu did not open');await frame.locator('[data-culture="en-US"]').click();if(await frame.locator('.title-language-menu').isVisible())throw Error('Language menu did not close');
+  const previousMode=await frame.locator('[data-theme-cycle]').getAttribute('data-mode');for(let index=0;index<3;index++)await frame.locator('[data-theme-cycle]').click();if(await frame.locator('[data-theme-cycle]').getAttribute('data-mode')!==previousMode)throw Error('Three-state theme cycle failed');
   if(await frame.locator('.titlebar .win-controls button').count()!==3)throw Error('Missing desktop caption buttons');
   await frame.evaluate(()=>window.IEditorPrototype.openAbout());if(!await frame.locator('.about-titlebar').isVisible()||!await frame.locator('.about-meta').innerText().then(text=>text.includes('2026-10-15 00:00:00')))throw Error('About desktop chrome or sample build time missing');for(const language of ['zh-CN','en-US']){
    await frame.evaluate(state=>window.IEditorPrototype.set(state),{language,mode:'Light',palette:'DotNet'});
    for(const state of ['checking','available','downloading','downloaded','canceled','failed']){await frame.evaluate(value=>window.IEditorPrototype.setUpdate(value),state);if(!await frame.locator('[data-update-action]').innerText())throw Error('Missing update action');}
    await frame.locator('.product-about').screenshot({path:path.join(output,'about-'+language+'.png'),animations:'disabled'});
   }await frame.locator('.about-close').click();
-  const remaining=await frame.evaluate(()=>{const result=[];const walker=document.createTreeWalker(document.querySelector('.window'),NodeFilter.SHOW_TEXT);let node;while(node=walker.nextNode())if(!node.parentElement.closest('script,style,svg,select')&&/[\u4e00-\u9fff]/.test(node.textContent))result.push(node.textContent.trim());return [...new Set(result)].filter(Boolean);});
+  const remaining=await frame.evaluate(()=>{const result=[];const walker=document.createTreeWalker(document.querySelector('.window'),NodeFilter.SHOW_TEXT);let node;while(node=walker.nextNode())if(!node.parentElement.closest('script,style,svg,select')&&node.parentElement.checkVisibility()&&/[\u4e00-\u9fff]/.test(node.textContent))result.push(node.textContent.trim());return [...new Set(result)].filter(Boolean);});
   fs.writeFileSync(path.join(output,route+'-remaining-chinese.json'),JSON.stringify(remaining,null,2));
   if(remaining.length)throw Error('Untranslated visible content in '+route+': '+remaining.join('; '));
  }

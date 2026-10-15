@@ -7,6 +7,8 @@ using Avalonia.Headless;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using Avalonia.Interactivity;
+using Ursa.Controls;
 using CodeWF.Avalonia.Controls.Themes;
 using CodeWF.Toolkit.Core.UpdateChecking;
 using CodeWF.Toolkit.Lang;
@@ -35,6 +37,25 @@ Check(model.IsPhotoPageActive, "Startup keeps the photo workspace active");
 Check(model.BatchPage.QueueItems.Count == 0, "Batch queue starts empty without fabricated files");
 Check(model.SettingsPage.ThemeOptions.Count == 3 && model.SettingsPage.ThemeOptions.All(item => item.IsEnabled), "Three usable theme modes");
 Check(model.SettingsPage.AccentColorOptions.Count == 8, "Eight shared accent palettes");
+var themeControl = window.GetVisualDescendants().OfType<ThemeToggleButton>().Single();
+var themeButton = themeControl.GetVisualDescendants().OfType<Button>().Single(button => button.Name == ThemeToggleButton.PART_ThemeButton);
+model.SettingsPage.ThemeMode = StudioThemeMode.System;
+model.SettingsPage.SelectedAccentColorOption = model.SettingsPage.AccentColorOptions.Single(item => item.Palette == StudioPalette.Aurora);
+foreach (var expectedMode in new[] { StudioThemeMode.Light, StudioThemeMode.Dark, StudioThemeMode.System })
+{
+    themeButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Pump();
+    Check(model.SettingsPage.ThemeMode == expectedMode && store.Load().Palette == StudioPalette.Aurora, "Title theme cycle preserves the active palette");
+}
+var languageButton = window.FindControl<Button>("TitleLanguageButton")!;
+Check(languageButton.Flyout is MenuFlyout { Items.Count: 2 }, "Title language icon contains the actual choices");
+foreach (var item in ((MenuFlyout)languageButton.Flyout!).Items.OfType<MenuItem>())
+{
+    ((MenuFlyout)languageButton.Flyout!).ShowAt(languageButton); Pump();
+    var expectedCulture = ((LanguageOptionViewModel)item.CommandParameter!).CultureName;
+    item.Command!.Execute(item.CommandParameter); Pump();
+    ((MenuFlyout)languageButton.Flyout!).Hide();
+    Check(I18nManager.Instance.Culture?.Name == expectedCulture, "Title language menu changes the shared culture");
+}
 Check(model.Version == UpdateVersion.Display(typeof(App).Assembly) && model.CompileTime != "—", "About uses the actual application metadata");
 Check(model.SettingsPage.VersionBadgeText == model.Version, "Settings version matches About");
 model.ShowAboutCommand.Execute(null); Check(aboutCalls == 1, "About entry reaches its window service");
@@ -57,9 +78,10 @@ var about = new AboutWindow { DataContext = model }; about.Show();
 foreach (var culture in new[] { "zh-CN", "en-US", "zh-CN", "en-US" })
 {
     model.SettingsPage.SelectedLanguageOption = model.SettingsPage.LanguageOptions.Single(item => item.CultureName == culture); Pump();
+    Check(ToolTip.GetTip(themeButton) is TextBlock tip && tip.Text == I18nManager.Instance.GetResource(Localization.Common.Theme.Light), "Existing Ursa tooltip follows the shared culture");
     Check(store.Load().Language == culture && I18nManager.Instance.Culture?.Name == culture, "Single global language persists: " + culture);
     Check(model.SettingsPage.SelectedThemeOption is not null && model.SettingsPage.SelectedAccentColorOption is not null && model.SettingsPage.SelectedLanguageOption is not null, "Appearance selections remain visible after translation refresh");
-    Check(window.GetVisualDescendants().OfType<ComboBox>().All(box => box.SelectedItem is not null), "Existing title selectors retain their selection");
+    Check(window.GetVisualDescendants().OfType<ListBox>().Single(list => list.Classes.Contains("titlePaletteSwatches")).SelectedItem is not null, "Title palette selection survives translation refresh");
     Check(about.Title == I18nManager.Instance.GetResource(Localization.About.Text.Title), "Existing About window switches language");
     Check(about.GetVisualDescendants().OfType<TextBlock>().Any(text => text.Text == model.Version), "Actual version is rendered in About");
     Check(window.GetVisualDescendants().OfType<Menu>().Single().Items.OfType<MenuItem>().FirstOrDefault()?.Header?.ToString() == I18nManager.Instance.GetResource(Localization.Common.Menu.File), "Existing menu updates its language");

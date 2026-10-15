@@ -98,6 +98,13 @@ public partial class SettingsViewModel : WorkspacePageViewModel
 
     public ObservableCollection<FormatOptionViewModel> FormatOptions { get; private set; } = [];
 
+    /// <summary>标题栏三态主题与设置页共用同一份持久化选择。</summary>
+    public StudioThemeMode ThemeMode
+    {
+        get => (StudioThemeMode)(SelectedThemeOption?.Value ?? AppThemeMode.System);
+        set => SelectedThemeOption = ThemeOptions.FirstOrDefault(option => (int)option.Value == (int)value);
+    }
+
     public ThemeOptionViewModel? SelectedThemeOption
     {
         get => selectedThemeOption;
@@ -666,6 +673,7 @@ public partial class SettingsViewModel : WorkspacePageViewModel
     {
         if (SetProperty(ref selectedThemeOption, value, nameof(SelectedThemeOption)))
         {
+            OnPropertyChanged(nameof(ThemeMode));
             foreach (var option in ThemeOptions)
             {
                 option.IsSelected = option == value;

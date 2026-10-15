@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using IEditor.App.Services;
 using IEditor.App.ViewModels;
 using IEditor.App.Views;
@@ -56,5 +57,21 @@ public partial class App : Application
         };
 
         I18nManager.Instance.Register(langPlugin, new CultureInfo("zh-CN"), out _);
+        I18nManager.Instance.CultureChanged += OnCultureChanged;
+        ApplyControlCulture();
+    }
+
+    private static void OnCultureChanged(object? sender, EventArgs args)
+    {
+        if (Dispatcher.UIThread.CheckAccess()) ApplyControlCulture();
+        else Dispatcher.UIThread.Post(ApplyControlCulture);
+    }
+
+    /// <summary>更新已加载主题的内建文案，保留应用资源和局部资源的同键覆盖。</summary>
+    private static void ApplyControlCulture()
+    {
+        if (Application.Current is not { } application || I18nManager.Instance.Culture is not { } culture) return;
+        foreach (var theme in application.Styles.OfType<Semi.Avalonia.SemiTheme>()) theme.Locale = culture;
+        foreach (var theme in application.Styles.OfType<Ursa.Themes.Semi.UrsaSemiTheme>()) theme.Locale = culture;
     }
 }

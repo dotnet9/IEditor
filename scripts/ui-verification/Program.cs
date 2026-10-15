@@ -85,9 +85,23 @@ aboutMaximize.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Pump();
 Check(about.WindowState == WindowState.Normal, "Disabled caption actions cannot change About window state");
 Check(about.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "PART_CloseButton").IsEnabled,
     "Actual About caption keeps closing available");
+var localeEditor = new TextBox { Text = model.SettingsPage.FilenameTemplate };
+var localeWindow = new Window { Content = localeEditor, Width = 320, Height = 100 };
+localeWindow.Show(window); Pump();
+var editMenu = localeEditor.ContextFlyout as MenuFlyout ?? throw new InvalidOperationException("Semi editor menu is missing.");
 foreach (var culture in new[] { "zh-CN", "en-US", "zh-CN", "en-US" })
 {
     model.SettingsPage.SelectedLanguageOption = model.SettingsPage.LanguageOptions.Single(item => item.CultureName == culture); Pump();
+    ResourceDictionary semiText = culture == "en-US" ? new Semi.Avalonia.Locale.en_us() : new Semi.Avalonia.Locale.zh_cn();
+    ResourceDictionary ursaText = culture == "en-US" ? new Ursa.Themes.Semi.Locale.en_us() : new Ursa.Themes.Semi.Locale.zh_cn();
+    editMenu.ShowAt(localeEditor); Pump();
+    Check(((MenuItem)editMenu.Items[1]!).Header?.ToString() == semiText["STRING_MENU_COPY"]?.ToString() &&
+          ((MenuItem)editMenu.Items[2]!).Header?.ToString() == semiText["STRING_MENU_PASTE"]?.ToString(),
+        "Existing Semi TextBox copy and paste menu follows the shared culture");
+    editMenu.Hide();
+    var ursaTheme = Application.Current!.Styles.OfType<Ursa.Themes.Semi.UrsaSemiTheme>().Single();
+    Check(ursaTheme.Resources["STRING_MENU_DIALOG_CANCEL"]?.ToString() == ursaText["STRING_MENU_DIALOG_CANCEL"]?.ToString(),
+        "Existing Ursa dialog resources follow the shared culture");
     Check(ToolTip.GetTip(themeButton) is TextBlock tip && tip.Text == I18nManager.Instance.GetResource(Localization.Common.Theme.Light), "Existing Ursa tooltip follows the shared culture");
     Check(store.Load().Language == culture && I18nManager.Instance.Culture?.Name == culture, "Single global language persists: " + culture);
     Check(model.SettingsPage.SelectedThemeOption is not null && model.SettingsPage.SelectedAccentColorOption is not null && model.SettingsPage.SelectedLanguageOption is not null, "Appearance selections remain visible after translation refresh");
@@ -103,6 +117,16 @@ foreach (var culture in new[] { "zh-CN", "en-US", "zh-CN", "en-US" })
     model.NavigateBatchProcessingCommand.Execute(null); Pump(); Capture(window, "batch-empty-" + culture + ".png");
     model.NavigatePhotoStudioCommand.Execute(null);
 }
+var hostCopyText = model.WindowTitle;
+Application.Current!.Resources["STRING_MENU_COPY"] = hostCopyText;
+I18nManager.Instance.Culture = CultureInfo.GetCultureInfo("zh-CN"); Pump();
+editMenu.ShowAt(localeEditor); Pump();
+Check(((MenuItem)editMenu.Items[1]!).Header?.ToString() == hostCopyText,
+    "Host resource overrides survive third-party locale changes");
+editMenu.Hide();
+Application.Current.Resources.Remove("STRING_MENU_COPY");
+I18nManager.Instance.Culture = CultureInfo.GetCultureInfo("en-US"); Pump();
+localeWindow.Close();
 about.Close();
 Capture(window, "photo-empty-en-US.png");
 // 所有图像与导出位于传入的隔离目录，不读取或修改用户图片。

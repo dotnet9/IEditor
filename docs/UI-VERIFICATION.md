@@ -36,7 +36,9 @@
 
 ## 原生与平台限制
 
-Windows x64 正式 NativeAOT 发布成功；独立 NativeAOT 界面验证器编译并实际运行成功，退出码为 0，生成 26 张截图及对应布局坐标。README 中的两张工作区图片来自该验证器通过 Skia 渲染的真实应用视图。
+Windows x64 正式 NativeAOT 发布成功；正式 EXE 的 `--verify-runtime` 实际运行通过，检查发布目录双语资源、语言切换及隔离偏好保存。独立 NativeAOT 界面验证器在 CodeWF.Avalonia 12.1.4.22 下重新编译并实际运行成功，退出码为 0，生成 26 张截图及对应布局坐标，28 项布局坐标对照通过。README 中的两张工作区图片和下方关于窗口均来自这次最终原生输出。
+
+![关于窗口（NativeAOT 真实视图）](images/about-window.png)
 
 Ursa/Semi 的裁剪与 AOT 分析告警保留可见，不通过屏蔽告警宣称兼容。锁屏期间不进行人工桌面验收；离屏实际渲染不能代替文件选择器、系统拖放、窗口拖动和安装器交互。Linux/macOS 的原生结果以对应 GitHub Actions 任务为准。
 

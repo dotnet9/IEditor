@@ -10,12 +10,16 @@ pwsh scripts/sync_localization_keys.ps1 -Check
 node scripts/prototype/build.cjs --check
 dotnet run --project scripts/ui-verification/UiVerification.csproj -c Release -- artifacts/ui-managed
 pwsh scripts/publish.ps1 -RuntimeIdentifier win-x64
+$process = Start-Process ./artifacts/publish/win-x64/IEditor.App/IEditor.App.exe -ArgumentList '--verify-runtime', 'artifacts/runtime-verification/win-x64' -WindowStyle Hidden -Wait -PassThru
+if ($process.ExitCode -ne 0) { throw 'NativeAOT runtime verification failed.' }
 ```
 
 应用发布目录为 `artifacts/publish/win-x64/IEditor.App`。原生界面验证器也必须按 NativeAOT 发布并实际执行；它使用与应用相同的视图、视图模型和图像引擎，隔离图片、偏好和导出目录，不启动安装器。
 
+`--verify-runtime <独立目录>` 直接执行正式原生 EXE，检查发布目录的两份翻译及语言切换，并在指定目录使用实际配置服务完成偏好写入和回读。它不初始化窗口、日志和用户偏好；不替代下方的真实视图验收。五平台 CI 均执行此项。
+
 ```powershell
-dotnet publish scripts/ui-verification/UiVerification.csproj -c Release -r win-x64 --self-contained true -p:PublishAot=true -p:PublishTrimmed=true -p:DebugType=portable -p:DebugSymbols=true -p:IlcGenerateCompleteTypeMetadata=true -p:IlcTrimMetadata=false -p:IlcSingleThreaded=true -o artifacts/ui-native/win-x64
+dotnet publish scripts/ui-verification/UiVerification.csproj -c Release -r win-x64 --self-contained true -m:1 -p:PublishAot=true -p:PublishTrimmed=true -p:DebugType=portable -p:DebugSymbols=true -p:IlcGenerateCompleteTypeMetadata=true -p:IlcTrimMetadata=false -p:IlcSingleThreaded=true -o artifacts/ui-native/win-x64
 & ./artifacts/ui-native/win-x64/UiVerification.exe artifacts/ui-evidence/win-x64
 ```
 

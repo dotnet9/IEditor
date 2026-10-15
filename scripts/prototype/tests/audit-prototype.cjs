@@ -10,11 +10,15 @@ const { chromium }=require('playwright');const path=require('path');const fs=req
   const frame=page.frames().find(frame=>frame!==page.mainFrame());
   // srcdoc 页继承外层查询参数之前，显式启用产品窗口截图视口。
   await frame.evaluate(()=>document.body.dataset.capture='true');
+  const nativeSwatches=await frame.locator('.title-palette-swatches button').evaluateAll(items=>items.map(item=>({key:item.dataset.paletteKey,color:item.style.getPropertyValue('--swatch')})));
+  if(JSON.stringify(nativeSwatches.map(item=>item.key))!==JSON.stringify(['DotNet','Aurora','Ember','Default','Aquatic','Desert','Dusk','NightSky']))throw Error('Title palette order differs from the native enum');
+  if(!await frame.evaluate(items=>items.every(item=>item.color===window.IEDITOR_PALETTES[item.key].Light.StudioAccentColor),nativeSwatches))throw Error('Title palette colors differ from native light preview brushes');
   for(const language of ['zh-CN','en-US'])for(const palette of ['DotNet','Aurora','Ember','Default','Aquatic','Desert','Dusk','NightSky'])for(const mode of ['Light','Dark']){
    await frame.evaluate(state=>window.IEditorPrototype.set(state),{language,palette,mode});
    const state=await frame.evaluate(()=>window.IEditorPrototype.getState());if(state.language!==language||state.palette!==palette||state.mode!==mode)throw Error('State failed '+route);
    if(await frame.locator('.title-palette-swatches [data-palette-key]').count()!==8||await frame.locator('.product-tools select').count()!==0)throw Error('Compact appearance tools missing');
    if(await frame.locator('[data-theme-cycle]').getAttribute('data-mode')!==mode)throw Error('Theme button state');
+   if(JSON.stringify(await frame.locator('.title-palette-swatches button').evaluateAll(items=>items.map(item=>({key:item.dataset.paletteKey,color:item.style.getPropertyValue('--swatch')}))))!==JSON.stringify(nativeSwatches))throw Error('Title palette colors changed with the theme');
    if(!await frame.locator('main').innerText())throw Error('Empty workspace');
    if(palette==='DotNet'){
     const file=route+'-'+language+'-'+mode;await page.screenshot({path:path.join(output,file+'.png'),animations:'disabled'});
@@ -38,6 +42,10 @@ const { chromium }=require('playwright');const path=require('path');const fs=req
   }
   const previousMode=await frame.locator('[data-theme-cycle]').getAttribute('data-mode');for(let index=0;index<3;index++)await frame.locator('[data-theme-cycle]').click();if(await frame.locator('[data-theme-cycle]').getAttribute('data-mode')!==previousMode)throw Error('Three-state theme cycle failed');
   if(await frame.locator('.titlebar .win-controls button').count()!==3)throw Error('Missing desktop caption buttons');
+  if(await frame.locator('.titlebar .win-controls > button[data-window-action]').count()!==3||await frame.locator('[data-theme-cycle][data-window-action]').count())throw Error('Caption actions must belong to the three desktop buttons');
+  await frame.locator('[data-window-action="maximize"]').click();if(!await frame.locator('.window').evaluate(el=>el.classList.contains('prototype-maximized')))throw Error('Maximize did not change the window frame');
+  await frame.locator('[data-window-action="maximize"]').click();if(await frame.locator('.window').evaluate(el=>el.classList.contains('prototype-maximized')))throw Error('Restore did not reset the window frame');
+  for(const action of ['minimize','close']){await frame.locator('[data-window-action="'+action+'"]').click();if(await frame.locator('.window').isVisible()||!await frame.locator('[data-window-restore]').isVisible())throw Error('Window action did not hide the workspace: '+route+'/'+action);await frame.locator('[data-window-restore]').click();if(!await frame.locator('.window').isVisible())throw Error('Window restore did not reopen the workspace');}
   await frame.evaluate(()=>window.IEditorPrototype.openAbout());if(!await frame.locator('.about-titlebar').isVisible()||!await frame.locator('.about-meta').innerText().then(text=>text.includes('2026-10-15 00:00:00')))throw Error('About desktop chrome or sample build time missing');for(const language of ['zh-CN','en-US']){
    await frame.evaluate(state=>window.IEditorPrototype.set(state),{language,mode:'Light',palette:'DotNet'});
    for(const state of ['checking','available','downloading','downloaded','canceled','failed']){await frame.evaluate(value=>window.IEditorPrototype.setUpdate(value),state);if(!await frame.locator('[data-update-action]').innerText())throw Error('Missing update action');}

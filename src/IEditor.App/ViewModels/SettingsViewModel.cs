@@ -624,6 +624,13 @@ public partial class SettingsViewModel : WorkspacePageViewModel
     private void BuildOptions()
     {
         var preferences = _preferencesService.Preferences;
+        // 全局语言是运行时唯一来源，外部切语后同步选中项和下次启动的偏好。
+        var cultureName = I18nManager.Instance.Culture?.Name;
+        if ((cultureName is "zh-CN" or "en-US") && preferences.Language != cultureName)
+        {
+            preferences.Language = cultureName;
+            _preferencesService.Save();
+        }
 
         ThemeOptions =
         [

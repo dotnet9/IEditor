@@ -57,6 +57,25 @@ foreach (var item in ((MenuFlyout)languageButton.Flyout!).Items.OfType<MenuItem>
     Check(I18nManager.Instance.Culture?.Name == expectedCulture, "Title language menu changes the shared culture");
 }
 Check(model.Version == UpdateVersion.Display(typeof(App).Assembly) && model.CompileTime != "—", "About uses the actual application metadata");
+// 外部模块直接切换唯一全局语言时，同一个设置下拉框和磁盘偏好也必须同步。
+model.NavigateSettingsCommand.Execute(null); Pump();
+var languageSelector = window.GetVisualDescendants().OfType<ComboBox>()
+    .Single(control => control.ItemsSource == model.SettingsPage.LanguageOptions);
+foreach (var culture in new[] { "en-US", "zh-CN", "en-US", "zh-CN" })
+{
+    Task.Run(() => I18nManager.Instance.Culture = CultureInfo.GetCultureInfo(culture)).GetAwaiter().GetResult(); Pump();
+    Check(model.SettingsPage.SelectedLanguageOption?.CultureName == culture &&
+          (languageSelector.SelectedItem as LanguageOptionViewModel)?.CultureName == culture && store.Load().Language == culture,
+        "External global culture synchronizes the existing language selector and saved preference");
+    var returnCulture = culture == "en-US" ? "zh-CN" : "en-US";
+    languageSelector.IsDropDownOpen = true; Pump();
+    languageSelector.SelectedItem = model.SettingsPage.LanguageOptions.Single(option => option.CultureName == returnCulture);
+    languageSelector.IsDropDownOpen = false; Pump();
+    Check(I18nManager.Instance.Culture?.Name == returnCulture && store.Load().Language == returnCulture &&
+          (languageSelector.SelectedItem as LanguageOptionViewModel)?.CultureName == returnCulture,
+        "The same actual language selector can switch back after an external change");
+}
+model.NavigatePhotoStudioCommand.Execute(null); Pump();
 Check(model.SettingsPage.VersionBadgeText == model.Version, "Settings version matches About");
 model.ShowAboutCommand.Execute(null); Check(aboutCalls == 1, "About entry reaches its window service");
 foreach (var palette in Enum.GetValues<StudioPalette>())

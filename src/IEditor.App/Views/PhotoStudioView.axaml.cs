@@ -1,3 +1,5 @@
+using System.Linq;
+using System.IO;
 using Avalonia;
 using System;
 using System.ComponentModel;
@@ -25,6 +27,9 @@ public partial class PhotoStudioView : UserControl
     public PhotoStudioView()
     {
         InitializeComponent();
+        DragDrop.SetAllowDrop(this, true);
+        AddHandler(DragDrop.DragOverEvent, (_, args) => args.DragEffects = args.DataTransfer.TryGetFiles() is null ? DragDropEffects.None : DragDropEffects.Copy);
+        AddHandler(DragDrop.DropEvent, OnDrop);
         PreviewImage.RenderTransform = new TransformGroup
         {
             Children =
@@ -36,6 +41,14 @@ public partial class PhotoStudioView : UserControl
         Loaded += OnViewLoaded;
         DetachedFromVisualTree += OnDetachedFromVisualTree;
         DataContextChanged += OnDataContextChanged;
+    }
+
+    private void OnDrop(object? sender, DragEventArgs args)
+    {
+        var paths = args.DataTransfer.TryGetFiles()?.Select(item => item.TryGetLocalPath()).OfType<string>().ToArray() ?? [];
+        var path = paths.FirstOrDefault(File.Exists);
+        if (path is not null) ViewModel?.SetSourcePath(path);
+        args.Handled = true;
     }
 
     private PhotoStudioViewModel? ViewModel => DataContext as PhotoStudioViewModel;

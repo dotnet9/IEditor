@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text.Json;
 using IEditor.App.Models;
@@ -7,15 +7,17 @@ namespace IEditor.App.Services;
 
 public sealed class AppPreferencesStore
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new()
-    {
-        WriteIndented = true
-    };
-
     private readonly string _filePath;
 
-    public AppPreferencesStore()
+    public AppPreferencesStore(string? filePath = null)
     {
+        if (filePath is not null)
+        {
+            _filePath = Path.GetFullPath(filePath);
+            Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
+            return;
+        }
+
         var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "IEditor");
 
         // 旧版偏好存在 Roaming（%APPDATA% 下），首次升级一次性迁到 Local（应用数据标准位置），旧目录保留作备份
@@ -57,7 +59,7 @@ public sealed class AppPreferencesStore
             }
 
             var json = File.ReadAllText(_filePath);
-            return JsonSerializer.Deserialize<AppPreferences>(json, SerializerOptions) ?? new AppPreferences();
+            return JsonSerializer.Deserialize(json, PreferencesJsonContext.Default.AppPreferences) ?? new AppPreferences();
         }
         catch
         {
@@ -69,7 +71,7 @@ public sealed class AppPreferencesStore
     {
         ArgumentNullException.ThrowIfNull(preferences);
 
-        var json = JsonSerializer.Serialize(preferences, SerializerOptions);
+        var json = JsonSerializer.Serialize(preferences, PreferencesJsonContext.Default.AppPreferences);
         File.WriteAllText(_filePath, json);
     }
 }

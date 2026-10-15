@@ -236,7 +236,7 @@ public partial class ExportDialogViewModel : DialogViewModelBase
         var candidate = Path.GetFileName(value.Trim());
         if (string.IsNullOrWhiteSpace(candidate))
         {
-            candidate = "证件照";
+            candidate = CodeWF.Toolkit.Lang.I18nManager.Instance.GetResource(Localization.Common.Filenames.Default);
         }
 
         return Path.ChangeExtension(candidate, extension);

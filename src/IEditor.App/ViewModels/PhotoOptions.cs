@@ -26,7 +26,7 @@ public partial class PhotoSizeOptionViewModel : ObservableObject
 
     public bool IsCustom { get; }
 
-    public string SubLabel => IsCustom ? "自定" : $"{WidthMm:0}×{HeightMm:0}";
+    public string SubLabel => IsCustom ? CodeWF.Toolkit.Lang.I18nManager.Instance.GetResource(Localization.PhotoStudio.Sizes.Custom) : $"{WidthMm:0}×{HeightMm:0}";
 
     [ObservableProperty]
     private bool isSelected;

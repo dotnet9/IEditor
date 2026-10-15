@@ -2,6 +2,12 @@
     x:Class="IEditor.App.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:lcommon="using:Localization.Common"
+    xmlns:lshell="using:Localization.Shell"
+    xmlns:lphotostudio="using:Localization.PhotoStudio"
+    xmlns:lsettings="using:Localization.Settings"
+    xmlns:lbatch="using:Localization.Batch"
+    xmlns:labout="using:Localization.About"
     xmlns:codewf="https://codewf.com"
     xmlns:helpers="using:IEditor.App.Helpers"
     xmlns:dialogViews="using:IEditor.App.Views.Dialogs"
@@ -11,7 +17,7 @@
     xmlns:u="https://irihi.tech/ursa"
     x:CompileBindings="True"
     x:DataType="vm:MainViewModel"
-    Background="{DynamicResource IEditorWindowBackgroundBrush}"
+    Background="{DynamicResource StudioBackground}"
     FontFamily="Microsoft YaHei UI, Microsoft YaHei, Segoe UI"
     Height="860"
     Icon="/Assets/logo.ico"
@@ -20,8 +26,10 @@
     Title="{Binding WindowTitle}"
     Width="1320"
     TitleBarHeight="42"
-    TitleBarBackground="{DynamicResource IEditorTitlebarBrush}"
-    TitleBarBorderBrush="{DynamicResource IEditorAccentGradientBrush}"
+    TitleBarBackground="{DynamicResource StudioBackground}"
+    TitleBarForeground="{DynamicResource StudioText}"
+    Foreground="{DynamicResource StudioText}"
+    TitleBarBorderBrush="{DynamicResource StudioGradient}"
     TitleBarBorderThickness="0,0,0,3"
     WindowStartupLocation="CenterScreen">
   <codewf:CodeWFWindow.LeftContent>
@@ -44,60 +52,73 @@
       </StackPanel>
     </StackPanel>
   </codewf:CodeWFWindow.LeftContent>
+  <codewf:CodeWFWindow.RightContent>
+    <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,12,0" VerticalAlignment="Center">
+      <ComboBox Width="112" MinHeight="28" FontSize="12" Padding="8,2" ItemsSource="{Binding SettingsPage.ThemeOptions}" SelectedItem="{Binding SettingsPage.SelectedThemeOption, Mode=TwoWay}">
+        <ComboBox.ItemTemplate><DataTemplate x:DataType="vm:ThemeOptionViewModel"><TextBlock Text="{Binding Title}" /></DataTemplate></ComboBox.ItemTemplate>
+      </ComboBox>
+      <ComboBox Width="120" MinHeight="28" FontSize="12" Padding="8,2" ItemsSource="{Binding SettingsPage.AccentColorOptions}" SelectedItem="{Binding SettingsPage.SelectedAccentColorOption, Mode=TwoWay}">
+        <ComboBox.ItemTemplate><DataTemplate x:DataType="vm:AccentColorOptionViewModel"><StackPanel Orientation="Horizontal" Spacing="7"><Ellipse Width="10" Height="10" Fill="{Binding AvaloniaBrush}" /><TextBlock Text="{Binding Title}" /></StackPanel></DataTemplate></ComboBox.ItemTemplate>
+      </ComboBox>
+      <ComboBox Width="100" MinHeight="28" FontSize="12" Padding="8,2" ItemsSource="{Binding SettingsPage.LanguageOptions}" SelectedItem="{Binding SettingsPage.SelectedLanguageOption, Mode=TwoWay}">
+        <ComboBox.ItemTemplate><DataTemplate x:DataType="vm:LanguageOptionViewModel"><TextBlock Text="{Binding Title}" /></DataTemplate></ComboBox.ItemTemplate>
+      </ComboBox>
+    </StackPanel>
+  </codewf:CodeWFWindow.RightContent>
   <Grid>
     <Grid RowDefinitions="Auto,*">
       <!-- 菜单栏：低频命令收纳 -->
-      <Menu Grid.Row="0" FontSize="12.5">
-        <MenuItem Header="文件">
+      <Menu Grid.Row="0" FontSize="12.5" Height="34" BorderBrush="{DynamicResource StudioBorder}" BorderThickness="0,0,0,1">
+        <MenuItem Header="{codewf:I18n {x:Static lcommon:Menu.File}}">
           <MenuItem
-              Header="打开图片…"
+              Header="{codewf:I18n {x:Static lcommon:Menu.OpenImage}}"
               Command="{Binding OpenImageCommand}"
               HotKey="Ctrl+O" />
           <MenuItem
-              Header="添加图片…"
+              Header="{codewf:I18n {x:Static lcommon:Menu.AddImages}}"
               Command="{Binding AddImagesCommand}"
               HotKey="Ctrl+Shift+O" />
           <Separator />
           <MenuItem
-              Header="导出图片…"
+              Header="{codewf:I18n {x:Static lcommon:Menu.ExportImage}}"
               Command="{Binding PhotoShowExportDialogCommand}"
               HotKey="Ctrl+S" />
           <MenuItem
-              Header="导出为 ZIP"
+              Header="{codewf:I18n {x:Static lcommon:Actions.ExportZip}}"
               Command="{Binding BatchExportZipCommand}" />
           <Separator />
           <MenuItem
-              Header="设置"
+              Header="{codewf:I18n {x:Static lshell:Navigation.Settings}}"
               Command="{Binding NavigateSettingsCommand}">
             <MenuItem.Icon>
               <TextBlock Text="✓" IsVisible="{Binding IsSettingsPageActive}" />
             </MenuItem.Icon>
           </MenuItem>
           <Separator />
-          <MenuItem Header="退出" Click="OnExitClick" InputGesture="Alt+F4" />
+          <MenuItem Header="{codewf:I18n {x:Static lcommon:Menu.Exit}}" Click="OnExitClick" InputGesture="Alt+F4" />
         </MenuItem>
-        <MenuItem Header="编辑">
+        <MenuItem Header="{codewf:I18n {x:Static lcommon:Menu.Edit}}">
           <MenuItem
-              Header="向左旋转"
+              Header="{codewf:I18n {x:Static lphotostudio:Page.RotateLeft}}"
               Command="{Binding PhotoRotateLeftCommand}"
               />
           <MenuItem
-              Header="向右旋转"
+              Header="{codewf:I18n {x:Static lphotostudio:Page.RotateRight}}"
               Command="{Binding PhotoRotateRightCommand}"
               />
           <MenuItem
-              Header="水平镜像"
+              Header="{codewf:I18n {x:Static lphotostudio:Page.FlipHorizontal}}"
               Command="{Binding PhotoFlipCommand}"
               HotKey="Ctrl+H" />
           <Separator />
           <MenuItem
-              Header="重置"
+              Header="{codewf:I18n {x:Static lcommon:Actions.Reset}}"
               Command="{Binding PhotoResetCommand}"
               HotKey="Ctrl+R" />
         </MenuItem>
-        <MenuItem Header="工作区">
+        <MenuItem Header="{codewf:I18n {x:Static lshell:Navigation.Workspace}}">
           <MenuItem
-              Header="证件照处理"
+              Header="{codewf:I18n {x:Static lshell:Navigation.PhotoStudio}}"
               Command="{Binding NavigatePhotoStudioCommand}">
             <MenuItem.Icon>
               <TextBlock Text="✓" IsVisible="{Binding IsPhotoPageActive}" />
@@ -106,7 +127,7 @@
           <MenuItem Command="{Binding NavigateBatchProcessingCommand}">
             <MenuItem.Header>
               <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                <TextBlock Text="批量处理" />
+                <TextBlock Text="{codewf:I18n {x:Static lshell:Navigation.BatchProcessing}}" />
               </Grid>
             </MenuItem.Header>
             <MenuItem.Icon>
@@ -114,88 +135,79 @@
             </MenuItem.Icon>
           </MenuItem>
           <MenuItem
-              Header="智能抠图"
+              Header="{codewf:I18n {x:Static lshell:Navigation.SmartCutout}}"
               Command="{Binding SmartCutoutCommand}" />
           <MenuItem IsEnabled="False">
             <MenuItem.Header>
               <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                <TextBlock Text="图片工具箱" />
+                <TextBlock Text="{codewf:I18n {x:Static lshell:Navigation.Toolbox}}" />
                 <TextBlock
                     Grid.Column="1"
                     FontSize="10"
-                    Foreground="{DynamicResource IEditorTextTertiaryBrush}"
-                    Text="即将上线" />
+                    Foreground="{DynamicResource StudioMuted}"
+                    Text="{codewf:I18n {x:Static lcommon:States.ComingSoon}}" />
               </Grid>
             </MenuItem.Header>
           </MenuItem>
           <Separator />
         </MenuItem>
-        <MenuItem Header="视图">
+        <MenuItem Header="{codewf:I18n {x:Static lcommon:Menu.View}}">
           <MenuItem
-              Header="放大"
+              Header="{codewf:I18n {x:Static lcommon:Menu.ZoomIn}}"
               Command="{Binding PhotoZoomCommand}"
               CommandParameter="+"
               />
           <MenuItem
-              Header="缩小"
+              Header="{codewf:I18n {x:Static lcommon:Menu.ZoomOut}}"
               Command="{Binding PhotoZoomCommand}"
               CommandParameter="-"
               />
           <MenuItem
-              Header="适应窗口"
+              Header="{codewf:I18n {x:Static lcommon:Menu.FitWindow}}"
               Command="{Binding PhotoZoomCommand}"
               CommandParameter="fit"
               HotKey="Ctrl+0" />
           <Separator />
           <MenuItem
-              Header="显示参考线"
+              Header="{codewf:I18n {x:Static lcommon:Menu.ShowGuides}}"
               Command="{Binding PhotoToggleGuidesCommand}"
               HotKey="Ctrl+G"
               ToggleType="CheckBox"
               IsChecked="{Binding PhotoPage.ShowGuides, Mode=TwoWay}" />
           <MenuItem
-              Header="原图对比（按住）"
+              Header="{codewf:I18n {x:Static lcommon:Menu.CompareOriginal}}"
               Command="{Binding PhotoToggleCompareCommand}" />
           <Separator />
-          <MenuItem Header="主题">
+          <MenuItem Header="{codewf:I18n {x:Static lsettings:Labels.Theme}}">
             <MenuItem
-                Header="浅色"
+                Header="{codewf:I18n {x:Static lcommon:Theme.Light}}"
                 Command="{Binding SetThemeLightCommand}"
                 ToggleType="Radio"
                 GroupName="ThemeGroup"
                 IsChecked="{Binding IsLightThemeChecked, Mode=OneWay}" />
-            <MenuItem IsEnabled="False">
-              <MenuItem.Header>
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                  <TextBlock Text="深色" />
-                  <TextBlock
-                      Grid.Column="1"
-                      FontSize="10"
-                      Foreground="{DynamicResource IEditorTextTertiaryBrush}"
-                      Text="即将上线" />
-                </Grid>
-              </MenuItem.Header>
-            </MenuItem>
+            <MenuItem Header="{codewf:I18n {x:Static lcommon:Theme.Dark}}"
+                Command="{Binding SetThemeDarkCommand}" ToggleType="Radio" GroupName="ThemeGroup"
+                IsChecked="{Binding IsDarkThemeChecked, Mode=OneWay}" />
             <MenuItem
-                Header="跟随系统"
+                Header="{codewf:I18n {x:Static lcommon:Theme.System}}"
                 Command="{Binding SetThemeSystemCommand}"
                 ToggleType="Radio"
                 GroupName="ThemeGroup"
                 IsChecked="{Binding IsSystemThemeChecked, Mode=OneWay}" />
           </MenuItem>
         </MenuItem>
-        <MenuItem Header="帮助">
+        <MenuItem Header="{codewf:I18n {x:Static lcommon:Actions.Help}}">
           <MenuItem
-              Header="帮助"
+              Header="{codewf:I18n {x:Static lcommon:Actions.Help}}"
               Command="{Binding PhotoPage.HelpCommand}"
               HotKey="F1" />
           <MenuItem
-              Header="检查更新…"
+              Header="{codewf:I18n {x:Static lcommon:Menu.CheckUpdate}}"
               Command="{Binding CheckUpdateCommand}" />
           <Separator />
-          <MenuItem Header="关于 IEditor" IsEnabled="False" />
+          <MenuItem Header="{codewf:I18n {x:Static lcommon:Menu.About}}" Command="{Binding ShowAboutCommand}" />
           <MenuItem
-              Header="开源仓库"
+              Header="{codewf:I18n {x:Static lcommon:Menu.Repository}}"
               Command="{Binding SettingsPage.OpenRepositoryCommand}" />
         </MenuItem>
       </Menu>

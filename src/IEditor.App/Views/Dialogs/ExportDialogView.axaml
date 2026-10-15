@@ -2,6 +2,13 @@
     x:Class="IEditor.App.Views.Dialogs.ExportDialogView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:lcommon="using:Localization.Common"
+    xmlns:lshell="using:Localization.Shell"
+    xmlns:lphotostudio="using:Localization.PhotoStudio"
+    xmlns:lsettings="using:Localization.Settings"
+    xmlns:lbatch="using:Localization.Batch"
+    xmlns:labout="using:Localization.About"
+    xmlns:codewf="https://codewf.com"
     xmlns:vm="using:IEditor.App.ViewModels"
     xmlns:dialogVm="using:IEditor.App.ViewModels.Dialogs"
     x:CompileBindings="True"
@@ -18,7 +25,7 @@
               Width="16"
               Height="16"
               Data="M12 4v11 M7.5 11.5 12 16l4.5-4.5 M4.5 19.5h15"
-              Stroke="{DynamicResource IEditorAccentBrush}" />
+              Stroke="{DynamicResource StudioAccent}" />
           <TextBlock
               Grid.Column="1"
               FontSize="14"
@@ -28,7 +35,7 @@
               Grid.Column="2"
               Classes="ie-icon-button"
               Command="{Binding CancelCommand}"
-              ToolTip.Tip="关闭">
+              ToolTip.Tip="{codewf:I18n {x:Static lcommon:Actions.Close}}">
             <Path
                 Classes="ie-icon"
                 Width="15"

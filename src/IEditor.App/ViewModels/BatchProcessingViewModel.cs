@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Threading;
 using Avalonia.Media;
 using CommunityToolkit.Mvvm.Input;
 using IEditor.App.Converters;
@@ -14,6 +15,8 @@ namespace IEditor.App.ViewModels;
 
 public partial class BatchProcessingViewModel : WorkspacePageViewModel
 {
+    private readonly Dictionary<string, string> _processed = new(StringComparer.OrdinalIgnoreCase);
+    private readonly CancellationTokenSource _lifetime = new();
     private readonly IPhotoStudioService _photoStudioService;
     private readonly AppPreferencesService _preferencesService;
     private BatchSizeOptionViewModel? selectedSizeOption;
@@ -66,7 +69,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
         _preferencesService = preferencesService;
 
         var preferences = _preferencesService.Preferences;
-        filenameTemplate = "证件照_{原名}_{规格}";
+        filenameTemplate = "photo_{name}_{size}";
         concurrency = preferences.BatchConcurrency;
         skipProcessed = preferences.BatchSkipProcessed;
         openFolderWhenDone = preferences.BatchOpenFolderWhenDone;
@@ -74,7 +77,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
 
         InitializeLocalizedText();
         BuildOptions();
-        BuildPrototypeQueue();
+        RebuildSummary();
     }
 
     public ObservableCollection<BatchProcessingItemViewModel> QueueItems { get; private set; } = [];
@@ -96,6 +99,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
                 }
 
                 UpdateSizeSummaryText();
+                RefreshQueueLabels();
             }
         }
     }
@@ -111,6 +115,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
                 {
                     option.IsSelected = option == value;
                 }
+                RefreshQueueLabels();
             }
         }
     }
@@ -130,6 +135,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
             {
                 _preferencesService.Preferences.BatchConcurrency = concurrency;
                 _preferencesService.Save();
+                OnPropertyChanged(nameof(ConcurrencyText));
                 OnPropertyChanged(nameof(IsConcurrency2));
                 OnPropertyChanged(nameof(IsConcurrency4));
                 OnPropertyChanged(nameof(IsConcurrency8));
@@ -233,15 +239,17 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
 
     private string selectFileText = string.Empty;
 
-    public string TokenNameText { get; private set; } = "{原名}";
+    public string ConcurrencyText => string.Format(L(Localization.Batch.Labels.ConcurrencyFormat), Concurrency);
 
-    public string TokenSizeText { get; private set; } = "{规格}";
+    public string TokenNameText { get; private set; } = "{name}";
 
-    public string TokenColorText { get; private set; } = "{底色}";
+    public string TokenSizeText { get; private set; } = "{size}";
 
-    public string TokenDateText { get; private set; } = "{日期}";
+    public string TokenColorText { get; private set; } = "{color}";
 
-    public string TokenIndexText { get; private set; } = "{序号}";
+    public string TokenDateText { get; private set; } = "{date}";
+
+    public string TokenIndexText { get; private set; } = "{index}";
 
     public string ExportAllText
     {
@@ -430,7 +438,9 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
         Title = L(Localization.Shell.Navigation.BatchProcessing);
         Subtitle = L(Localization.Batch.Page.Subtitle);
         Breadcrumb = L(Localization.Batch.Page.Breadcrumb);
-        StatusText = L(Localization.Batch.Page.PlannedDesign);
+        StatusText = L(Localization.Common.States.Ready);
+        OnPropertyChanged(nameof(PageStatusBadge));
+        OnPropertyChanged(nameof(ConcurrencyText));
         DropTitleText = L(Localization.Batch.Labels.DropTitle);
         DropDescriptionText = L(Localization.Batch.Labels.DropDescription);
         QueueTitleText = L(Localization.Batch.Labels.QueueTitle);
@@ -467,7 +477,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
     [RelayCommand]
     private void AddImages(IReadOnlyList<string>? paths)
     {
-        var inputPaths = paths?.Where(File.Exists).ToArray() ?? [];
+        var inputPaths = paths?.Where(File.Exists).Where(path => !QueueItems.Any(item => string.Equals(item.SourcePath, path, StringComparison.OrdinalIgnoreCase))).Distinct(StringComparer.OrdinalIgnoreCase).Take(Math.Max(0, 200 - QueueItems.Count)).ToArray() ?? [];
         if (inputPaths.Length == 0)
         {
             return;
@@ -486,9 +496,23 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
 
         foreach (var path in inputPaths)
         {
-            var queueItem = CreateQueueItem(path);
-            HookQueueItem(queueItem);
-            QueueItems.Add(queueItem);
+            if (Path.GetExtension(path).ToLowerInvariant() is not (".jpg" or ".jpeg" or ".png" or ".webp")) continue;
+            try
+            {
+                var queueItem = CreateQueueItem(path);
+                HookQueueItem(queueItem);
+                QueueItems.Add(queueItem);
+            }
+            catch (Exception error) when (error is IOException or ArgumentException or InvalidOperationException)
+            {
+                StatusText = string.Format(L(Localization.PhotoStudio.Status.PreviewFailed), error.Message);
+                var failed = new BatchProcessingItemViewModel(Path.GetFileName(path), error.Message,
+                    SelectedSizeOption?.Title ?? string.Empty, SelectedBackgroundOption?.Title ?? string.Empty,
+                    ActiveBackgroundColor.ToAvaloniaColor(), L(Localization.Batch.Status.Failed), 0, 0, 0,
+                    sourcePath: path, statusKind: "failed");
+                HookQueueItem(failed);
+                QueueItems.Add(failed);
+            }
         }
 
         ImportPathsText = string.Join(Environment.NewLine, inputPaths);
@@ -498,12 +522,21 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
 
     public void AddImagePaths(IEnumerable<string> paths)
     {
-        AddImages(paths.ToArray());
+        try
+        {
+            AddImages(paths.SelectMany(path => Directory.Exists(path)
+                ? Directory.EnumerateFiles(path, "*", SearchOption.TopDirectoryOnly) : [path]).ToArray());
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+        {
+            StatusText = string.Format(L(Localization.PhotoStudio.Status.PreviewFailed), error.Message);
+        }
     }
 
     [RelayCommand]
     private void RemoveSelected()
     {
+        if (IsBusy) return;
         var removing = QueueItems.Where(item => item.IsSelected).ToArray();
         foreach (var item in removing)
         {
@@ -516,72 +549,72 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
     }
 
     [RelayCommand]
+    private void RemoveItem(BatchProcessingItemViewModel? item)
+    {
+        if (IsBusy || item is null || !QueueItems.Contains(item)) return;
+        UnhookQueueItem(item);
+        QueueItems.Remove(item);
+        item.Dispose();
+        RebuildSummary();
+    }
+
+    [RelayCommand]
     private async Task ExportAllAsync()
     {
+        if (IsBusy) return;
         var exportItems = QueueItems.Where(item => item.IsSelected && item.SourcePath is not null).ToArray();
-        if (exportItems.Length == 0)
-        {
-            StatusText = L(Localization.Common.States.Ready);
-            return;
-        }
-
+        if (exportItems.Length == 0) return;
         IsBusy = true;
         try
         {
-            var outputFolder = Path.Combine(_preferencesService.Preferences.DefaultSaveLocation, "批量导出");
-            Directory.CreateDirectory(outputFolder);
-
-            var total = exportItems.Length;
-            var processed = 0;
-
-            foreach (var item in exportItems)
+            var outputFolder = EnsureExportFolder();
+            using var workers = new SemaphoreSlim(Concurrency);
+            var tasks = exportItems.Select(async (item, index) =>
             {
-                processed++;
-                item.SetStatus(L(Localization.Batch.Status.Processing), "processing");
-                item.Progress = 0.4;
-
-                var request = new PhotoProcessingRequest(
-                    item.SourcePath!,
-                    BuildTargetSize(item),
-                    ActiveBackgroundColor,
-                    _preferencesService.Preferences.DefaultFormat,
-                    _preferencesService.Preferences.DefaultQuality);
-
-                var result = await _photoStudioService.ProcessAsync(request);
-                var fileName = BuildOutputFileName(item, request.OutputFormat, processed);
-                var targetPath = Path.Combine(outputFolder, fileName);
-                await File.WriteAllBytesAsync(targetPath, result.Data);
-
-                item.SetStatus(L(Localization.Batch.Status.Completed), "completed");
-                item.Progress = 1;
-                FooterStatusText = $"{L(Localization.Batch.Status.Processing)} · {processed} / {total}";
-                RebuildSummary();
-            }
-
-            StatusText = string.Format(L(Localization.PhotoStudio.Status.SavedFormat), outputFolder);
-            if (OpenFolderWhenDone)
+                var request = BuildBatchRequest(item);
+                var target = Path.Combine(outputFolder, BuildOutputFileName(item, request.OutputFormat, index + 1));
+                var fingerprint = $"{request}|{new FileInfo(item.SourcePath!).LastWriteTimeUtc.Ticks}|{target}";
+                if (SkipProcessed && File.Exists(target) && _processed.TryGetValue(item.SourcePath!, out var previous) && previous == fingerprint) return;
+                await workers.WaitAsync(_lifetime.Token);
+                try
+                {
+                    item.SetStatus(L(Localization.Batch.Status.Processing), "processing");
+                    item.Progress = 0.2;
+                    var result = await _photoStudioService.ProcessAsync(request, _lifetime.Token);
+                    await File.WriteAllBytesAsync(target, result.Data, _lifetime.Token);
+                    _processed[item.SourcePath!] = fingerprint;
+                    item.SetStatus(L(Localization.Batch.Status.Completed), "completed");
+                    item.Progress = 1;
+                }
+                catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { }
+                catch (Exception error)
+                {
+                    item.SetStatus(L(Localization.Batch.Status.Failed), "failed");
+                    StatusText = string.Format(L(Localization.PhotoStudio.Status.SaveFailed), error.Message);
+                }
+                finally { workers.Release(); }
+            });
+            await Task.WhenAll(tasks);
+            if (exportItems.All(item => item.IsCompleted))
             {
-                OpenFolder(outputFolder);
+                StatusText = string.Format(L(Localization.PhotoStudio.Status.SavedFormat), outputFolder);
+                if (OpenFolderWhenDone) OpenFolder(outputFolder);
             }
         }
-        catch
-        {
-            foreach (var item in exportItems.Where(item => item.Progress < 1))
-            {
-                item.SetStatus(L(Localization.Batch.Status.Failed), "failed");
-            }
-
-            RebuildSummary();
-        }
-        finally
-        {
-            IsBusy = false;
-        }
+        catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { }
+        catch (Exception error) { StatusText = string.Format(L(Localization.PhotoStudio.Status.SaveFailed), error.Message); }
+        finally { IsBusy = false; RebuildSummary(); }
     }
+
+    private PhotoProcessingRequest BuildBatchRequest(BatchProcessingItemViewModel item) => new(
+        item.SourcePath!, BuildTargetSize(item), ActiveBackgroundColor,
+        _preferencesService.Preferences.DefaultFormat, _preferencesService.Preferences.DefaultQuality,
+        EmbedSrgb: _preferencesService.Preferences.EmbedSrgb);
 
     [RelayCommand]
     private async Task ExportZipAsync()
     {
+        if (IsBusy) return;
         var exportItems = QueueItems.Where(item => item.IsSelected && item.SourcePath is not null).ToArray();
         if (exportItems.Length == 0)
         {
@@ -593,7 +626,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
         try
         {
             var outputFolder = EnsureExportFolder();
-            var targetPath = Path.Combine(outputFolder, $"批量导出_{DateTime.Now:yyyyMMdd_HHmmss}.zip");
+            var targetPath = Path.Combine(outputFolder, $"BatchExport_{DateTime.Now:yyyyMMdd_HHmmss}.zip");
 
             using var stream = new FileStream(targetPath, FileMode.Create, FileAccess.Write, FileShare.None);
             using var archive = new ZipArchive(stream, ZipArchiveMode.Create);
@@ -605,14 +638,9 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
                 item.SetStatus(L(Localization.Batch.Status.Processing), "processing");
                 item.Progress = 0.5;
 
-                var request = new PhotoProcessingRequest(
-                    item.SourcePath!,
-                    BuildTargetSize(item),
-                    ActiveBackgroundColor,
-                    _preferencesService.Preferences.DefaultFormat,
-                    _preferencesService.Preferences.DefaultQuality);
+                var request = BuildBatchRequest(item);
 
-                var result = await _photoStudioService.ProcessAsync(request);
+                var result = await _photoStudioService.ProcessAsync(request, _lifetime.Token);
                 var entry = archive.CreateEntry(BuildOutputFileName(item, request.OutputFormat, index + 1), CompressionLevel.Optimal);
                 await using (var entryStream = entry.Open())
                 {
@@ -686,6 +714,7 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
 
     protected override void OnDisposed()
     {
+        _lifetime.Cancel();
         UnhookQueueItems();
         foreach (var item in QueueItems)
         {
@@ -698,86 +727,46 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
     private void BuildOptions()
     {
         var preferences = _preferencesService.Preferences;
+        var sizeToken = SelectedSizeOption?.Token;
+        var backgroundToken = SelectedBackgroundOption?.Token;
 
         SizeOptions =
         [
-            new BatchSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.OneInch), "1寸", 25, 35, false),
-            new BatchSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.TwoInch), "2寸", 35, 49, false),
-            new BatchSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.SmallTwoInch), "小2寸", 33, 48, false),
-            new BatchSizeOptionViewModel(L(Localization.Batch.Labels.FollowOriginal), "跟随原", null, null, true)
+            new BatchSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.OneInch), "one-inch", 25, 35, false),
+            new BatchSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.TwoInch), "two-inch", 35, 49, false),
+            new BatchSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.SmallTwoInch), "small-two-inch", 33, 48, false),
+            new BatchSizeOptionViewModel(L(Localization.Batch.Labels.FollowOriginal), "original", null, null, true)
         ];
 
         BackgroundOptions =
         [
-            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.WhiteName), "白色", RgbColor.White, false),
-            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.BlueName), "标准蓝", RgbColor.Blue, false),
-            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.RedName), "中国红", new RgbColor(190, 11, 36), false),
-            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.GrayLightName), "浅灰", new RgbColor(237, 241, 246), false),
-            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.Custom), "自定义", preferences.AccentColor, true)
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.WhiteName), "white", RgbColor.White, false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.BlueName), "blue", RgbColor.Blue, false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.RedName), "red", new RgbColor(190, 11, 36), false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.GrayLightName), "light-gray", new RgbColor(237, 241, 246), false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.Custom), "custom", preferences.AccentColor, true)
         ];
 
-        SelectedSizeOption = SizeOptions[0];
-        SelectedBackgroundOption = BackgroundOptions[1];
+        SelectedSizeOption = SizeOptions.FirstOrDefault(item => item.Token == sizeToken) ?? SizeOptions[0];
+        SelectedBackgroundOption = BackgroundOptions.FirstOrDefault(item => item.Token == backgroundToken) ?? BackgroundOptions[1];
+        RefreshQueueLabels();
 
         OnPropertyChanged(nameof(SizeOptions));
         OnPropertyChanged(nameof(BackgroundOptions));
         UpdateSizeSummaryText();
     }
 
-    private void BuildPrototypeQueue()
+    private void RefreshQueueLabels()
     {
-        QueueItems =
-        [
-            BatchProcessingItemViewModel.CreatePlaceholder(
-                "合影-张三.jpg",
-                "1200×1600 · 2.1 MB",
-                "1 寸",
-                L(Localization.PhotoStudio.Backgrounds.BlueName),
-                new RgbColor(67, 142, 219).ToAvaloniaColor(),
-                L(Localization.Batch.Status.Completed),
-                "completed",
-                1),
-            BatchProcessingItemViewModel.CreatePlaceholder(
-                "证件照-李四.png",
-                "3024×4032 · 4.8 MB",
-                "2 寸",
-                L(Localization.PhotoStudio.Backgrounds.WhiteName),
-                Colors.White,
-                L(Localization.Batch.Status.Completed),
-                "completed",
-                1),
-            BatchProcessingItemViewModel.CreatePlaceholder(
-                "报名照-王五.jpg",
-                "960×1280 · 1.3 MB",
-                "1 寸",
-                L(Localization.PhotoStudio.Backgrounds.RedName),
-                new RgbColor(190, 11, 36).ToAvaloniaColor(),
-                L(Localization.Batch.Status.Processing),
-                "processing",
-                0.6),
-            BatchProcessingItemViewModel.CreatePlaceholder(
-                "体检表-赵六.jpg",
-                "1500×2100 · 2.7 MB",
-                "小2寸",
-                L(Localization.PhotoStudio.Backgrounds.GrayLightName),
-                new RgbColor(237, 241, 246).ToAvaloniaColor(),
-                L(Localization.Batch.Status.Waiting),
-                "waiting",
-                0),
-            BatchProcessingItemViewModel.CreatePlaceholder(
-                "简历照-孙七.png",
-                "1800×2400 · 3.2 MB",
-                "2 寸",
-                L(Localization.PhotoStudio.Backgrounds.BlueName),
-                new RgbColor(67, 142, 219).ToAvaloniaColor(),
-                L(Localization.Batch.Status.Waiting),
-                "waiting",
-                0)
-        ];
-
-        HookQueueItems();
-        OnPropertyChanged(nameof(QueueItems));
-        RebuildSummary();
+        if (SelectedSizeOption is null || SelectedBackgroundOption is null) return;
+        foreach (var item in QueueItems)
+            item.RefreshLabels(SelectedSizeOption.Title, SelectedBackgroundOption.Title, L(item.StatusKind switch
+            {
+                "completed" => Localization.Batch.Status.Completed,
+                "processing" => Localization.Batch.Status.Processing,
+                "failed" => Localization.Batch.Status.Failed,
+                _ => Localization.Batch.Status.Waiting
+            }), ActiveBackgroundColor.ToAvaloniaColor());
     }
 
     private BatchProcessingItemViewModel CreateQueueItem(string path)
@@ -817,11 +806,11 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
     {
         var tokens = new Dictionary<string, string>
         {
-            ["原名"] = Path.GetFileNameWithoutExtension(item.FileName),
-            ["规格"] = SelectedSizeOption?.Title ?? string.Empty,
-            ["底色"] = SelectedBackgroundOption?.Title ?? string.Empty,
-            ["日期"] = DateTime.Now.ToString("yyyyMMdd"),
-            ["序号"] = index.ToString("000")
+            ["name"] = Path.GetFileNameWithoutExtension(item.FileName),
+            ["size"] = SelectedSizeOption?.Title ?? string.Empty,
+            ["color"] = SelectedBackgroundOption?.Title ?? string.Empty,
+            ["date"] = DateTime.Now.ToString("yyyyMMdd"),
+            ["index"] = index.ToString("000")
         };
 
         var baseName = FilenameTemplateFormatter.Format(FilenameTemplate, tokens);
@@ -879,16 +868,16 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
 
         FooterStatusText = ProcessingCount > 0
             ? $"{L(Localization.Batch.Status.Processing)} · {ProcessingCount} / {QueueItems.Count}"
-            : $"{L(Localization.Common.States.Ready)} · {QueueItems.Count} 个文件";
+            : string.Format(L(Localization.Batch.Labels.ReadyFiles), QueueItems.Count);
 
         OnPropertyChanged(nameof(SelectedCount));
         OnPropertyChanged(nameof(AreAllItemsSelected));
-        SelectedCountText = $"{L(Localization.Batch.Labels.SelectedCount)} {SelectedCount} 项";
+        SelectedCountText = string.Format(L(Localization.Batch.Labels.SelectedFormat), SelectedCount);
     }
 
     private string EnsureExportFolder()
     {
-        var outputFolder = Path.Combine(_preferencesService.Preferences.DefaultSaveLocation, "批量导出");
+        var outputFolder = Path.Combine(_preferencesService.Preferences.DefaultSaveLocation, "BatchExport");
         Directory.CreateDirectory(outputFolder);
         return outputFolder;
     }
@@ -926,6 +915,6 @@ public partial class BatchProcessingViewModel : WorkspacePageViewModel
         var heightMm = SelectedSizeOption.HeightMm ?? 0;
         var widthPx = PhotoSizeSpec.MmToPixels(widthMm, DefaultDpi);
         var heightPx = PhotoSizeSpec.MmToPixels(heightMm, DefaultDpi);
-        SizeSummaryText = $"{SelectedSizeOption.Title} · {widthPx} × {heightPx} 像素 · {DefaultDpi} DPI";
+        SizeSummaryText = string.Format(L(Localization.Batch.Labels.SizeSummary), SelectedSizeOption.Title, widthPx, heightPx, DefaultDpi);
     }
 }

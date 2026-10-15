@@ -40,11 +40,11 @@ public partial class BatchProcessingItemViewModel : ObservableObject, IDisposabl
 
     public string FileInfo { get; }
 
-    public string SizeText { get; }
+    public string SizeText { get; private set; }
 
-    public string BackgroundText { get; }
+    public string BackgroundText { get; private set; }
 
-    public Color BackgroundColor { get; }
+    public Color BackgroundColor { get; private set; }
 
     public IBrush ThumbnailBrush => new SolidColorBrush(BackgroundColor);
 
@@ -90,6 +90,13 @@ public partial class BatchProcessingItemViewModel : ObservableObject, IDisposabl
     [ObservableProperty]
     private bool isSelected;
 
+    public void RefreshLabels(string size, string background, string status, Color? color = null)
+    {
+        SizeText = size; BackgroundText = background; StatusText = status;
+        if (color is { } value) { BackgroundColor = value; OnPropertyChanged(nameof(ThumbnailBrush)); }
+        OnPropertyChanged(nameof(SizeText)); OnPropertyChanged(nameof(BackgroundText));
+    }
+
     public void SetStatus(string text, string kind)
     {
         statusKind = kind;
@@ -100,17 +107,6 @@ public partial class BatchProcessingItemViewModel : ObservableObject, IDisposabl
         OnPropertyChanged(nameof(IsFailed));
         StatusText = text;
     }
-
-    public static BatchProcessingItemViewModel CreatePlaceholder(
-        string fileName,
-        string fileInfo,
-        string sizeText,
-        string backgroundText,
-        Color backgroundColor,
-        string statusText,
-        string statusKind,
-        double progress) =>
-        new(fileName, fileInfo, sizeText, backgroundText, backgroundColor, statusText, progress, 0, 0, statusKind: statusKind);
 
     public static BatchProcessingItemViewModel CreateFromPath(
         string sourcePath,
@@ -134,7 +130,7 @@ public partial class BatchProcessingItemViewModel : ObservableObject, IDisposabl
             bitmap.PixelSize.Width,
             bitmap.PixelSize.Height,
             sourcePath,
-            bitmap);
+            bitmap) { IsSelected = true };
     }
 
     public void Dispose()

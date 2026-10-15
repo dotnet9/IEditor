@@ -1,20 +1,22 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
+using CodeWF.Avalonia.Controls.Themes;
+using CodeWF.Toolkit.Core;
 using CommunityToolkit.Mvvm.Input;
 using IEditor.App.Models;
 using IEditor.App.Services;
 using CodeWF.Toolkit.Core.UpdateChecking;
 using IEditor.Core.Models;
-using CodeWF.Avalonia.Lang;
+using CodeWF.Toolkit.Lang;
 
 namespace IEditor.App.ViewModels;
 
 public partial class SettingsViewModel : WorkspacePageViewModel
 {
     private readonly AppPreferencesService _preferencesService;
-    private readonly UpdateChecker _updateChecker = new("dotnet9", "IEditor");
+    public UpdateViewModel Update { get; }
     private ThemeOptionViewModel? selectedThemeOption;
     private AccentColorOptionViewModel? selectedAccentColorOption;
     private LanguageOptionViewModel? selectedLanguageOption;
@@ -70,9 +72,10 @@ public partial class SettingsViewModel : WorkspacePageViewModel
         : "0.3.0");
     private string processingEngineBadgeText = string.Empty;
 
-    public SettingsViewModel(AppPreferencesService preferencesService)
+    public SettingsViewModel(AppPreferencesService preferencesService, IUpdateService? updates = null, Action<string>? openUrl = null, Action? exit = null)
     {
         _preferencesService = preferencesService;
+        Update = new UpdateViewModel(updates, openUrl, exit);
 
         var preferences = _preferencesService.Preferences;
         defaultDpi = preferences.DefaultDpi;
@@ -520,33 +523,7 @@ public partial class SettingsViewModel : WorkspacePageViewModel
     }
 
     [RelayCommand]
-    private async Task CheckUpdateAsync()
-    {
-        Version current = Assembly.GetEntryAssembly()?.GetName().Version ?? new Version(0, 3, 0);
-        StatusText = L(Localization.Common.States.CheckingUpdate);
-        UpdateCheckResult result = await _updateChecker.CheckAsync(current);
-        if (!result.Succeeded)
-        {
-            StatusText = string.Format(
-                CultureInfo.CurrentCulture,
-                L(Localization.Common.States.UpdateCheckFailed),
-                result.Error);
-            return;
-        }
-
-        if (result.Update is { } update)
-        {
-            // 仅提醒不自动下载：提示并打开发布页
-            StatusText = string.Format(
-                CultureInfo.CurrentCulture,
-                L(Localization.Common.States.UpdateAvailable),
-                update.Tag);
-            OpenUrl(update.PageUrl);
-            return;
-        }
-
-        StatusText = L(Localization.Common.States.UpToDate);
-    }
+    private Task CheckUpdateAsync() => Update.CheckAsync();
 
     private void OpenUrl(string url)
     {
@@ -629,8 +606,8 @@ public partial class SettingsViewModel : WorkspacePageViewModel
         BrowseText = L(Localization.Common.Actions.Browse);
         CheckUpdateText = L(Localization.Common.Actions.CheckUpdate);
         OpenRepositoryButtonText = L(Localization.Common.Actions.OpenRepository);
-        VersionBadgeText = "v0.3.0";
-        ProcessingEngineBadgeText = "Magick.NET · 内置";
+        VersionBadgeText = UpdateVersion.Display(typeof(App).Assembly);
+        ProcessingEngineBadgeText = L(Localization.Settings.Options.EngineBadge);
         CurrentVersionText = L(Localization.Settings.Descriptions.CurrentVersion);
         ProcessingEngineText = L(Localization.Settings.Descriptions.ProcessingEngine);
         OpenSourceRepositoryText = L(Localization.Settings.Descriptions.OpenSourceRepository);
@@ -644,22 +621,27 @@ public partial class SettingsViewModel : WorkspacePageViewModel
         ThemeOptions =
         [
             new ThemeOptionViewModel(L(Localization.Common.Theme.Light), AppThemeMode.Light),
-            new ThemeOptionViewModel(L(Localization.Common.Theme.Dark), AppThemeMode.Dark, false),
+            new ThemeOptionViewModel(L(Localization.Common.Theme.Dark), AppThemeMode.Dark),
             new ThemeOptionViewModel(L(Localization.Common.Theme.System), AppThemeMode.System)
         ];
 
-        AccentColorOptions =
-        [
-            new AccentColorOptionViewModel(L(Localization.Settings.Options.TechBlue), new RgbColor(46, 107, 255)),
-            new AccentColorOptionViewModel(L(Localization.Settings.Options.AuroraCyan), new RgbColor(0, 184, 217)),
-            new AccentColorOptionViewModel(L(Localization.Settings.Options.NebulaPurple), new RgbColor(124, 92, 255)),
-            new AccentColorOptionViewModel(L(Localization.Settings.Options.Green), new RgbColor(18, 183, 106)),
-            new AccentColorOptionViewModel(L(Localization.Settings.Options.Amber), new RgbColor(245, 158, 11))
-        ];
+        AccentColorOptions = new(Enum.GetValues<StudioPalette>().Select(palette => new AccentColorOptionViewModel(
+            L(palette switch
+            {
+                StudioPalette.DotNet => Localization.Settings.Options.DotNet,
+                StudioPalette.Aurora => Localization.Settings.Options.Aurora,
+                StudioPalette.Ember => Localization.Settings.Options.Ember,
+                StudioPalette.Default => Localization.Settings.Options.Default,
+                StudioPalette.Aquatic => Localization.Settings.Options.Aquatic,
+                StudioPalette.Desert => Localization.Settings.Options.Desert,
+                StudioPalette.Dusk => Localization.Settings.Options.Dusk,
+                _ => Localization.Settings.Options.NightSky
+            }), palette)));
 
         LanguageOptions =
         [
-            new LanguageOptionViewModel(L(Localization.Common.Language.SimplifiedChinese), "zh-CN")
+            new LanguageOptionViewModel(L(Localization.Common.Language.SimplifiedChinese), "zh-CN"),
+            new LanguageOptionViewModel(L(Localization.Common.Language.English), "en-US")
         ];
 
         FormatOptions =
@@ -668,20 +650,21 @@ public partial class SettingsViewModel : WorkspacePageViewModel
             new FormatOptionViewModel(L(Localization.Common.Formats.Png), PhotoOutputFormat.Png)
         ];
 
-        SelectThemeOption(ThemeOptions.FirstOrDefault(item => item.Value == preferences.ThemeMode) ?? ThemeOptions[0], persist: false);
-        SelectAccentColorOption(AccentColorOptions.FirstOrDefault(item => item.Color == preferences.AccentColor) ?? AccentColorOptions[0], persist: false);
-        SelectLanguageOption(LanguageOptions.FirstOrDefault(item => item.CultureName == preferences.Language) ?? LanguageOptions[0], persist: false);
-        SelectFormatOption(FormatOptions.FirstOrDefault(item => item.Value == preferences.DefaultFormat) ?? FormatOptions[0], persist: false);
-
         OnPropertyChanged(nameof(ThemeOptions));
         OnPropertyChanged(nameof(AccentColorOptions));
         OnPropertyChanged(nameof(LanguageOptions));
         OnPropertyChanged(nameof(FormatOptions));
+
+        SelectThemeOption(ThemeOptions.FirstOrDefault(item => item.Value == preferences.ThemeMode) ?? ThemeOptions[0], persist: false);
+        SelectAccentColorOption(AccentColorOptions.FirstOrDefault(item => item.Palette == preferences.Palette) ?? AccentColorOptions[0], persist: false);
+        SelectLanguageOption(LanguageOptions.FirstOrDefault(item => item.CultureName == preferences.Language) ?? LanguageOptions[0], persist: false);
+        SelectFormatOption(FormatOptions.FirstOrDefault(item => item.Value == preferences.DefaultFormat) ?? FormatOptions[0], persist: false);
+
     }
 
     private void SelectThemeOption(ThemeOptionViewModel? value, bool persist)
     {
-        if (SetProperty(ref selectedThemeOption, value))
+        if (SetProperty(ref selectedThemeOption, value, nameof(SelectedThemeOption)))
         {
             foreach (var option in ThemeOptions)
             {
@@ -699,7 +682,7 @@ public partial class SettingsViewModel : WorkspacePageViewModel
 
     private void SelectAccentColorOption(AccentColorOptionViewModel? value, bool persist)
     {
-        if (SetProperty(ref selectedAccentColorOption, value))
+        if (SetProperty(ref selectedAccentColorOption, value, nameof(SelectedAccentColorOption)))
         {
             foreach (var option in AccentColorOptions)
             {
@@ -709,7 +692,7 @@ public partial class SettingsViewModel : WorkspacePageViewModel
 
         if (persist && value is not null)
         {
-            _preferencesService.Preferences.AccentColor = value.Color;
+            _preferencesService.Preferences.Palette = value.Palette;
             _preferencesService.ApplyAndSave();
             StatusText = L(Localization.Settings.Page.AutoSaved);
         }
@@ -717,7 +700,7 @@ public partial class SettingsViewModel : WorkspacePageViewModel
 
     private void SelectLanguageOption(LanguageOptionViewModel? value, bool persist)
     {
-        if (SetProperty(ref selectedLanguageOption, value))
+        if (SetProperty(ref selectedLanguageOption, value, nameof(SelectedLanguageOption)))
         {
             foreach (var option in LanguageOptions)
             {
@@ -734,9 +717,15 @@ public partial class SettingsViewModel : WorkspacePageViewModel
         }
     }
 
+    protected override void OnDisposed()
+    {
+        Update.Dispose();
+        base.OnDisposed();
+    }
+
     private void SelectFormatOption(FormatOptionViewModel? value, bool persist)
     {
-        if (SetProperty(ref selectedFormatOption, value))
+        if (SetProperty(ref selectedFormatOption, value, nameof(SelectedFormatOption)))
         {
             foreach (var option in FormatOptions)
             {

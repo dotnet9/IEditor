@@ -1,3 +1,5 @@
+using Avalonia.Input;
+using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +16,16 @@ public partial class BatchProcessingView : UserControl
     public BatchProcessingView()
     {
         InitializeComponent();
+        DragDrop.SetAllowDrop(this, true);
+        AddHandler(DragDrop.DragOverEvent, (_, args) => args.DragEffects = args.DataTransfer.TryGetFiles() is null ? DragDropEffects.None : DragDropEffects.Copy);
+        AddHandler(DragDrop.DropEvent, OnDrop);
+    }
+
+    private void OnDrop(object? sender, DragEventArgs args)
+    {
+        var paths = args.DataTransfer.TryGetFiles()?.Select(item => item.TryGetLocalPath()).OfType<string>().ToArray() ?? [];
+        ViewModel?.AddImagePaths(paths);
+        args.Handled = true;
     }
 
     private BatchProcessingViewModel? ViewModel => DataContext as BatchProcessingViewModel;

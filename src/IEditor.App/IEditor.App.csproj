@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
@@ -6,7 +6,7 @@
     <AssemblyName>IEditor.App</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>..\..\logo.ico</ApplicationIcon>
-    <Version>0.3.5</Version>
+    <Version>0.3.6</Version>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     <!-- CI（release.yml）按 RID 做 NativeAOT 发布；裁剪配置与免裁清单与 Vex 对齐 -->
     <IsTrimmable>true</IsTrimmable>
@@ -57,6 +57,7 @@
     </None>
     <None Update="I18n\*.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <TargetPath>I18n\$(AssemblyName)\%(Filename)%(Extension)</TargetPath>
     </None>
   </ItemGroup>

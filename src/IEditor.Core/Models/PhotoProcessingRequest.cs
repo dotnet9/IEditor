@@ -11,4 +11,5 @@ public sealed record PhotoProcessingRequest(
     bool EnableSmartCutout = false,
     double ZoomFactor = 1d,
     double OffsetX = 0d,
-    double OffsetY = 0d);
+    double OffsetY = 0d,
+    bool EmbedSrgb = true);

@@ -5,11 +5,19 @@ using IEditor.App.Models;
 using IEditor.App.Services;
 using IEditor.App.Views;
 using IEditor.Core.Services;
+using CodeWF.Toolkit.Core.UpdateChecking;
+using CodeWF.Toolkit.Core.Extensions;
+using System.Runtime.InteropServices;
 
 namespace IEditor.App.ViewModels;
 
 public partial class MainViewModel : LocalizedViewModel, IDisposable
 {
+    private readonly Action _showAbout;
+    public string Version => UpdateVersion.Display(typeof(App).Assembly);
+    public string CompileTime => typeof(App).Assembly.CompileTime()?.ToString("yyyy-MM-dd HH:mm:ss") ?? "—";
+    public string Platform => $"{RuntimeInformation.FrameworkDescription} · Avalonia {typeof(Avalonia.Application).Assembly.GetName().Version}";
+
     private readonly PhotoStudioViewModel _photoStudioPage;
     private readonly BatchProcessingViewModel _batchProcessingPage;
     private readonly SettingsViewModel _settingsPage;
@@ -19,11 +27,12 @@ public partial class MainViewModel : LocalizedViewModel, IDisposable
     private string _windowTitle = string.Empty;
     private string _windowSubtitle = string.Empty;
 
-    public MainViewModel(IPhotoStudioService photoStudioService, AppPreferencesService preferencesService)
+    public MainViewModel(IPhotoStudioService photoStudioService, AppPreferencesService preferencesService, IUpdateService? updates = null, Action<string>? openUrl = null, Action? exit = null, Action? showAbout = null)
     {
         _photoStudioPage = new PhotoStudioViewModel(photoStudioService, preferencesService);
         _batchProcessingPage = new BatchProcessingViewModel(photoStudioService, preferencesService);
-        _settingsPage = new SettingsViewModel(preferencesService);
+        _settingsPage = new SettingsViewModel(preferencesService, updates, openUrl, exit);
+        _showAbout = showAbout ?? (() => MainWindow.Instance?.ShowAbout());
         _preferencesService = preferencesService;
 
         NavigationItems =
@@ -64,7 +73,7 @@ public partial class MainViewModel : LocalizedViewModel, IDisposable
         _ = RunScheduledUpdateCheckAsync();
     }
 
-    /// <summary>「每周检查一次，仅提醒不自动下载」：到期就跳到设置页执行一次检查，结果落在设置页状态栏。</summary>
+    /// <summary>每周静默检查一次，不切换用户当前工作区。</summary>
     private async Task RunScheduledUpdateCheckAsync()
     {
         try
@@ -83,7 +92,6 @@ public partial class MainViewModel : LocalizedViewModel, IDisposable
 
             preferences.LastAutoCheckUpdateAt = DateTime.UtcNow;
             _preferencesService.Save();
-            SelectedNavigationItem = NavigationItems[4];
             await _settingsPage.CheckUpdateCommand.ExecuteAsync(null);
         }
         catch
@@ -165,6 +173,8 @@ public partial class MainViewModel : LocalizedViewModel, IDisposable
 
     public bool IsSettingsPageActive => ReferenceEquals(SelectedPage, _settingsPage);
 
+    public bool IsDarkThemeChecked => _preferencesService.Preferences.ThemeMode == AppThemeMode.Dark;
+
     public bool IsLightThemeChecked => _preferencesService.Preferences.ThemeMode == AppThemeMode.Light;
 
     public bool IsSystemThemeChecked => _preferencesService.Preferences.ThemeMode == AppThemeMode.System;
@@ -214,6 +224,7 @@ public partial class MainViewModel : LocalizedViewModel, IDisposable
         OnPropertyChanged(nameof(IsPhotoPageActive));
         OnPropertyChanged(nameof(IsBatchPageActive));
         OnPropertyChanged(nameof(IsSettingsPageActive));
+        OnPropertyChanged(nameof(IsDarkThemeChecked));
         OnPropertyChanged(nameof(IsLightThemeChecked));
         OnPropertyChanged(nameof(IsSystemThemeChecked));
         PhotoShowExportDialogCommand.NotifyCanExecuteChanged();
@@ -285,7 +296,7 @@ public partial class MainViewModel : LocalizedViewModel, IDisposable
     [RelayCommand]
     private void CheckUpdate()
     {
-        SelectedNavigationItem = NavigationItems[4];
+        _showAbout();
         _settingsPage.CheckUpdateCommand.Execute(null);
     }
 
@@ -294,6 +305,19 @@ public partial class MainViewModel : LocalizedViewModel, IDisposable
     {
         _preferencesService.Preferences.ThemeMode = AppThemeMode.Light;
         _preferencesService.ApplyAndSave();
+        _settingsPage.Refresh();
+        UpdateActivePageState();
+    }
+
+    [RelayCommand]
+    private void ShowAbout() => _showAbout();
+
+    [RelayCommand]
+    private void SetThemeDark()
+    {
+        _preferencesService.Preferences.ThemeMode = AppThemeMode.Dark;
+        _preferencesService.ApplyAndSave();
+        _settingsPage.Refresh();
         UpdateActivePageState();
     }
 
@@ -302,6 +326,7 @@ public partial class MainViewModel : LocalizedViewModel, IDisposable
     {
         _preferencesService.Preferences.ThemeMode = AppThemeMode.System;
         _preferencesService.ApplyAndSave();
+        _settingsPage.Refresh();
         UpdateActivePageState();
     }
 

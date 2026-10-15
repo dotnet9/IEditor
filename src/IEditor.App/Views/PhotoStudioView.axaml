@@ -3,6 +3,13 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:controls="using:Avalonia.Controls"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:lcommon="using:Localization.Common"
+    xmlns:lshell="using:Localization.Shell"
+    xmlns:lphotostudio="using:Localization.PhotoStudio"
+    xmlns:lsettings="using:Localization.Settings"
+    xmlns:lbatch="using:Localization.Batch"
+    xmlns:labout="using:Localization.About"
+    xmlns:codewf="https://codewf.com"
     xmlns:icons="using:IEditor.App.Icons"
     xmlns:primitives="using:Avalonia.Controls.Primitives"
     xmlns:vm="using:IEditor.App.ViewModels"
@@ -15,12 +22,12 @@
     <Border Classes="ie-topbar">
       <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="12">
         <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-          <TextBlock Classes="ie-crumb" Text="工作台 /" />
+          <TextBlock Classes="ie-crumb" Text="{codewf:I18n {x:Static lcommon:Menu.Workbench}}" />
           <TextBlock Classes="ie-crumb-current" Text="{Binding Title}" />
         </StackPanel>
         <Border Grid.Column="1" Classes="ie-chip chip-green">
           <StackPanel Orientation="Horizontal" Spacing="6">
-            <Ellipse Width="6" Height="6" Fill="{DynamicResource IEditorSuccessBrush}" />
+            <Ellipse Width="6" Height="6" Fill="{DynamicResource SemiColorSuccess}" />
             <TextBlock Text="{Binding LivePreviewText}" />
           </StackPanel>
         </Border>
@@ -62,7 +69,7 @@
                 ToolTip.Tip="{Binding FlipHorizontalText}">
               <Path Classes="ie-icon" Width="17" Height="17" Data="{x:Static icons:AppIcons.FlipHorizontal}" Stroke="{Binding $parent[Button].Foreground}" />
             </Button>
-            <Border Width="24" Height="1" HorizontalAlignment="Center" Background="{DynamicResource IEditorBorderBrush}" />
+            <Border Width="24" Height="1" HorizontalAlignment="Center" Background="{DynamicResource StudioBorder}" />
             <Button
                 Classes="ie-rail-button"
                 Command="{Binding ResetCommand}"
@@ -74,10 +81,10 @@
 
         <!-- 预览舞台 -->
         <StackPanel Grid.Column="1" Spacing="12">
-          <StackPanel Orientation="Horizontal" Spacing="8">
+          <Grid ColumnDefinitions="Auto,Auto,Auto,*,Auto" ColumnSpacing="8">
             <Border
-                Background="{DynamicResource IEditorSurfaceBrush}"
-                BorderBrush="{DynamicResource IEditorBorderStrongBrush}"
+                Background="{DynamicResource StudioSurface}"
+                BorderBrush="{DynamicResource StudioBorder}"
                 BorderThickness="1"
                 CornerRadius="10"
                 Height="32">
@@ -100,6 +107,7 @@
               </StackPanel>
             </Border>
             <ToggleButton
+                Grid.Column="1"
                 Classes="ie-tool-button"
                 IsChecked="{Binding ShowGuides, Mode=TwoWay}">
               <StackPanel Orientation="Horizontal" Spacing="6">
@@ -108,6 +116,7 @@
               </StackPanel>
             </ToggleButton>
             <Button
+                Grid.Column="2"
                 Classes="ie-tool-button"
                 PointerPressed="OnComparePressed"
                 PointerReleased="OnCompareReleased"
@@ -118,16 +127,16 @@
                 <TextBlock Text="{Binding CompareOriginalText}" />
               </StackPanel>
             </Button>
-            <Panel />
-            <Border Classes="ie-chip chip-blue">
+            <Border Grid.Column="4" Classes="ie-chip chip-blue">
               <StackPanel Orientation="Horizontal" Spacing="6">
-                <Path Classes="ie-icon" Width="13" Height="13" Data="{x:Static icons:AppIcons.Zap}" Stroke="{DynamicResource IEditorAccentBrush}" />
+                <Path Classes="ie-icon" Width="13" Height="13" Data="{x:Static icons:AppIcons.Zap}" Stroke="{DynamicResource StudioAccent}" />
                 <TextBlock Text="{Binding EngineReady}" />
               </StackPanel>
             </Border>
-          </StackPanel>
+          </Grid>
 
           <Border Classes="ie-stage" MinHeight="600">
+            <Grid>
             <Panel HorizontalAlignment="Center" VerticalAlignment="Center" Width="{Binding PhotoBoxWidth}" Height="400">
 
               <!-- 照片 -->
@@ -227,7 +236,7 @@
                   <!-- 尺寸角标 -->
                   <Border
                       Classes="ie-mono"
-                      Background="{DynamicResource IEditorDimChipBrush}"
+                      Background="{DynamicResource StudioSurface}"
                       CornerRadius="8"
                       Padding="9,4"
                       Margin="10"
@@ -236,7 +245,7 @@
                     <TextBlock
                         Classes="ie-mono"
                         FontSize="11"
-                        Foreground="{DynamicResource IEditorDimChipTextBrush}"
+                        Foreground="{DynamicResource StudioText}"
                         Text="{Binding DimChipText}" />
                   </Border>
                 </Panel>
@@ -248,13 +257,17 @@
               <Border Classes="ie-corner" Margin="-8" HorizontalAlignment="Left" VerticalAlignment="Bottom" BorderThickness="2.5,0,0,2.5" CornerRadius="0,0,0,5" BoxShadow="0 0 6 0 #6635E0FF" />
               <Border Classes="ie-corner" Margin="-8" HorizontalAlignment="Right" VerticalAlignment="Bottom" BorderThickness="0,0,2.5,2.5" CornerRadius="0,0,5,0" BoxShadow="0 0 6 0 #6635E0FF" />
             </Panel>
-          </Border>
+            <Border Background="{DynamicResource StudioBackground}" BorderBrush="{DynamicResource StudioBorder}"
+                BorderThickness="1" CornerRadius="999" Padding="14,5" Margin="0,0,0,14"
+                HorizontalAlignment="Center" VerticalAlignment="Bottom" IsVisible="{Binding IsPreviewEmpty}">
           <TextBlock
               HorizontalAlignment="Center"
-              Margin="0,0,0,2"
               FontSize="11.5"
-              Foreground="{DynamicResource IEditorTextSecondaryBrush}"
-              IsVisible="{Binding IsPreviewEmpty}"><Run>拖入图片，或使用 </Run><Run FontWeight="SemiBold" Foreground="{DynamicResource IEditorAccentBrush}">文件 › 打开图片</Run><Run>（Ctrl+O）</Run></TextBlock>
+              Foreground="{DynamicResource StudioMuted}"
+              Text="{codewf:I18n {x:Static lcommon:Menu.StageHint}}" />
+            </Border>
+            </Grid>
+          </Border>
         </StackPanel>
 
         <!-- 参数面板 -->
@@ -267,7 +280,7 @@
                 <Border Classes="ie-card-header">
                   <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                      <Path Classes="ie-icon" Width="15" Height="15" Data="{x:Static icons:AppIcons.LoadImage}" Stroke="{DynamicResource IEditorAccentBrush}" />
+                      <Path Classes="ie-icon" Width="15" Height="15" Data="{x:Static icons:AppIcons.LoadImage}" Stroke="{DynamicResource StudioAccent}" />
                       <TextBlock Classes="ie-section-title" Text="{Binding SourceSectionTitle}" />
                     </StackPanel>
                     <TextBlock Grid.Column="2" Classes="ie-footnote" Text="{Binding SourceSectionHint}" />
@@ -280,8 +293,8 @@
                         Height="52"
                         CornerRadius="10"
                         ClipToBounds="True"
-                        Background="{DynamicResource IEditorSurface2Brush}"
-                        BorderBrush="{DynamicResource IEditorBorderBrush}"
+                        Background="{DynamicResource StudioRaised}"
+                        BorderBrush="{DynamicResource StudioBorder}"
                         BorderThickness="1">
                       <Panel>
                         <Path
@@ -289,7 +302,7 @@
                             Width="18"
                             Height="18"
                             Data="{x:Static icons:AppIcons.LoadImage}"
-                            Stroke="{DynamicResource IEditorTextTertiaryBrush}"
+                            Stroke="{DynamicResource StudioMuted}"
                             IsVisible="{Binding IsPreviewEmpty}" />
                         <Image Source="{Binding SourceThumb}" Stretch="UniformToFill" IsVisible="{Binding HasPreview}" />
                       </Panel>
@@ -302,7 +315,7 @@
                           TextTrimming="CharacterEllipsis" />
                       <TextBlock
                           Classes="ie-mono"
-                          Foreground="{DynamicResource IEditorTextTertiaryBrush}"
+                          Foreground="{DynamicResource StudioMuted}"
                           Text="{Binding SourceInfoText}"
                           TextTrimming="CharacterEllipsis" />
                     </StackPanel>
@@ -317,7 +330,7 @@
                 <Border Classes="ie-card-header">
                   <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                      <Path Classes="ie-icon" Width="15" Height="15" Data="{x:Static icons:AppIcons.Crop}" Stroke="{DynamicResource IEditorAccentBrush}" />
+                      <Path Classes="ie-icon" Width="15" Height="15" Data="{x:Static icons:AppIcons.Crop}" Stroke="{DynamicResource StudioAccent}" />
                       <TextBlock Classes="ie-section-title" Text="{Binding SizeSectionTitle}" />
                     </StackPanel>
                     <TextBlock Grid.Column="2" Classes="ie-footnote" Text="{Binding SizeSectionHint}" />
@@ -350,7 +363,7 @@
                                   Margin="0,2,2,0"
                                   HorizontalAlignment="Right"
                                   VerticalAlignment="Top"
-                                  Fill="{DynamicResource IEditorAccentBrush}"
+                                  Fill="{DynamicResource StudioAccent}"
                                   IsVisible="{Binding IsSelected}" />
                             </Panel>
                           </ToggleButton>
@@ -361,10 +374,10 @@
                     <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
                       <Border Classes="ie-field" IsEnabled="{Binding IsCustomSize}">
                         <StackPanel Spacing="6">
-                          <TextBlock Classes="ie-muted" Text="宽度" />
+                          <TextBlock Classes="ie-muted" Text="{codewf:I18n {x:Static lphotostudio:Labels.Width}}" />
                           <Border Classes="ie-input-group">
                             <Grid ColumnDefinitions="Auto,*,Auto">
-                              <TextBlock Classes="ie-input-prefix" Text="宽" />
+                              <TextBlock Classes="ie-input-prefix" Text="{codewf:I18n {x:Static lphotostudio:Labels.WidthPrefix}}" />
                               <TextBox Grid.Column="1" Classes="ie-flat" Text="{Binding WidthMmInput, Mode=TwoWay}" />
                               <TextBlock Grid.Column="2" Classes="ie-input-suffix" Text="mm" />
                             </Grid>
@@ -373,10 +386,10 @@
                       </Border>
                       <Border Grid.Column="1" Classes="ie-field" IsEnabled="{Binding IsCustomSize}">
                         <StackPanel Spacing="6">
-                          <TextBlock Classes="ie-muted" Text="高度" />
+                          <TextBlock Classes="ie-muted" Text="{codewf:I18n {x:Static lphotostudio:Labels.Height}}" />
                           <Border Classes="ie-input-group">
                             <Grid ColumnDefinitions="Auto,*,Auto">
-                              <TextBlock Classes="ie-input-prefix" Text="高" />
+                              <TextBlock Classes="ie-input-prefix" Text="{codewf:I18n {x:Static lphotostudio:Labels.HeightPrefix}}" />
                               <TextBox Grid.Column="1" Classes="ie-flat" Text="{Binding HeightMmInput, Mode=TwoWay}" />
                               <TextBlock Grid.Column="2" Classes="ie-input-suffix" Text="mm" />
                             </Grid>
@@ -401,32 +414,32 @@
                     </Grid>
 
                     <Border
-                        Background="{DynamicResource IEditorSurface2Brush}"
-                        BorderBrush="{DynamicResource IEditorBorderStrongBrush}"
+                        Background="{DynamicResource StudioRaised}"
+                        BorderBrush="{DynamicResource StudioBorder}"
                         BorderThickness="1"
                         CornerRadius="10"
                         Padding="12,8">
                       <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                        <Path Classes="ie-icon" Width="14" Height="14" Data="{x:Static icons:AppIcons.Zap}" Stroke="{DynamicResource IEditorAccentBrush}" />
+                        <Path Classes="ie-icon" Width="14" Height="14" Data="{x:Static icons:AppIcons.Zap}" Stroke="{DynamicResource StudioAccent}" />
                         <TextBlock Classes="ie-muted" Text="{Binding OutputSizeText}" />
                         <TextBlock
                             Classes="ie-mono"
                             FontWeight="Bold"
-                            Foreground="{DynamicResource IEditorAccentBrush}"
+                            Foreground="{DynamicResource StudioAccent}"
                             Text="{Binding OutputPxText}" />
                         <TextBlock
                             Classes="ie-mono"
-                            Foreground="{DynamicResource IEditorTextTertiaryBrush}"
+                            Foreground="{DynamicResource StudioMuted}"
                             Text="{Binding OutputMmText}" />
                       </StackPanel>
                     </Border>
 
-                    <StackPanel Orientation="Horizontal" Spacing="6">
+                    <WrapPanel ItemSpacing="6" LineSpacing="6">
                       <TextBlock Classes="ie-footnote" Margin="0,0,2,0" VerticalAlignment="Center" Text="{Binding MoreSizesText}" />
-                      <Border Classes="ie-chip chip-locked"><TextBlock Text="护照 35×45" /></Border>
-                      <Border Classes="ie-chip chip-locked"><TextBlock Text="社保 26×32" /></Border>
-                      <Border Classes="ie-chip chip-locked"><TextBlock Text="考试 33×48" /></Border>
-                    </StackPanel>
+                      <Border Classes="ie-chip chip-locked"><TextBlock Text="{codewf:I18n {x:Static lphotostudio:Labels.Passport}}" /></Border>
+                      <Border Classes="ie-chip chip-locked"><TextBlock Text="{codewf:I18n {x:Static lphotostudio:Labels.SocialSecurity}}" /></Border>
+                      <Border Classes="ie-chip chip-locked"><TextBlock Text="{codewf:I18n {x:Static lphotostudio:Labels.Examination}}" /></Border>
+                    </WrapPanel>
                   </StackPanel>
                 </Border>
               </StackPanel>
@@ -438,7 +451,7 @@
                 <Border Classes="ie-card-header">
                   <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                      <Path Classes="ie-icon" Width="15" Height="15" Data="{x:Static icons:AppIcons.Palette}" Stroke="{DynamicResource IEditorAccentBrush}" />
+                      <Path Classes="ie-icon" Width="15" Height="15" Data="{x:Static icons:AppIcons.Palette}" Stroke="{DynamicResource StudioAccent}" />
                       <TextBlock Classes="ie-section-title" Text="{Binding BackgroundSectionTitle}" />
                     </StackPanel>
                     <TextBlock Grid.Column="2" Classes="ie-footnote" Text="{Binding ActiveBackgroundName}" />
@@ -457,11 +470,16 @@
                           <ToggleButton
                               Classes="ie-swatch"
                               Classes.rainbow="{Binding IsCustom}"
-                              Background="{Binding AvaloniaBrush}"
+                              Background="Transparent"
                               IsChecked="{Binding IsSelected, Mode=TwoWay}"
                               Command="{Binding $parent[ItemsControl].((vm:PhotoStudioViewModel)DataContext).SelectBackgroundCommand}"
                               CommandParameter="{Binding}"
-                              ToolTip.Tip="{Binding Title}" />
+                              ToolTip.Tip="{Binding Title}">
+                            <Panel>
+                              <Border CornerRadius="999" Background="{Binding AvaloniaBrush}" IsVisible="{Binding !IsCustom}" />
+                              <Border CornerRadius="999" Background="{DynamicResource IEditorRainbowBrush}" IsVisible="{Binding IsCustom}" />
+                            </Panel>
+                          </ToggleButton>
                         </DataTemplate>
                       </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -482,7 +500,7 @@
                           CornerRadius="4"
                           VerticalAlignment="Center"
                           Background="{Binding ActiveBackgroundBrush}"
-                          BorderBrush="{DynamicResource IEditorSwatchBorderBrush}"
+                          BorderBrush="{DynamicResource StudioBorder}"
                           BorderThickness="1" />
                       <TextBlock Grid.Column="3" Classes="ie-input-suffix" Text="HEX" />
                       <Button
@@ -490,13 +508,13 @@
                           Classes="ie-icon-button"
                           Click="OnOpenColorPickerClick"
                           IsVisible="{Binding IsCustomBackground}"
-                          ToolTip.Tip="颜色选择器">
+                          ToolTip.Tip="{codewf:I18n {x:Static lphotostudio:Labels.ColorPicker}}">
                         <Path Classes="ie-icon" Width="14" Height="14" Data="{x:Static icons:AppIcons.Palette}" Stroke="{Binding $parent[Button].Foreground}" />
                         <primitives:FlyoutBase.AttachedFlyout>
                           <Flyout Placement="BottomEdgeAlignedLeft">
                             <Border
-                                Background="{DynamicResource IEditorSurfaceBrush}"
-                                BorderBrush="{DynamicResource IEditorBorderBrush}"
+                                Background="{DynamicResource StudioSurface}"
+                                BorderBrush="{DynamicResource StudioBorder}"
                                 BorderThickness="1"
                                 BoxShadow="0 18 50 0 #330A1628"
                                 CornerRadius="12"
@@ -532,12 +550,12 @@
                           VerticalAlignment="Top"
                           Margin="0,2,0,0"
                           Data="{x:Static icons:AppIcons.SmartCutout}"
-                          Stroke="{DynamicResource IEditorCyanBrush}" />
+                          Stroke="{DynamicResource StudioSecondary}" />
                       <StackPanel Grid.Column="1" Spacing="2">
                         <TextBlock Classes="ie-row-title" Text="{Binding SmartCutoutTitleText}" />
                         <TextBlock Classes="ie-footnote" Text="{Binding SmartCutoutDescriptionText}" />
                       </StackPanel>
-                      <ToggleSwitch Grid.Column="3" IsChecked="{Binding IsSmartCutoutEnabled, Mode=TwoWay}" />
+                      <ToggleSwitch OnContent="" OffContent="" Grid.Column="3" IsChecked="{Binding IsSmartCutoutEnabled, Mode=TwoWay}" />
                     </Grid>
                   </StackPanel>
                 </Border>
@@ -555,13 +573,13 @@
       <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto" ColumnSpacing="16">
         <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
           <Ellipse Classes="ie-dot" Classes.busy="{Binding IsBusy}" />
-          <TextBlock FontSize="12" Foreground="{DynamicResource IEditorTextSecondaryBrush}" Text="{Binding StatusText}" />
+          <TextBlock FontSize="12" Foreground="{DynamicResource StudioMuted}" Text="{Binding StatusText}" />
         </StackPanel>
         <TextBlock
             Grid.Column="1"
             VerticalAlignment="Center"
             Classes="ie-mono"
-            Foreground="{DynamicResource IEditorTextTertiaryBrush}"
+            Foreground="{DynamicResource StudioMuted}"
             Text="{Binding SizeStatusText}" />
         <TextBlock Grid.Column="3" VerticalAlignment="Center" Classes="ie-footnote" Text="Magick.NET" />
         <TextBlock Grid.Column="4" VerticalAlignment="Center" Classes="ie-footnote" Text="{Binding FormatStatusText}" />

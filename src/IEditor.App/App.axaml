@@ -6,6 +6,7 @@
     xmlns:vm="using:IEditor.App.ViewModels"
     xmlns:semi="https://irihi.tech/semi"
     xmlns:codewf="https://codewf.com"
+    xmlns:themes="using:CodeWF.Avalonia.Controls.Themes"
     RequestedThemeVariant="Default">
   <Application.DataTemplates>
     <DataTemplate DataType="vm:PhotoStudioViewModel">
@@ -25,6 +26,7 @@
     <semi:SemiPopupAnimations />
     <semi:ColorPickerSemiTheme />
     <codewf:ACSemiTheme />
+    <themes:StudioTheme />
     <StyleInclude Source="avares://IEditor.App/Styles/Index.axaml" />
     <StyleInclude Source="avares://IEditor.App/Styles/DialogOverlay.axaml" />
   </Application.Styles>

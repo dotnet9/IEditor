@@ -1,5 +1,6 @@
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CodeWF.Avalonia.Lang;
+using CodeWF.Toolkit.Lang;
 
 namespace IEditor.App.ViewModels;
 
@@ -10,13 +11,18 @@ public abstract partial class LocalizedViewModel : ObservableObject, IDisposable
     protected LocalizedViewModel()
     {
         I18nManager.Instance.CultureChanged += OnCultureChanged;
+        I18nManager.Instance.ResourcesChanged += OnCultureChanged;
     }
 
     protected abstract void RefreshLocalizedText();
 
     protected string L(string key) => I18nManager.Instance.GetResource(key);
 
-    public void Refresh() => RefreshLocalizedText();
+    public void Refresh()
+    {
+        RefreshLocalizedText();
+        OnPropertyChanged(string.Empty);
+    }
 
     protected void InitializeLocalizedText() => RefreshLocalizedText();
 
@@ -33,8 +39,13 @@ public abstract partial class LocalizedViewModel : ObservableObject, IDisposable
 
         _disposed = true;
         I18nManager.Instance.CultureChanged -= OnCultureChanged;
+        I18nManager.Instance.ResourcesChanged -= OnCultureChanged;
         OnDisposed();
     }
 
-    private void OnCultureChanged(object? sender, EventArgs e) => RefreshLocalizedText();
+    private void OnCultureChanged(object? sender, EventArgs e)
+    {
+        if (Dispatcher.UIThread.CheckAccess()) Refresh();
+        else Dispatcher.UIThread.Post(Refresh);
+    }
 }

@@ -10,7 +10,7 @@ public static class FilenameTemplateFormatter
     {
         if (string.IsNullOrWhiteSpace(template))
         {
-            template = "{原名}";
+            template = "{name}";
         }
 
         var result = template;
@@ -38,6 +38,6 @@ public static class FilenameTemplateFormatter
             sanitized = sanitized.Replace("  ", " ", StringComparison.Ordinal);
         }
 
-        return string.IsNullOrWhiteSpace(sanitized) ? "未命名" : sanitized;
+        return string.IsNullOrWhiteSpace(sanitized) ? CodeWF.Toolkit.Lang.I18nManager.Instance.GetResource(Localization.Common.Filenames.Unnamed) : sanitized;
     }
 }

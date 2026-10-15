@@ -1,4 +1,5 @@
 using Avalonia.Media;
+using CodeWF.Avalonia.Controls.Themes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using IEditor.App.Converters;
 using IEditor.App.Models;
@@ -8,17 +9,26 @@ namespace IEditor.App.ViewModels;
 
 public partial class AccentColorOptionViewModel : ObservableObject
 {
-    public AccentColorOptionViewModel(string title, RgbColor color)
+    public AccentColorOptionViewModel(string title, StudioPalette palette)
     {
         Title = title;
-        Color = color;
+        Palette = palette;
     }
 
     public string Title { get; }
 
-    public RgbColor Color { get; }
+    public StudioPalette Palette { get; }
 
-    public Color AvaloniaColor => Color.ToAvaloniaColor();
+    public RgbColor Color { get { var color = AvaloniaColor; return new(color.R, color.G, color.B); } }
+
+    public Color AvaloniaColor
+    {
+        get
+        {
+            Avalonia.Application.Current!.TryGetResource("StudioAccent", StudioTheme.GetVariant(Palette, false), out var value);
+            return ((ISolidColorBrush)value!).Color;
+        }
+    }
 
     public IBrush AvaloniaBrush => new SolidColorBrush(AvaloniaColor);
 

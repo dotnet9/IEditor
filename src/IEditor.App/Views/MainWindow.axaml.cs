@@ -19,6 +19,16 @@ public partial class MainWindow : CodeWFWindow
         Instance = this;
     }
 
+    private AboutWindow? _aboutWindow;
+
+    public void ShowAbout()
+    {
+        if (_aboutWindow is not null) { _aboutWindow.Activate(); return; }
+        _aboutWindow = new AboutWindow { DataContext = DataContext };
+        _aboutWindow.Closed += (_, _) => _aboutWindow = null;
+        _ = _aboutWindow.ShowDialog(this);
+    }
+
     private MainViewModel? ViewModel => DataContext as MainViewModel;
 
     private void OnExitClick(object? sender, RoutedEventArgs e) => Close();

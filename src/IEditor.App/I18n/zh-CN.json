@@ -3,9 +3,13 @@
   "description": "IEditor 简体中文资源",
   "cultureName": "zh-CN",
   "Localization": {
-      "Common": {
+    "Common": {
       "Filenames": {
-        "Default": "证件照"
+        "Default": "证件照",
+        "Photo": "照片",
+        "Unnamed": "未命名",
+        "DefaultTemplate": "photo_{size}_{color}",
+        "BatchTemplate": "photo_{name}_{size}"
       },
       "Menu": {
         "File": "文件",
@@ -18,7 +22,14 @@
         "ZoomOut": "缩小",
         "FitWindow": "适应窗口",
         "Filename": "文件名",
-        "StageHint": "拖入图片，或使用 文件 › 打开图片（Ctrl+O）"
+        "StageHint": "拖入图片，或使用 文件 › 打开图片（Ctrl+O）",
+        "AddImages": "添加图片…",
+        "ExportImage": "导出图片…",
+        "CheckUpdate": "检查更新…",
+        "Workbench": "工作台 /",
+        "ShowGuides": "显示参考线",
+        "CompareOriginal": "原图对比（按住）",
+        "Repository": "开源仓库"
       },
       "Actions": {
         "Add": "添加",
@@ -53,7 +64,8 @@
       },
       "Language": {
         "SimplifiedChinese": "简体中文",
-        "TraditionalChinese": "繁體中文"
+        "TraditionalChinese": "繁體中文",
+        "English": "English"
       },
       "States": {
         "AutoSaved": "更改已自动保存",
@@ -118,14 +130,22 @@
         "SaveLocation": "保存位置",
         "SizeHint": "标准冲印比例",
         "SourceHint": "JPG / PNG / WEBP",
-        "WidthMm": "宽（毫米）"
+        "WidthMm": "宽（毫米）",
+        "Width": "宽度",
+        "Height": "高度",
+        "WidthPrefix": "宽",
+        "HeightPrefix": "高",
+        "Passport": "护照 35×45",
+        "SocialSecurity": "社保 26×32",
+        "Examination": "考试 33×48",
+        "ColorPicker": "颜色选择器"
       },
       "Page": {
         "BackgroundSection": "背景颜色",
-        "BackgroundSmartDescription": "自动抠出人像，任意替换底色",
-        "BackgroundSmartTitle": "智能抠图换底",
+        "BackgroundSmartDescription": "适合背景均匀的照片；不适用于复杂背景",
+        "BackgroundSmartTitle": "纯色背景去除",
         "Breadcrumb": "工作台 / 证件照处理",
-        "EngineReady": "AI 引擎就绪",
+        "EngineReady": "图像引擎就绪",
         "ExportImage": "导出图片",
         "FitToWindow": "适应",
         "Help": "帮助",
@@ -169,7 +189,10 @@
         "BackgroundFormat": "{0}背景 · {1}",
         "NoImageSelected": "未选择图片",
         "ProcessingFormat": "{0} · {1:0.#} × {2:0.#} 毫米 · {3} × {4} 像素",
-        "SavedFormat": "已保存：{0}"
+        "SavedFormat": "已保存：{0}",
+        "Original": "原图 · {0} × {1}",
+        "ApproximateSize": " · 约 {0:0} KB",
+        "FormatQuality": "{0} · 质量 {1}{2}"
       }
     },
     "Settings": {
@@ -182,7 +205,7 @@
         "DefaultQuality": "仅对 JPG 生效",
         "DefaultSaveLocation": "默认输出目录",
         "EmbedSrgb": "保证冲印与屏幕显示颜色一致",
-        "FilenameTemplate": "支持 {规格} {底色} {日期} {序号} 变量",
+        "FilenameTemplate": "支持 {name} {size} {color} {date} {index} 变量",
         "Language": "切换后立即生效",
         "OpenSourceRepository": "欢迎提交 Issue 与 PR",
         "ProcessingEngine": "当前使用内置 Magick.NET 引擎",
@@ -216,7 +239,16 @@
         "SimplifiedChinese": "简体中文",
         "System": "跟随系统",
         "TechBlue": "科技蓝",
-        "TraditionalChinese": "繁體中文"
+        "TraditionalChinese": "繁體中文",
+        "DotNet": ".NET 紫",
+        "Aurora": "AI 极光",
+        "Ember": "余烬橙",
+        "Default": "经典蓝",
+        "Aquatic": "水生",
+        "Desert": "沙漠",
+        "Dusk": "暮光",
+        "NightSky": "夜空",
+        "EngineBadge": "Magick.NET · 内置"
       },
       "Page": {
         "Appearance": "外观",
@@ -231,7 +263,7 @@
     "Batch": {
       "Descriptions": {
         "Concurrency": "同时处理图片数量",
-        "FilenameTemplate": "支持 {原名} {规格} {底色} {日期} {序号} 变量",
+        "FilenameTemplate": "支持 {name} {size} {color} {date} {index} 变量",
         "OpenFolderWhenDone": "全部导出成功后自动打开",
         "SkipProcessed": "再次导出时忽略无变化文件"
       },
@@ -249,7 +281,7 @@
         "KeepRatio": "保持比例",
         "OpenFolderWhenDone": "完成后打开文件夹",
         "Processing": "处理中",
-        "QueueHint": "5 个文件 · 2 个已完成",
+        "QueueHint": "添加图片后开始处理",
         "QueueTitle": "处理队列",
         "Remove": "移除",
         "SelectedCount": "已选",
@@ -258,7 +290,11 @@
         "Status": "状态",
         "UniformBackground": "统一背景",
         "UniformSize": "统一规格",
-        "UniformSizeTitle": "统一尺寸"
+        "UniformSizeTitle": "统一尺寸",
+        "ConcurrencyFormat": "并发 {0}",
+        "SelectedFormat": "已选 {0} 项",
+        "ReadyFiles": "就绪 · {0} 个文件",
+        "SizeSummary": "{0} · {1} × {2} 像素 · {3} DPI"
       },
       "Page": {
         "AddImage": "添加图片",
@@ -272,6 +308,54 @@
         "Failed": "失败",
         "Processing": "处理中",
         "Waiting": "等待中"
+      }
+    },
+    "About": {
+      "Text": {
+        "Title": "关于 IEditor",
+        "Version": "版本",
+        "CompileTime": "编译时间",
+        "Platform": "开发平台",
+        "Author": "作者",
+        "AuthorName": "dotnet9",
+        "Repository": "GitHub 仓库",
+        "Copyright": "© 2026 CodeWF · MIT 开源许可",
+        "Description": "本地证件照处理与批量导出",
+        "UpdateDescription": "检查发布版本，下载经 SHA-256 校验的安装包。",
+        "Checking": "正在检查更新…",
+        "Downloading": "正在下载更新…",
+        "Installing": "正在启动安装…",
+        "Current": "当前已是最新版本",
+        "Available": "发现新版本 {0}",
+        "Downloaded": "下载完成，校验通过",
+        "Failed": "更新失败：{0}",
+        "Canceled": "更新已取消",
+        "ReleasePage": "打开发布页",
+        "Download": "下载更新",
+        "Install": "安装更新",
+        "OpenFolder": "打开所在文件夹",
+        "Check": "检查更新",
+        "Recheck": "重新检查",
+        "Cancel": "取消"
+      }
+    },
+    "Prototype": {
+      "Text": {
+        "MenuHint": "低频命令已收纳至菜单，快捷键见各菜单项",
+        "TemplateHint": "支持 {size} {color} {date} {index} 变量",
+        "SettingsSaved": "所有设置已自动保存",
+        "PrototypeVersion": "v0.3.6 · 界面原型",
+        "EmptyHint": "拖入图片，或使用",
+        "OpenMenuPath": "文件 › 打开图片",
+        "CustomShort": "自定",
+        "PreviewReady": "就绪 · 预览已生成",
+        "QualitySample": "JPG · 质量 92 · 约 86 KB",
+        "QueueHint": "5 个文件 · 2 个已完成",
+        "Items": "项",
+        "ApplyAll": "应用到全部",
+        "ProcessingSample": "处理中 · 2 / 5 · 预计剩余 6 秒",
+        "QueueSummary": "已完成 2 · 等待 3 · 失败 0",
+        "ConcurrencySample": "并发 4"
       }
     }
   }

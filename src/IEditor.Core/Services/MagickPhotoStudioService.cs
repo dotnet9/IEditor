@@ -16,12 +16,12 @@ public sealed class MagickPhotoStudioService : IPhotoStudioService
     {
         if (string.IsNullOrWhiteSpace(request.SourcePath))
         {
-            throw new ArgumentException("源图片路径不能为空。", nameof(request));
+            throw new ArgumentException("Source image path is required.", nameof(request));
         }
 
         if (!File.Exists(request.SourcePath))
         {
-            throw new FileNotFoundException("未找到源图片。", request.SourcePath);
+            throw new FileNotFoundException("Source image was not found.", request.SourcePath);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -62,6 +62,8 @@ public sealed class MagickPhotoStudioService : IPhotoStudioService
         var offsetX = (int)Math.Round((widthPx - drawWidth) / 2d + request.OffsetX, MidpointRounding.AwayFromZero);
         var offsetY = (int)Math.Round((heightPx - drawHeight) / 2d + request.OffsetY, MidpointRounding.AwayFromZero);
         canvas.Composite(source, offsetX, offsetY, CompositeOperator.Over);
+        if (request.EmbedSrgb) canvas.SetProfile(ColorProfiles.SRGB);
+        else canvas.Settings.SetDefine(MagickFormat.Png, "exclude-chunks", "sRGB,iCCP");
         canvas.Quality = request.OutputFormat == PhotoOutputFormat.Jpeg ? request.JpegQuality : 100;
 
         using var output = new MemoryStream();

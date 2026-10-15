@@ -7,6 +7,35 @@ namespace IEditor.Core.Tests;
 
 public class MagickPhotoStudioServiceTests
 {
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task ProcessAsync_EmbedSrgbControlsPngColorMetadata(bool embedSrgb)
+    {
+        var sourcePath = Path.Combine(Path.GetTempPath(), $"{Guid.NewGuid():N}.png");
+        try
+        {
+            using var source = new MagickImage(MagickColors.Blue, 120, 160);
+            source.Write(sourcePath, MagickFormat.Png);
+            var request = new PhotoProcessingRequest(sourcePath, new PhotoSizeSpec(25, 35, 300),
+                RgbColor.White, PhotoOutputFormat.Png, EmbedSrgb: embedSrgb);
+            var result = await new MagickPhotoStudioService().ProcessAsync(request, TestContext.Current.CancellationToken);
+            var chunks = new List<string>();
+            // PNG 可使用 sRGB 块声明标准色彩空间，并不要求额外写入 iCCP。
+            for (var offset = 8; offset + 12 <= result.Data.Length;)
+            {
+                var length = System.Buffers.Binary.BinaryPrimitives.ReadInt32BigEndian(result.Data.AsSpan(offset, 4));
+                chunks.Add(System.Text.Encoding.ASCII.GetString(result.Data, offset + 4, 4));
+                offset = checked(offset + length + 12);
+            }
+            Assert.Equal(embedSrgb, chunks.Contains("sRGB") || chunks.Contains("iCCP"));
+        }
+        finally
+        {
+            File.Delete(sourcePath);
+        }
+    }
+
     [Fact]
     public async Task ProcessAsync_CreatesExpectedOutputSize()
     {

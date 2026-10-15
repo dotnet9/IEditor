@@ -1,12 +1,11 @@
 using System;
 using System.IO;
-using Avalonia.Media;
-using CommunityToolkit.Mvvm.ComponentModel;
+using CodeWF.Avalonia.Controls.Themes;
 using IEditor.Core.Models;
 
 namespace IEditor.App.Models;
 
-public partial class AppPreferences : ObservableObject
+public sealed class AppPreferences
 {
     private static string GetDefaultSaveLocation()
     {
@@ -16,49 +15,36 @@ public partial class AppPreferences : ObservableObject
             : Path.Combine(pictures, "IEditor");
     }
 
-    [ObservableProperty]
-    private AppThemeMode themeMode = AppThemeMode.Light;
+    public AppThemeMode ThemeMode { get; set; } = AppThemeMode.Light;
 
-    [ObservableProperty]
-    private RgbColor accentColor = new(46, 107, 255);
+    public StudioPalette Palette { get; set; } = StudioPalette.DotNet;
 
-    [ObservableProperty]
-    private string language = "zh-CN";
+    public RgbColor AccentColor { get; set; } = new(46, 107, 255);
 
-    [ObservableProperty]
-    private int defaultDpi = 300;
+    public string Language { get; set; } = "zh-CN";
 
-    [ObservableProperty]
-    private PhotoOutputFormat defaultFormat = PhotoOutputFormat.Jpeg;
+    public int DefaultDpi { get; set; } = 300;
 
-    [ObservableProperty]
-    private uint defaultQuality = 92;
+    public PhotoOutputFormat DefaultFormat { get; set; } = PhotoOutputFormat.Jpeg;
 
-    [ObservableProperty]
-    private string defaultSaveLocation = GetDefaultSaveLocation();
+    public uint DefaultQuality { get; set; } = 92;
 
-    [ObservableProperty]
-    private string filenameTemplate = "证件照_{规格}_{底色}";
+    public string DefaultSaveLocation { get; set; } = GetDefaultSaveLocation();
 
-    [ObservableProperty]
-    private bool showGuides = true;
+    public string FilenameTemplate { get; set; } = "photo_{size}_{color}";
 
-    [ObservableProperty]
-    private bool embedSrgb = true;
+    public bool ShowGuides { get; set; } = true;
 
-    [ObservableProperty]
-    private bool autoCheckUpdate = true;
+    public bool EmbedSrgb { get; set; } = true;
+
+    public bool AutoCheckUpdate { get; set; } = true;
 
     /// <summary>上次自动检查更新的时间（UTC）；「每周检查一次」的节流依据。</summary>
-    [ObservableProperty]
-    private DateTime? lastAutoCheckUpdateAt;
+    public DateTime? LastAutoCheckUpdateAt { get; set; }
 
-    [ObservableProperty]
-    private int batchConcurrency = 4;
+    public int BatchConcurrency { get; set; } = 4;
 
-    [ObservableProperty]
-    private bool batchSkipProcessed = true;
+    public bool BatchSkipProcessed { get; set; } = true;
 
-    [ObservableProperty]
-    private bool batchOpenFolderWhenDone = true;
+    public bool BatchOpenFolderWhenDone { get; set; } = true;
 }

@@ -2,10 +2,17 @@
     x:Class="IEditor.App.Views.MainView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:lcommon="using:Localization.Common"
+    xmlns:lshell="using:Localization.Shell"
+    xmlns:lphotostudio="using:Localization.PhotoStudio"
+    xmlns:lsettings="using:Localization.Settings"
+    xmlns:lbatch="using:Localization.Batch"
+    xmlns:labout="using:Localization.About"
+    xmlns:codewf="https://codewf.com"
     xmlns:vm="using:IEditor.App.ViewModels"
     x:CompileBindings="True"
     x:DataType="vm:MainViewModel">
-  <Grid Background="{DynamicResource IEditorPageBackgroundBrush}">
+  <Grid Background="{DynamicResource StudioBackground}">
     <ContentControl Content="{Binding SelectedPage}" />
   </Grid>
 </UserControl>

@@ -751,10 +751,10 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         Title = L(Localization.Shell.Navigation.PhotoStudio);
         Subtitle = L(Localization.Shell.Window.Subtitle);
         Breadcrumb = L(Localization.PhotoStudio.Page.Breadcrumb);
-        StatusText = string.IsNullOrWhiteSpace(StatusText) ? L(Localization.PhotoStudio.Status.Ready) : StatusText;
-        SourceSummary = string.IsNullOrWhiteSpace(SourceSummary)
+        StatusText = L(Localization.PhotoStudio.Status.Ready);
+        SourceSummary = string.IsNullOrWhiteSpace(SourcePath)
             ? L(Localization.PhotoStudio.Summary.NoImageSelected)
-            : SourceSummary;
+            : Path.GetFileName(SourcePath);
 
         SourceSectionTitle = L(Localization.PhotoStudio.Page.SourceSection);
         SourceSectionHint = L(Localization.PhotoStudio.Labels.SourceHint);
@@ -1219,25 +1219,25 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
 
     private void RefreshOptions()
     {
-        _selectedSizeToken ??= SelectedSizeOption?.Token ?? "1寸";
-        _selectedBackgroundToken ??= SelectedBackgroundOption?.Token ?? "蓝色";
+        _selectedSizeToken ??= SelectedSizeOption?.Token ?? "one-inch";
+        _selectedBackgroundToken ??= SelectedBackgroundOption?.Token ?? "blue";
 
         SizeOptions =
         [
-            new PhotoSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.OneInch), "1寸", 25, 35, false),
-            new PhotoSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.TwoInch), "2寸", 35, 49, false),
-            new PhotoSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.SmallTwoInch), "小2寸", 33, 48, false),
-            new PhotoSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.Custom), "自定义", WidthMm, HeightMm, true)
+            new PhotoSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.OneInch), "one-inch", 25, 35, false),
+            new PhotoSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.TwoInch), "two-inch", 35, 49, false),
+            new PhotoSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.SmallTwoInch), "small-two-inch", 33, 48, false),
+            new PhotoSizeOptionViewModel(L(Localization.PhotoStudio.Sizes.Custom), "custom", WidthMm, HeightMm, true)
         ];
 
         BackgroundOptions =
         [
-            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.WhiteName), "白色", RgbColor.White, false),
-            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.BlueName), "蓝色", new RgbColor(67, 142, 219), false),
-            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.RedName), "中国红", new RgbColor(190, 11, 36), false),
-            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.GrayLightName), "浅灰", new RgbColor(237, 241, 246), false),
-            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.GrayDarkName), "深灰", new RgbColor(58, 70, 87), false),
-            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.Custom), "自定义", CustomBackgroundColor.ToRgbColor(), true)
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.WhiteName), "white", RgbColor.White, false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.BlueName), "blue", new RgbColor(67, 142, 219), false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.RedName), "red", new RgbColor(190, 11, 36), false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.GrayLightName), "light-gray", new RgbColor(237, 241, 246), false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.GrayDarkName), "dark-gray", new RgbColor(58, 70, 87), false),
+            new BackgroundOptionViewModel(L(Localization.PhotoStudio.Backgrounds.Custom), "custom", CustomBackgroundColor.ToRgbColor(), true)
         ];
 
         FormatOptions =
@@ -1290,16 +1290,16 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         var size = SelectedSizeOption?.Title ?? string.Empty;
         var background = SelectedBackgroundOption?.Title ?? string.Empty;
         var sourceName = string.IsNullOrWhiteSpace(SourcePath)
-            ? "照片"
+            ? L(Localization.Common.Filenames.Photo)
             : Path.GetFileNameWithoutExtension(SourcePath);
 
         return new Dictionary<string, string>
         {
-            ["原名"] = sourceName,
-            ["规格"] = size,
-            ["底色"] = background,
-            ["日期"] = DateTime.Now.ToString("yyyyMMdd"),
-            ["序号"] = "001"
+            ["name"] = sourceName,
+            ["size"] = size,
+            ["color"] = background,
+            ["date"] = DateTime.Now.ToString("yyyyMMdd"),
+            ["index"] = "001"
         };
     }
 
@@ -1323,7 +1323,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         OutputMmText = $"{WidthMm:0.#} × {HeightMm:0.#} mm";
         SizeStatusText = $"{size.WidthPx}×{size.HeightPx} px @ {Dpi} DPI";
         DimChipText = ComparePreview && OriginalBitmap is { } original
-            ? $"原图 · {original.PixelSize.Width} × {original.PixelSize.Height}"
+            ? string.Format(L(Localization.PhotoStudio.Summary.Original), original.PixelSize.Width, original.PixelSize.Height)
             : $"{size.WidthPx} × {size.HeightPx} px · {Dpi} DPI";
         FormatStatusText = BuildFormatStatusText();
         SyncHexText();
@@ -1355,11 +1355,11 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
     {
         var format = OutputFormat == PhotoOutputFormat.Jpeg ? FormatJpgText : FormatPngText;
         var estimate = lastPreviewBytes is { } bytes
-            ? $" · 约 {(bytes / 1024d):0} KB"
+            ? string.Format(L(Localization.PhotoStudio.Summary.ApproximateSize), bytes / 1024d)
             : OutputFormat == PhotoOutputFormat.Jpeg
-                ? $" · 约 {Math.Round(OutputQuality * 0.94)} KB"
+                ? string.Format(L(Localization.PhotoStudio.Summary.ApproximateSize), Math.Round(OutputQuality * 0.94))
                 : string.Empty;
-        return $"{format} · 质量 {OutputQuality}{estimate}";
+        return string.Format(L(Localization.PhotoStudio.Summary.FormatQuality), format, OutputQuality, estimate);
     }
 
     private PhotoProcessingRequest BuildRequest(PhotoOutputFormat outputFormat) =>
@@ -1374,7 +1374,8 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
             IsSmartCutoutEnabled,
             PreviewScale,
             PreviewOffsetX,
-            PreviewOffsetY);
+            PreviewOffsetY,
+            _preferencesService.Preferences.EmbedSrgb);
 
     private static Bitmap CreateBitmap(byte[] data)
     {

@@ -2,8 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:u="https://irihi.tech/ursa">
   <Style Selector="Border.ie-dialog">
-    <Setter Property="Background" Value="{DynamicResource IEditorSurfaceBrush}" />
-    <Setter Property="BorderBrush" Value="{DynamicResource IEditorBorderBrush}" />
+    <Setter Property="Background" Value="{DynamicResource StudioSurface}" />
+    <Setter Property="BorderBrush" Value="{DynamicResource StudioBorder}" />
     <Setter Property="BorderThickness" Value="1" />
     <Setter Property="CornerRadius" Value="14" />
     <Setter Property="BoxShadow" Value="0 18 50 0 #4D0A1628" />

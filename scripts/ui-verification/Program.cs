@@ -75,6 +75,16 @@ Check(store.Load().ThemeMode == AppThemeMode.System, "System theme persists inde
 model.SettingsPage.SelectedAccentColorOption = model.SettingsPage.AccentColorOptions.Single(item => item.Palette == StudioPalette.DotNet);
 model.SetThemeLightCommand.Execute(null);
 var about = new AboutWindow { DataContext = model }; about.Show();
+Pump();
+var aboutMinimize = about.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "PART_MinimizeButton");
+var aboutMaximize = about.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "PART_MaximizeRestoreButton");
+Check(aboutMinimize.IsEffectivelyVisible && !aboutMinimize.IsEnabled && aboutMaximize.IsEffectivelyVisible && !aboutMaximize.IsEnabled,
+    "Actual About caption disables minimizing and maximizing");
+aboutMinimize.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+aboutMaximize.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); Pump();
+Check(about.WindowState == WindowState.Normal, "Disabled caption actions cannot change About window state");
+Check(about.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "PART_CloseButton").IsEnabled,
+    "Actual About caption keeps closing available");
 foreach (var culture in new[] { "zh-CN", "en-US", "zh-CN", "en-US" })
 {
     model.SettingsPage.SelectedLanguageOption = model.SettingsPage.LanguageOptions.Single(item => item.CultureName == culture); Pump();

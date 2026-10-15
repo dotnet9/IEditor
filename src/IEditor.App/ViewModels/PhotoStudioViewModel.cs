@@ -177,6 +177,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         {
             if (SetProperty(ref widthMm, value))
             {
+                OnPropertyChanged(nameof(WidthMmInput));
                 UpdateSuggestedFileName();
                 UpdateDerivedText();
                 SchedulePreview();
@@ -191,6 +192,7 @@ public partial class PhotoStudioViewModel : WorkspacePageViewModel
         {
             if (SetProperty(ref heightMm, value))
             {
+                OnPropertyChanged(nameof(HeightMmInput));
                 UpdateSuggestedFileName();
                 UpdateDerivedText();
                 SchedulePreview();

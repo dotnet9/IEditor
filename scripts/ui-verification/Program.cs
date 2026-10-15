@@ -163,7 +163,17 @@ var photo = model.PhotoPage; photo.SetSourcePath(Path.Combine(inputs, "sample-0.
 Check(photo.PreviewBitmap!.PixelSize.Width == 295 && photo.PreviewBitmap.PixelSize.Height == 413, "Real image preview matches one-inch 300 DPI output");
 // 先暂停防抖预览，再变更一组参数，避免定时器与显式预览争用导出。
 photo.BeginPreviewInteraction(); WaitUntil(() => !photo.IsBusy);
-photo.SelectedSizeOption = photo.SizeOptions.Single(item => item.IsCustom); photo.WidthMm = 30; photo.HeightMm = 40;
+photo.SelectedSizeOption = photo.SizeOptions.Single(item => item.IsCustom); photo.WidthMm = 30; photo.HeightMm = 40; Pump();
+var widthEditor = window.GetVisualDescendants().OfType<TextBox>().Single(control => control.Name == "PhotoWidthInput");
+var heightEditor = window.GetVisualDescendants().OfType<TextBox>().Single(control => control.Name == "PhotoHeightInput");
+Check(widthEditor.Text == "30" && heightEditor.Text == "40", "Actual dimension editors follow custom size changes");
+var preset = photo.SizeOptions.First(item => !item.IsCustom && item.WidthMm != 25);
+photo.SelectedSizeOption = preset; Pump();
+Check(widthEditor.Text == preset.WidthMm.ToString("0.#") && heightEditor.Text == preset.HeightMm.ToString("0.#"),
+    "Actual dimension editors follow preset changes");
+photo.SelectedSizeOption = photo.SizeOptions.Single(item => item.IsCustom);
+widthEditor.Text = "30"; heightEditor.Text = "40"; Pump();
+Check(photo.WidthMm == 30 && photo.HeightMm == 40, "Actual custom dimension editors update the output parameters");
 photo.Dpi = 150; photo.OutputFormat = PhotoOutputFormat.Png; photo.ShowGuides = false;
 Complete(photo.GeneratePreviewCommand.ExecuteAsync(null));
 photo.OutputPath = Path.Combine(output, "exports", "single.png"); var save = photo.SaveExportAsync(); Complete(save); Check(save.Result, "Single export succeeds: " + photo.StatusText);
@@ -173,7 +183,10 @@ using (var exported = new MagickImage(photo.OutputPath))
     Check(System.Text.Encoding.Latin1.GetString(File.ReadAllBytes(photo.OutputPath!)).Contains("sRGB"), "sRGB output includes its PNG color-space chunk");
 }
 Capture(window, "photo-loaded-en-US.png");
-photo.ResetCommand.Execute(null); service.ResetCounters(); model.NavigateBatchProcessingCommand.Execute(null); var batch = model.BatchPage;
+photo.ResetCommand.Execute(null); Pump();
+Check(widthEditor.Text == photo.WidthMm.ToString("0.#") && heightEditor.Text == photo.HeightMm.ToString("0.#"),
+    "Actual dimension editors follow reset");
+service.ResetCounters(); model.NavigateBatchProcessingCommand.Execute(null); var batch = model.BatchPage;
 batch.AddImagePaths(sourcePaths); batch.AddImagePaths(sourcePaths);
 Check(batch.QueueItems.Count == 3, "Import deduplicates real image paths");
 batch.SelectAllCommand.Execute(null); batch.Concurrency = 2; batch.OpenFolderWhenDone = false;

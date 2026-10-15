@@ -378,7 +378,7 @@
                           <Border Classes="ie-input-group">
                             <Grid ColumnDefinitions="Auto,*,Auto">
                               <TextBlock Classes="ie-input-prefix" Text="{codewf:I18n {x:Static lphotostudio:Labels.WidthPrefix}}" />
-                              <TextBox Grid.Column="1" Classes="ie-flat" Text="{Binding WidthMmInput, Mode=TwoWay}" />
+                              <TextBox x:Name="PhotoWidthInput" Grid.Column="1" Classes="ie-flat" Text="{Binding WidthMmInput, Mode=TwoWay}" />
                               <TextBlock Grid.Column="2" Classes="ie-input-suffix" Text="mm" />
                             </Grid>
                           </Border>
@@ -390,7 +390,7 @@
                           <Border Classes="ie-input-group">
                             <Grid ColumnDefinitions="Auto,*,Auto">
                               <TextBlock Classes="ie-input-prefix" Text="{codewf:I18n {x:Static lphotostudio:Labels.HeightPrefix}}" />
-                              <TextBox Grid.Column="1" Classes="ie-flat" Text="{Binding HeightMmInput, Mode=TwoWay}" />
+                              <TextBox x:Name="PhotoHeightInput" Grid.Column="1" Classes="ie-flat" Text="{Binding HeightMmInput, Mode=TwoWay}" />
                               <TextBlock Grid.Column="2" Classes="ie-input-suffix" Text="mm" />
                             </Grid>
                           </Border>

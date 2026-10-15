@@ -1,8 +1,6 @@
 ﻿name: release
 
-# Pushing a v* (or bare numeric) tag publishes AOT-trimmed installers for
-# win-x64 (Inno Setup setup.exe) / linux-x64 / linux-arm64 (deb) /
-# osx-x64 / osx-arm64 (dmg) with SHA-256 checksums, followed by a GitHub Release.
+# 版本标签触发五个平台的原生 AOT 验证与 exe、deb、dmg 安装包发布。
 on:
   push:
     tags:
@@ -33,6 +31,34 @@ jobs:
       - name: Test
         run: dotnet test IEditor.slnx -c Release
 
+      - name: Verify T4 localization keys
+        shell: pwsh
+        run: ./scripts/sync_localization_keys.ps1 -Check
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Verify self-contained prototype
+        shell: pwsh
+        run: |
+          node scripts/prototype/build.cjs --check
+          if ($LASTEXITCODE -ne 0) { throw 'Prototype generation drifted.' }
+          npm ci --prefix scripts/prototype/tests
+          if ($LASTEXITCODE -ne 0) { throw 'Prototype tools restore failed.' }
+          Push-Location scripts/prototype/tests
+          npx playwright install chromium
+          if ($LASTEXITCODE -ne 0) { throw 'Chromium install failed.' }
+          Pop-Location
+          node scripts/prototype/tests/audit-prototype.cjs
+          if ($LASTEXITCODE -ne 0) { throw 'Offline prototype audit failed.' }
+
+      - name: Verify application behavior and rendering
+        run: dotnet run --project scripts/ui-verification/UiVerification.csproj -c Release -- artifacts/ui-managed
+
+      - name: Compare measured prototype layout
+        run: node scripts/prototype/tests/compare-layout.cjs artifacts/ui-managed artifacts/prototype-audit
+
   publish:
     name: Publish ${{ matrix.rid }}
     needs: test
@@ -47,9 +73,9 @@ jobs:
           - rid: linux-arm64
             os: ubuntu-24.04-arm
           - rid: osx-x64
-            os: macos-latest
+            os: macos-15-intel
           - rid: osx-arm64
-            os: macos-latest
+            os: macos-15
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -76,16 +102,30 @@ jobs:
 
       - name: Install NativeAOT prerequisites (Linux)
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev
+        run: sudo apt-get update && sudo apt-get install -y clang zlib1g-dev libfontconfig1 libx11-6 fonts-noto-cjk
 
       - name: Publish (NativeAOT with full reflection metadata)
         shell: pwsh
-        run: >
-          dotnet publish src/IEditor.App/IEditor.App.csproj -c Release
-          -r ${{ matrix.rid }} --self-contained true -p:Version=$env:APP_VERSION
-          -p:PublishAot=true -p:PublishTrimmed=true -p:PublishSingleFile=false
-          -p:IlcGenerateCompleteTypeMetadata=true -p:IlcTrimMetadata=false -p:IlcSingleThreaded=true
-          -o "artifacts/publish/${{ matrix.rid }}/IEditor.App"
+        run: ./scripts/publish.ps1 -RuntimeIdentifier '${{ matrix.rid }}' -Version $env:APP_VERSION
+
+      - name: Publish and run native UI verification
+        shell: pwsh
+        run: |
+          $rid = '${{ matrix.rid }}'
+          $output = "artifacts/ui-native/$rid"
+          dotnet publish scripts/ui-verification/UiVerification.csproj -c Release -r $rid --self-contained true -p:Version=$env:APP_VERSION -p:PublishAot=true -p:PublishTrimmed=true -p:DebugType=portable -p:DebugSymbols=true -p:IlcGenerateCompleteTypeMetadata=true -p:IlcTrimMetadata=false -p:IlcSingleThreaded=true -o $output
+          if ($LASTEXITCODE -ne 0) { throw 'Native UI verification publish failed.' }
+          $executable = if ($IsWindows) { 'UiVerification.exe' } else { 'UiVerification' }
+          & (Join-Path (Resolve-Path $output) $executable) "artifacts/ui-evidence/$rid"
+          if ($LASTEXITCODE -ne 0) { throw 'Native UI verification failed.' }
+
+      - name: Retain native verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: IEditor-ui-${{ matrix.rid }}
+          path: artifacts/ui-evidence/${{ matrix.rid }}
+          if-no-files-found: ignore
 
       - name: Build Windows installer (Inno Setup)
         if: runner.os == 'Windows'
@@ -122,7 +162,7 @@ jobs:
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: IEditor-${{ matrix.rid }}
+          name: IEditor-installer-${{ matrix.rid }}
           path: artifacts/release/*
           if-no-files-found: error
 
@@ -136,7 +176,7 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: IEditor-*
+          pattern: IEditor-installer-*
           path: artifacts/release
           merge-multiple: true
 
@@ -148,7 +188,7 @@ jobs:
             $version = '${{ inputs.version }}'.TrimStart('v', 'V')
             $tagName = "v$version"
           } else {
-            # Keep the pushed tag as-is (v0.3.0 or 0.3.0) instead of creating a new one.
+            # 使用推送的标签原名。
             $tagName = '${{ github.ref_name }}'
             $version = $tagName.TrimStart('v', 'V')
           }
@@ -171,17 +211,12 @@ jobs:
             Copy-Item -LiteralPath $curated -Destination $bodyPath -Force
             Write-Host "Using curated release notes: $curated"
           }
-                    # 附注 tag 的说明就是发布说明（Release 页直接可读，不点开 tag 也能看到）
-                    git fetch --quiet --tags origin 2>$null
-                    $tagMessage = git tag -l "$env:TAG_NAME" --format='%(contents)'
-                    if (-not [string]::IsNullOrWhiteSpace($tagMessage)) {
-                      $tagMessage | Set-Content -LiteralPath $bodyPath -Encoding utf8
-                      Write-Host "使用附注 tag 说明作为发布说明。"
-                    }
-                    else {
-        
-            "IEditor v$env:VERSION" | Set-Content -LiteralPath $bodyPath -Encoding utf8
-            Write-Host "No curated notes found; generated notes only."
+          else {
+            git fetch --quiet --tags origin
+            if ($LASTEXITCODE -ne 0) { throw 'Tag fetch failed.' }
+            $tagMessage = git tag -l "$env:TAG_NAME" --format='%(contents)'
+            if ([string]::IsNullOrWhiteSpace($tagMessage)) { throw 'Release notes are required.' }
+            $tagMessage | Set-Content -LiteralPath $bodyPath -Encoding utf8
           }
 
       - name: Create GitHub Release

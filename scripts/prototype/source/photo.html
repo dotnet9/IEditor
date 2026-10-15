@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>证件照处理 · IEditor 界面原型</title>
 <link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/product.css">
 <link rel="icon" href="../logo.svg">
 </head>
 <body class="desktop">
@@ -129,7 +130,7 @@
               原图对比
             </button>
             <span class="spacer"></span>
-            <span class="chip"><svg class="ic" style="width:13px;height:13px;color:var(--primary)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13.5h5L11 21l8-10.5h-5Z"/></svg>AI 引擎就绪</span>
+            <span class="chip"><svg class="ic" style="width:13px;height:13px;color:var(--primary)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13.5h5L11 21l8-10.5h-5Z"/></svg>图像引擎就绪</span>
           </div>
 
           <div class="stage">
@@ -245,8 +246,8 @@
               <div style="display:flex;align-items:center;gap:10px">
                 <svg class="ic" style="color:var(--cyan)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 13.6 8l4.4 1.6-4.4 1.6L12 15.7l-1.6-4.5L6 9.6 10.4 8Z"/><path d="m18.6 14.2.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8Z"/></svg>
                 <div class="grow" style="flex:1">
-                  <div class="t" style="font-weight:500">智能抠图换底</div>
-                  <div class="d" style="font-size:12px;color:var(--text-3)">自动抠出人像，任意替换底色</div>
+                  <div class="t" style="font-weight:500">纯色背景去除</div>
+                  <div class="d" style="font-size:12px;color:var(--text-3)">适合背景均匀的照片；不适用于复杂背景</div>
                 </div>
                 <label class="switch"><input type="checkbox"><i></i></label>
               </div>
@@ -277,25 +278,25 @@
         <div class="dialog-b">
           <div class="field">
             <label>文件格式</label>
-            <div class="seg">
-              <button class="on" type="button">JPG</button>
-              <button type="button">PNG</button>
+            <div class="seg" id="fmtSeg">
+              <button class="on" data-value="jpg" type="button">JPG</button>
+              <button data-value="png" type="button">PNG</button>
             </div>
           </div>
           <div class="field">
-            <label style="display:flex;justify-content:space-between">输出质量 <b style="font-family:var(--mono)">92</b></label>
-            <input type="range" min="60" max="100" value="92">
+            <label style="display:flex;justify-content:space-between">输出质量 <b id="qVal" style="font-family:var(--mono)">92</b></label>
+            <input id="qRange" type="range" min="60" max="100" value="92">
           </div>
           <div class="field">
             <label>保存位置</label>
             <div style="display:flex;gap:8px">
-              <input class="input mono" value="D:\Pictures\证件照" readonly>
+              <input class="input mono" value="D:\Pictures\IEditor" readonly>
               <button class="btn" style="height:34px" type="button">浏览</button>
             </div>
           </div>
           <div class="field">
             <label>文件名</label>
-            <input class="input mono" value="证件照_1寸_标准蓝.jpg">
+            <input class="input mono" value="photo_one-inch_blue.jpg">
           </div>
           <div class="dialog-actions">
             <button class="btn" data-close type="button">取消</button>
@@ -421,5 +422,8 @@
     });
   })();
 </script>
+<script src="resources.js"></script>
+<script src="assets/palette-tokens.js"></script>
+<script src="assets/product.js"></script>
 </body>
 </html>

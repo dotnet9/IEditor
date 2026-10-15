@@ -1,0 +1,1 @@
+{"name":"ieditor-prototype-audit","private":true,"version":"1.0.0","scripts":{"test":"node audit-prototype.cjs"},"devDependencies":{"playwright":"1.62.1"}}

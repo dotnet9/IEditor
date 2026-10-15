@@ -1,36 +1,34 @@
-<p align="center">
-  <img src="logo.svg" width="96" alt="IEditor 标志" />
-</p>
+<p align="center"><img src="logo.svg" width="96" alt="IEditor 标志" /></p>
 
-# 证件照处理
+# IEditor 证件照处理
 
-这是一个基于 Avalonia 的桌面证件照处理软件。
+基于 Avalonia 的本地证件照工具。当前版本：**0.3.6**。
 
-## 功能范围
+- 单张处理：一寸、二寸及自定义毫米尺寸，DPI、背景颜色、旋转、镜像、缩放、拖动与原图对比，支持 JPG、PNG 导出。
+- 背景处理：支持去除均匀纯色背景；复杂发丝和复杂场景不在当前算法范围内。
+- 批量处理：拖放和文件夹导入、重复过滤、最多 200 张、统一规格、文件名模板、2/4/8 并发、跳过未变化的已处理文件及 ZIP 导出。启动队列不包含虚构任务。
+- 外观与语言：Semi、Ursa、CodeWF 组件系；浅色、深色、跟随系统，八套主题色，即时切换简体中文和英文并保存偏好。
+- 关于与更新：真实版本和编译时间，通过 CodeWF.Toolkit 完成检查、下载、校验、安装、取消及异常恢复。
 
-- 证件照单张处理：1 寸 / 2 寸 / 自定义尺寸（毫米），白色、标准蓝、中国红或自定义背景，实时预览、旋转镜像、参考线与原图对比
-- 批量处理：队列 + 拖放导入、统一尺寸/背景、文件名模板、并发导出与 ZIP 打包
-- 设置：外观主题色、默认 DPI、参考线开关、处理引擎与默认保存位置
-- 更新检查：帮助菜单手动检查，设置页可开启每周自动检查
-- 智能抠图：即将上线（界面就绪，算法接入中）
+![证件照工作区](docs/images/photo-light.png)
 
-## 界面原型
+![批量处理深色工作区](docs/images/batch-dark.png)
 
-- `design/index.html`：原型总览与设计规范（深色壁纸 + 圆角自绘窗口呈现）
-- 功能原型页：`design/证件照处理.html`、`design/批量处理.html`、`design/设置.html`
+## 运行与验证
 
-## 目录结构
+需要 .NET 10 SDK。所有 CodeWF 引用均来自 NuGet，无跨仓库项目引用。
 
-- `src/IEditor.Core`：核心模型与图像处理
-- `src/IEditor.App`：界面与视图模型
-- `tests/IEditor.Core.Tests`：核心逻辑测试
-
-## 运行
-
-```bash
+```powershell
 dotnet run --project src/IEditor.App/IEditor.App.csproj
+dotnet test IEditor.slnx -c Release
+pwsh scripts/sync_localization_keys.ps1 -Check
+dotnet run --project scripts/ui-verification/UiVerification.csproj -c Release -- artifacts/ui-managed
 ```
 
-## 发布
+宿主翻译 JSON 输出到程序目录；`Language.tt` 生成强类型键。业务和内嵌库资源共用 `CodeWF.Toolkit.Lang.I18nManager.Instance`，宿主同名键自动覆盖库资源。
 
-标准发布流程与发布说明规范见 [docs/RELEASE.md](docs/RELEASE.md)。
+## 原型与发布
+
+[design/index.html](design/index.html) 是可复制后离线使用的单文件交互原型；维护和自动审计说明见 [design/README.md](design/README.md)。
+
+[界面验证记录](docs/UI-VERIFICATION.md) 记录了同尺寸原型对照、真实行为和 NativeAOT 验证边界。发布入口为 `pwsh scripts/publish.ps1 -RuntimeIdentifier win-x64`，完整流程见 [docs/RELEASE.md](docs/RELEASE.md)。GitHub 版本工作流分别在原生 runner 生成 Windows exe、Linux x64/arm64 deb、macOS x64/arm64 dmg 安装包及 SHA-256 校验文件。

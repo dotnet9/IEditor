@@ -152,12 +152,13 @@ sign_bundle "$APP_DIR" "$EXECUTABLE_NAME"
 
 DMG_STAGE="$STAGE_ROOT/dmg"
 mkdir -p "$DMG_STAGE"
-cp -R "$APP_DIR" "$DMG_STAGE/$APP_NAME.app"
+mv "$APP_DIR" "$DMG_STAGE/$APP_NAME.app"
 ln -s /Applications "$DMG_STAGE/Applications"
 
 mkdir -p "$OUTPUT_DIR"
 DMG_PATH="$OUTPUT_DIR/$APP_NAME-$VERSION-$RID.dmg"
 rm -f "$DMG_PATH"
 hdiutil create -volname "$APP_NAME" -srcfolder "$DMG_STAGE" -ov -format UDZO "$DMG_PATH" >/dev/null
+shasum -a 256 "$DMG_PATH" | sed "s|$OUTPUT_DIR/||" >"$DMG_PATH.sha256"
 
 echo "Created: $DMG_PATH"

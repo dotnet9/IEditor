@@ -1,0 +1,22 @@
+/* 产品复核样式：复用 Studio 三态八色，保持原有工作流布局。 */
+body { font-family:"Microsoft YaHei UI","Segoe UI",sans-serif; }
+.titlebar,.menubar,.statusbar { background:var(--bg);color:var(--text-1); }
+.titlebar { border:0;border-bottom:3px solid var(--primary);height:42px; }
+.window::before { display:none; }
+.product-tools { margin-left:auto;display:flex;gap:8px;margin-right:12px;align-items:center; }
+.product-tools select { height:28px;border:1px solid var(--border);border-radius:4px;background:var(--surface-2);color:var(--text-1);font:12px inherit;padding:2px 8px;text-align:left; }
+.product-tools [data-mode] { width:112px; }.product-tools [data-palette] { width:120px; }.product-tools [data-language] { width:100px; }
+.product-tools + .win-controls { margin-left:0; }
+.seg { background:var(--surface-2); }.seg [data-value].on { background:var(--surface); }
+.menu-dropdown,.submenu,.ig,.stepper,.rail-btn,.zoom,.tool,.input,select.input { background:var(--surface);color:var(--text-1); }
+.stage { background-color:var(--surface);background-image:linear-gradient(45deg,var(--surface-2) 25%,transparent 25%,transparent 75%,var(--surface-2) 75%),linear-gradient(45deg,var(--surface-2) 25%,transparent 25%,transparent 75%,var(--surface-2) 75%);min-height:600px; }
+.photo { width:286px;height:400px; }.corner { border-color:var(--primary);filter:none; }
+.panel { max-height:calc(100vh - 180px);overflow:auto; }.content { padding:20px; }
+select { text-align:left; }.card-h .ic { width:17px;height:17px; }.titlebar .brand-text small { color:var(--text-2); }
+.product-about { width:600px;height:620px;box-sizing:border-box;padding:28px;overflow:auto;background:var(--bg);color:var(--text-1);border:1px solid var(--border);border-radius:8px; }
+.product-about::backdrop { background:#0006; }.about-heading { display:flex;gap:16px;align-items:center;margin-bottom:22px; }.about-heading img { width:56px;height:56px; }.about-heading h2 { font-size:22px;margin:0 0 6px; }.about-meta { display:grid;grid-template-columns:110px 1fr;gap:14px 12px;line-height:1.5; }.about-meta dd { margin:0; }.about-update { border-top:1px solid var(--border);padding-top:18px;margin-top:18px; }.about-update p { margin:0 0 12px; }.about-update .btn { margin:0 8px 8px 0; }.about-close { float:right; }
+body[data-capture] .desk { padding:0; }.window { min-height:0; }body[data-capture] .window { border-radius:0;box-shadow:none; }
+[data-palettes] { display:flex;gap:10px; }[data-palettes] button { width:30px;height:30px; }
+.switch input:checked + i { background:#35B34A; }
+
+.main,.content { min-height:0; }

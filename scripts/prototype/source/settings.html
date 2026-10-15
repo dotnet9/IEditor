@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>设置 · IEditor 界面原型</title>
 <link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="assets/product.css">
 <link rel="icon" href="../logo.svg">
 </head>
 <body class="desktop">
@@ -108,11 +109,11 @@
           </div>
           <div class="card-b" style="gap:0;padding:4px 0">
             <div class="row">
-              <div class="grow"><div class="t">主题</div><div class="d">深色主题将随 v0.5 一同发布</div></div>
+              <div class="grow"><div class="t">主题</div><div class="d">浅色、深色或跟随系统</div></div>
               <div class="ctl">
                 <div class="seg" style="width:230px">
                   <button data-value="light" class="on" type="button">浅色</button>
-                  <button data-value="dark" disabled type="button">深色</button>
+                  <button data-value="dark" type="button">深色</button>
                   <button data-value="system" type="button">跟随系统</button>
                 </div>
               </div>
@@ -120,22 +121,15 @@
             <div class="row">
               <div class="grow"><div class="t">强调色</div><div class="d">按钮、选中等交互元素的主色</div></div>
               <div class="ctl">
-                <div class="swatches">
-                  <button class="swatch on" style="background:#2e6bff" title="科技蓝" type="button"></button>
-                  <button class="swatch" style="background:#00b8d9" title="极光青" type="button"></button>
-                  <button class="swatch" style="background:#7c5cff" title="星云紫" type="button"></button>
-                  <button class="swatch" style="background:#12b76a" title="松石绿" type="button"></button>
-                  <button class="swatch" style="background:#f59e0b" title="琥珀橙" type="button"></button>
-                </div>
+                <div class="swatches" data-palettes></div>
               </div>
             </div>
             <div class="row">
               <div class="grow"><div class="t">界面语言</div><div class="d">切换后立即生效</div></div>
               <div class="ctl">
-                <select class="input" style="width:160px">
-                  <option selected>简体中文</option>
-                  <option>English</option>
-                  <option>繁體中文</option>
+                <select class="input" style="width:160px" data-language>
+                  <option value="zh-CN">简体中文</option>
+                  <option value="en-US">English</option>
                 </select>
               </div>
             </div>
@@ -182,7 +176,7 @@
           </div>
           <div class="card-b" style="gap:0;padding:4px 0">
             <div class="row">
-              <div class="grow"><div class="t">默认保存位置</div><div class="d" style="font-family:var(--mono)">D:\Pictures\证件照</div></div>
+              <div class="grow"><div class="t">默认保存位置</div><div class="d" style="font-family:var(--mono)">D:\Pictures\IEditor</div></div>
               <div class="ctl"><button class="btn" style="height:30px;font-size:12px" type="button">浏览</button></div>
             </div>
             <div class="row">
@@ -200,8 +194,8 @@
               <span class="chip" style="font-family:var(--mono)">92</span>
             </div>
             <div class="row">
-              <div class="grow"><div class="t">命名模板</div><div class="d">支持 {规格} {底色} {日期} {序号} 变量</div></div>
-              <div class="ctl"><input class="input mono" style="width:220px" value="证件照_{规格}_{底色}"></div>
+              <div class="grow"><div class="t">命名模板</div><div class="d">支持 {size} {color} {date} {index} 变量</div></div>
+              <div class="ctl"><input class="input mono" style="width:220px" value="photo_{size}_{color}"></div>
             </div>
           </div>
         </section>
@@ -218,14 +212,14 @@
               <div class="ctl"><label class="switch"><input type="checkbox" checked><i></i></label></div>
             </div>
             <div class="row">
-              <div class="grow"><div class="t">当前版本</div><div class="d">IEditor · 基于 Avalonia 11 与 .NET 10</div></div>
+              <div class="grow"><div class="t">当前版本</div><div class="d">IEditor · 基于 Avalonia 与 .NET 10</div></div>
               <div class="ctl">
-                <span class="chip blue">v0.3.0</span>
+                <span class="chip blue">v0.3.6</span>
               </div>
             </div>
             <div class="row">
               <div class="grow"><div class="t">开源仓库</div><div class="d">欢迎提交 Issue 与 PR</div></div>
-              <div class="ctl"><a class="btn" style="height:30px;font-size:12px;text-decoration:none" href="https://github.com" target="_blank" rel="noreferrer">GitHub</a></div>
+              <div class="ctl"><a class="btn" style="height:30px;font-size:12px;text-decoration:none" href="https://github.com/dotnet9/IEditor" target="_blank" rel="noreferrer">GitHub</a></div>
             </div>
           </div>
         </section>
@@ -236,12 +230,15 @@
     <footer class="statusbar">
       <span><span class="dot ok"></span>所有设置已自动保存</span>
       <span class="spacer"></span>
-      <span class="meta">v0.3.0 · 界面原型</span>
+      <span class="meta">v0.3.6 · 界面原型</span>
     </footer>
   </div>
 </div>
 </div>
 
 <script src="assets/app.js"></script>
+<script src="resources.js"></script>
+<script src="assets/palette-tokens.js"></script>
+<script src="assets/product.js"></script>
 </body>
 </html>

@@ -1,61 +1,46 @@
-# 发布流程规范（RELEASE）
+# IEditor 发布流程
 
-> 本文档是各仓库统一的标准发布流程。**每次发版都按本文档执行**，避免出现
-> 「Release 页只有 Full Changelog 链接」「安装包缺失」「版本号不一致」这类不规范情况。
+版本唯一来源为 `src/IEditor.App/IEditor.App.csproj`，版本标签必须匹配，如 `0.3.6` 对应 `v0.3.6`。精选发布说明放在 `.github/release-notes/v0.3.6.md`。
 
-## 1. 版本号约定
+## 本机验证
 
-- 版本号唯一来源：根目录 `Directory.Build.props` 的 `<Version>`（个别仓库在主 csproj，如 IEditor/QuickApp）。
-- 发布 tag 必须与该版本一致：`<Version>1.2.3</Version>` ↔ tag `v1.2.3`。
-- README 的「当前版本」行（如有）同步更新。
-- 更新日志：有 `UpdateLog.md` 的仓库，发布前新增对应版本条目（`## 版本 (YYYY-MM-DD)`）。
-
-## 2. 标准发布流程
-
-```text
-1. 改版本号（Directory.Build.props / csproj）+ 更新 UpdateLog.md + 同步 README 版本行
-2. 提交：chore(release): vX.Y.Z（英文规范提交，仓库另有约定从其约定）
-3. 打附注 tag —— tag 的附注消息就是 GitHub Release 的发布说明（见下节）：
-       git tag -a vX.Y.Z -m "应用名 X.Y.Z\n\n- 要点一\n- 要点二 ..."
-4. 推送分支与 tag：git push origin <branch> && git push origin vX.Y.Z
-5. CI（release.yml）自动：测试 → 全平台 NativeAOT 发布 → 制作安装包 → 创建 GitHub Release
-6. 到 Release 页确认：说明可读、各平台安装包齐全（win exe / linux deb / mac dmg）
+```powershell
+dotnet test IEditor.slnx -c Release
+pwsh scripts/sync_localization_keys.ps1 -Check
+node scripts/prototype/build.cjs --check
+dotnet run --project scripts/ui-verification/UiVerification.csproj -c Release -- artifacts/ui-managed
+pwsh scripts/publish.ps1 -RuntimeIdentifier win-x64
 ```
 
-## 3. 发布说明规范（重要）
+应用发布目录为 `artifacts/publish/win-x64/IEditor.App`。原生界面验证器也必须按 NativeAOT 发布并实际执行；它使用与应用相同的视图、视图模型和图像引擎，隔离图片、偏好和导出目录，不启动安装器。
 
-**Release 页的说明来自附注 tag 的消息**。打 tag 时必须写清楚：
-
-```bash
-git tag -a vX.Y.Z -m "应用名 X.Y.Z
-
-本版本做了什么（第一段概览）
-
-- 变更要点 1
-- 变更要点 2"
+```powershell
+dotnet publish scripts/ui-verification/UiVerification.csproj -c Release -r win-x64 --self-contained true -p:PublishAot=true -p:PublishTrimmed=true -p:DebugType=portable -p:DebugSymbols=true -p:IlcGenerateCompleteTypeMetadata=true -p:IlcTrimMetadata=false -p:IlcSingleThreaded=true -o artifacts/ui-native/win-x64
+& ./artifacts/ui-native/win-x64/UiVerification.exe artifacts/ui-evidence/win-x64
 ```
 
-- 工作流的「准备发布说明」步骤会按以下优先级取内容：
-  1. 精选说明 `.github/release-notes/vX.Y.Z.md`（存在则优先）；
-  2. **附注 tag 消息**（`git tag -l vX.Y.Z --format='%(contents)'`）；
-  3. 兜底：仅版本标题 + 自动生成的 Full Changelog（**不允许停留在这一档**）。
-- 不确定时，发布后打开 Release 页检查说明是否可读。
+## 提交与版本标签
 
-## 4. 平台与安装包矩阵
+直接在 `main` 按变更范围使用简体中文规范提交。完成检查后推送 `main`，用精选发布说明文件创建新附注标签并推送。已发布标签不得移动。
 
-| 平台 | 产物 | 说明 |
+```powershell
+git push origin main
+git tag -a v0.3.6 -F .github/release-notes/v0.3.6.md
+git push origin v0.3.6
+```
+
+本地开发可用 `temp_nugets` 目录验证新包，不提交本地源配置或跨仓库项目引用。正式 CI 使用 nuget.org；共享包可用后再触发版本标签。
+
+## CI 与安装包
+
+测试任务检查 Core、T4、单文件原型离线交互及 managed 真实行为。随后五个原生 runner 分别执行仓库发布脚本，再原生发布并实际运行界面验证器，成功后打包。
+
+| RID | Runner | 安装包 |
 | --- | --- | --- |
-| win-x64 | 安装器或 zip（各仓既有形态） | NativeAOT |
-| win-x86 | 同上 | NativeAOT 不支持 x86 的仓库保持自包含单文件 |
-| linux-x64 / linux-arm64 | `.deb`（amd64/arm64） | NativeAOT；arm64 在 arm runner 上原生编译 |
-| osx-x64 / osx-arm64 | `.dmg` | NativeAOT；保留符号（Apple ld_classic 不支持压缩调试段） |
+| win-x64 | windows-latest | Inno Setup exe |
+| linux-x64 | ubuntu-latest | amd64 deb |
+| linux-arm64 | ubuntu-24.04-arm | arm64 deb |
+| osx-x64 | macos-15-intel | x64 dmg |
+| osx-arm64 | macos-15 | arm64 dmg |
 
-- 统一配方：`-p:PublishAot=true -p:PublishTrimmed=true -p:PublishSingleFile=false
-  -p:IlcGenerateCompleteTypeMetadata=true -p:IlcTrimMetadata=false -p:IlcSingleThreaded=true`。
-- Linux runner 需 `clang zlib1g-dev`；不要在 x64 runner 上交叉编译其他架构的 AOT。
-- 平台相关功能未适配时，应用内以「当前平台功能正在开发中」友好提示，不阻塞发布与启动。
-
-## 5. 发布后检查
-
-- Release 页：说明可读、资产齐全（对照矩阵）、带 `.sha256` 的照旧。
-- 安装包抽查：至少在 Windows 本机跑一次发布产物。
+发布资产仅包含上述安装包与 SHA-256 文件；界面证据作为独立 Actions artifact 保留。Release 说明优先精选文件，其次附注标签，禁止以缺失说明静默继续。发布后核对五个平台安装包、校验文件和全部工作流结果。

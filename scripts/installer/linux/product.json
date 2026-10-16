@@ -1,0 +1,16 @@
+{
+  "id": "com.codewf.ieditor",
+  "package": "ieditor",
+  "command": "ieditor",
+  "name": "IEditor",
+  "chineseName": "证件照编辑器",
+  "summary": "Prepare identity photos and image layouts",
+  "chineseSummary": "制作证件照和图片排版",
+  "description": "An image editor for preparing identity photos and printable layouts.",
+  "chineseDescription": "用于制作证件照与打印排版的图片编辑器。",
+  "categories": [
+    "Graphics",
+    "RasterGraphics"
+  ],
+  "homepage": "https://github.com/dotnet9/IEditor"
+}

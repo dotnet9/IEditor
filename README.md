@@ -14,7 +14,7 @@
 
 ![批量处理深色工作区](docs/images/batch-v0.3.13-dark.png)
 
-以上两张截图来自 0.3.13 本地候选版本的独立 Windows NativeAOT 界面验证器，使用真实视图与 Skia 离屏渲染；不代表人工桌面或安装器操作验收。源码指纹和图片 SHA-256 见 [本轮媒体复核](docs/recheck25-native-media.md)。本轮尚未推送、创建标签或公开发布。
+以上两张截图来自 0.3.13 本地候选版本的独立 Windows NativeAOT 界面验证器，使用真实视图与 Skia 离屏渲染；不代表人工桌面或安装器操作验收。源码指纹和图片 SHA-256 见 [本轮媒体复核](docs/recheck25-native-media.md)。本机验证记录不替代 GitHub Release 发布状态。
 
 ## 运行与验证
 

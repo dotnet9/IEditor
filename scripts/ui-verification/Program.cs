@@ -1,13 +1,17 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.IO.Compression;
+using System.Runtime.CompilerServices;
+using System.Text.Json.Serialization;
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Presenters;
 using Avalonia.Headless;
 using Avalonia.Media;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using Avalonia.Interactivity;
+using Avalonia.Input;
 using Ursa.Controls;
 using CodeWF.Avalonia.Controls.Themes;
 using CodeWF.Toolkit.Core.UpdateChecking;
@@ -17,12 +21,16 @@ using IEditor.App.Models;
 using IEditor.App.Services;
 using IEditor.App.ViewModels;
 using IEditor.App.Views;
+using IEditor.App.Views.Dialogs;
+using IEditor.App.ViewModels.Dialogs;
 using IEditor.Core.Models;
 using IEditor.Core.Services;
 using ImageMagick;
 
 var output = Path.GetFullPath(args.FirstOrDefault() ?? "artifacts/ui-verification");
 Directory.CreateDirectory(output);
+var assertions = new List<string>();
+var primaryColors = new List<PrimaryColorEvidence>();
 AppBuilder.Configure<App>().UseSkia().WithInterFont()
     .With(new FontManagerOptions { FontFallbacks = [new FontFallback { FontFamily = new FontFamily("Microsoft YaHei UI") }, new FontFallback { FontFamily = new FontFamily("Noto Sans CJK SC") }] })
     .UseHeadless(new AvaloniaHeadlessPlatformOptions { UseHeadlessDrawing = false }).SetupWithoutStarting();
@@ -95,6 +103,7 @@ model.SettingsPage.SelectedAccentColorOption = model.SettingsPage.AccentColorOpt
 model.SetThemeLightCommand.Execute(null);
 var about = new AboutWindow { DataContext = model }; about.Show();
 Pump();
+VerifyPrimaryActions();
 var aboutMinimize = about.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "PART_MinimizeButton");
 var aboutMaximize = about.GetVisualDescendants().OfType<Button>().Single(button => button.Name == "PART_MaximizeRestoreButton");
 Check(aboutMinimize.IsEffectivelyVisible && !aboutMinimize.IsEnabled && aboutMaximize.IsEffectivelyVisible && !aboutMaximize.IsEnabled,
@@ -232,9 +241,70 @@ foreach (var culture in new[] { "zh-CN", "en-US" })
     Check(queue.Offset.Y > 0, "Minimum-window queue reaches its final rows: " + culture);
     Capture(window, "batch-queue-scroll-" + culture + ".png");
 }
-window.Close(); Console.WriteLine("IEditor UI verification passed: " + output);
+window.Close();
+File.WriteAllLines(Path.Combine(output, "assertions.txt"), assertions);
+File.WriteAllText(Path.Combine(output, "primary-button-colors.json"), System.Text.Json.JsonSerializer.Serialize(primaryColors,
+    PrimaryColorJsonContext.Default.ListPrimaryColorEvidence));
+Console.WriteLine($"IEditor UI verification passed: {assertions.Count} assertions; NativeAOT={!RuntimeFeature.IsDynamicCodeSupported}; {output}");
 
-void Check(bool value, string message) { if (!value) throw new InvalidOperationException(message); Console.WriteLine("PASS " + message); }
+void Check(bool value, string message) { if (!value) throw new InvalidOperationException(message); assertions.Add(message); Console.WriteLine("PASS " + message); }
+void VerifyPrimaryActions()
+{
+    var export = new ExportDialogView { DataContext = new ExportDialogViewModel(model.PhotoPage) };
+    var exportHost = new Window { Content = export, Width = 620, Height = 620 };
+    exportHost.Show(); Pump();
+    var aboutButton = about.GetVisualDescendants().OfType<Button>().Single(item => item.Classes.Contains("ie-primary-button"));
+    var exportButton = export.GetVisualDescendants().OfType<Button>().Single(item => item.Classes.Contains("ie-primary-button"));
+    foreach (var palette in Enum.GetValues<StudioPalette>())
+    foreach (var mode in new[] { AppThemeMode.Light, AppThemeMode.Dark })
+    {
+        model.SettingsPage.SelectedAccentColorOption = model.SettingsPage.AccentColorOptions.Single(item => item.Palette == palette);
+        model.SettingsPage.SelectedThemeOption = model.SettingsPage.ThemeOptions.Single(item => item.Value == mode); Pump();
+        Verify(about, aboutButton, "About", palette + " " + mode);
+        Verify(exportHost, exportButton, "Export", palette + " " + mode);
+    }
+    exportHost.Close();
+    model.SettingsPage.SelectedAccentColorOption = model.SettingsPage.AccentColorOptions.Single(item => item.Palette == StudioPalette.DotNet);
+    model.SetThemeLightCommand.Execute(null); Pump();
+
+    void Verify(Window host, Button button, string action, string variant)
+    {
+        var presenter = button.GetVisualDescendants().OfType<ContentPresenter>().Single();
+        var text = button.GetVisualDescendants().OfType<TextBlock>().Single();
+        button.Transitions = null; presenter.Transitions = null;
+        host.MouseMove(new Point(-20, -20)); Pump(); Record("normal", "StudioPrimary");
+        var point = button.TranslatePoint(new Point(button.Bounds.Width / 2, button.Bounds.Height / 2), host)!.Value;
+        host.MouseMove(point); Pump(); Check(button.IsPointerOver, "Actual primary receives hover: " + action + " " + variant); Record("hover", "StudioPrimaryHover");
+        host.MouseDown(point, MouseButton.Left); Pump(); Check(button.IsPressed, "Actual primary receives press: " + action + " " + variant); Record("pressed", "StudioPrimaryPressed");
+        // 在按钮外释放，不执行更新、导出或文件访问。
+        host.MouseMove(new Point(-20, -20)); host.MouseUp(new Point(-20, -20), MouseButton.Left); Pump();
+        button.IsEnabled = false; Pump();
+        Check(!button.IsEffectivelyEnabled && (button.Opacity < 1 || presenter.Opacity < 1 || text.Opacity < 1 ||
+              ((ISolidColorBrush)presenter.Background!).Opacity < 1 || !Equals(text.Foreground, button.FindResource("StudioOnPrimary"))),
+            "Actual primary exposes disabled state: " + action + " " + variant);
+        Record("disabled", null); button.IsEnabled = true; Pump(); Record("reenabled", "StudioPrimary");
+
+        void Record(string state, string? key)
+        {
+            var foreground = (ISolidColorBrush)text.Foreground!;
+            var background = (ISolidColorBrush)presenter.Background!;
+            var ratio = Contrast(foreground.Color, background.Color);
+            primaryColors.Add(new PrimaryColorEvidence(action, variant, state, foreground.Color.ToString(), background.Color.ToString(), foreground.Opacity, background.Opacity, ratio));
+            File.WriteAllText(Path.Combine(output, "primary-button-colors.json"), System.Text.Json.JsonSerializer.Serialize(primaryColors,
+                PrimaryColorJsonContext.Default.ListPrimaryColorEvidence));
+            if (key is null) return;
+            Check(button.TryFindResource(key, button.ActualThemeVariant, out var resource) && resource is ISolidColorBrush expected &&
+                  expected.Color == background.Color && ratio >= 4.5,
+                "Actual primary has readable " + state + " colors: " + action + " " + variant + $"; ratio={ratio:F2}; background={background}; foreground={foreground}");
+        }
+    }
+}
+static double Contrast(Color first, Color second)
+{
+    static double Channel(byte value) { var x = value / 255d; return x <= .04045 ? x / 12.92 : Math.Pow((x + .055) / 1.055, 2.4); }
+    static double Luminance(Color value) => .2126 * Channel(value.R) + .7152 * Channel(value.G) + .0722 * Channel(value.B);
+    var a = Luminance(first); var b = Luminance(second); return (Math.Max(a, b) + .05) / (Math.Min(a, b) + .05);
+}
 void Pump() { var timer = Stopwatch.StartNew(); do { Dispatcher.UIThread.RunJobs(); AvaloniaHeadlessPlatform.ForceRenderTimerTick(); Thread.Sleep(10); } while (timer.ElapsedMilliseconds < 200); }
 void WaitUntil(Func<bool> condition) { var timer = Stopwatch.StartNew(); while (!condition() && timer.ElapsedMilliseconds < 15000) Pump(); Check(condition(), "Asynchronous image work completes"); Pump(); }
 void Complete(Task task) { WaitUntil(() => task.IsCompleted); task.GetAwaiter().GetResult(); }
@@ -275,6 +345,12 @@ void VerifyUpdates()
     Complete(vm.CheckAsync()); Complete(vm.AdvanceAsync()); Check(opened.Last() == "https://example.test/release", "Missing platform assets fall back to the release page");
     Check(updates.CurrentVersion == UpdateVersion.Current(typeof(App).Assembly), "Update checks use the application version, including under NativeAOT");
 }
+sealed record PrimaryColorEvidence(string Action, string Variant, string State, string Foreground, string Background,
+    double ForegroundOpacity, double BackgroundOpacity, double Ratio);
+[JsonSourceGenerationOptions(WriteIndented = true, PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+[JsonSerializable(typeof(List<PrimaryColorEvidence>))]
+partial class PrimaryColorJsonContext : JsonSerializerContext;
+
 sealed class CountingPhotos : IPhotoStudioService
 {
     private readonly MagickPhotoStudioService _service = new(); private int _active;

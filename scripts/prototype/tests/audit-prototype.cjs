@@ -4,7 +4,7 @@ const { chromium }=require('playwright');const path=require('path');const fs=req
  const productVersion=fs.readFileSync(path.join(root,'src/IEditor.App/IEditor.App.csproj'),'utf8').match(/<Version>(\d+\.\d+\.\d+)<\/Version>/)?.[1];
  const isolated=path.join(output,'offline-copy');fs.mkdirSync(isolated,{recursive:true});const html=path.join(isolated,'index.html');fs.copyFileSync(path.join(root,'design/index.html'),html);
  const browser=await chromium.launch({headless:true,...(process.env.CI?{}:{channel:'msedge'})});const context=await browser.newContext({viewport:{width:1320,height:860},deviceScaleFactor:1,offline:true});
- const page=await context.newPage();const errors=[];const external=[];page.on('pageerror',e=>errors.push(e.stack));page.on('request',request=>{if(/^https?:/.test(request.url()))external.push(request.url());});
+ const page=await context.newPage();const errors=[];const external=[];const primaryColors=[];page.on('pageerror',e=>errors.push(e.stack));page.on('request',request=>{if(/^https?:/.test(request.url()))external.push(request.url());});
  let count=0;for(const route of ['photo','batch','settings']){
   await page.goto(pathToFileURL(html).href+'?capture=1#'+route);await page.reload();
   await page.waitForFunction(()=>!!document.querySelector('iframe').contentWindow.IEditorPrototype);
@@ -29,6 +29,7 @@ const { chromium }=require('playwright');const path=require('path');const fs=req
   }
   if(route==='photo'){
    await frame.locator('.menu').first().hover();await frame.locator('[data-export]').first().click();if(!await frame.locator('#exportDialog').isVisible())throw Error('Export did not open');
+   await verifyPrimary(frame,frame.locator('#exportDialog .btn.primary'),'Export');
    await frame.locator('#qRange').evaluate(el=>{el.value='80';el.dispatchEvent(new Event('input',{bubbles:true}));});if(await frame.locator('#qVal').innerText()!=='80')throw Error('Quality did not change');await frame.locator('#exportDialog [data-close]').first().click();
    await frame.locator('#btnGuides').click();if(!await frame.locator('#guides').evaluate(el=>el.classList.contains('hidden')))throw Error('Guide toggle failed');
   }
@@ -47,7 +48,9 @@ const { chromium }=require('playwright');const path=require('path');const fs=req
   await frame.locator('[data-window-action="maximize"]').click();if(!await frame.locator('.window').evaluate(el=>el.classList.contains('prototype-maximized')))throw Error('Maximize did not change the window frame');
   await frame.locator('[data-window-action="maximize"]').click();if(await frame.locator('.window').evaluate(el=>el.classList.contains('prototype-maximized')))throw Error('Restore did not reset the window frame');
   for(const action of ['minimize','close']){await frame.locator('[data-window-action="'+action+'"]').click();if(await frame.locator('.window').isVisible()||!await frame.locator('[data-window-restore]').isVisible())throw Error('Window action did not hide the workspace: '+route+'/'+action);await frame.locator('[data-window-restore]').click();if(!await frame.locator('.window').isVisible())throw Error('Window restore did not reopen the workspace');}
-  await frame.evaluate(()=>window.IEditorPrototype.openAbout());if(!await frame.locator('.about-titlebar').isVisible()||!await frame.locator('.about-meta').innerText().then(text=>text.includes('2026-10-15 00:00:00')))throw Error('About desktop chrome or sample build time missing');for(const language of ['zh-CN','en-US']){
+  await frame.evaluate(()=>window.IEditorPrototype.openAbout());if(!await frame.locator('.about-titlebar').isVisible()||!await frame.locator('.about-meta').innerText().then(text=>text.includes('2026-10-15 00:00:00')))throw Error('About desktop chrome or sample build time missing');
+  if(route==='photo')await verifyPrimary(frame,frame.locator('[data-update-action]'),'About');
+  for(const language of ['zh-CN','en-US']){
    await frame.evaluate(state=>window.IEditorPrototype.set(state),{language,mode:'Light',palette:'DotNet'});
    for(const state of ['checking','available','downloading','downloaded','canceled','failed']){await frame.evaluate(value=>window.IEditorPrototype.setUpdate(value),state);if(!await frame.locator('[data-update-action]').innerText())throw Error('Missing update action');}
    await frame.locator('.product-about').screenshot({path:path.join(output,'about-'+language+'.png'),animations:'disabled'});
@@ -70,5 +73,24 @@ const { chromium }=require('playwright');const path=require('path');const fs=req
   fs.writeFileSync(path.join(output,route+'-remaining-chinese.json'),JSON.stringify(remaining,null,2));
   if(remaining.length)throw Error('Untranslated visible content in '+route+': '+remaining.join('; '));
  }
- await browser.close();if(errors.length||external.length)throw Error([...errors,...external].join('\n'));console.log('PASS '+count+' workspace/language/palette/mode combinations; export and guide interactions; About/update states; isolated offline HTML; zero JavaScript errors or external requests.');
+ fs.writeFileSync(path.join(output,'primary-button-colors.json'),JSON.stringify(primaryColors,null,2));
+ await browser.close();if(errors.length||external.length)throw Error([...errors,...external].join('\n'));console.log('PASS '+count+' workspace/language/palette/mode combinations; '+primaryColors.length+' primary button state records; export and guide interactions; About/update states; isolated offline HTML; zero JavaScript errors or external requests.');
+ async function verifyPrimary(frame,button,action){
+  await frame.addStyleTag({content:'*,*::before,*::after{transition:none!important;animation:none!important}'});
+  for(const palette of ['DotNet','Aurora','Ember','Default','Aquatic','Desert','Dusk','NightSky'])for(const mode of ['Light','Dark']){
+   await frame.evaluate(state=>window.IEditorPrototype.set(state),{language:'zh-CN',palette,mode});
+   await page.mouse.move(1,1);await record('normal','--button-primary');
+   await button.hover();await record('hover','--button-primary-hover');
+   await page.mouse.down();await record('pressed','--button-primary-pressed');
+   await page.mouse.move(1,1);await page.mouse.up();
+   await button.evaluate(element=>element.disabled=true);await record('disabled',null);
+   await button.evaluate(element=>element.disabled=false);await record('reenabled','--button-primary');
+   async function record(state,key){
+    const value=await button.evaluate((element,key)=>{const style=getComputedStyle(element);const rgb=value=>value.match(/[\d.]+/g).slice(0,3).map(Number);const lum=value=>rgb(value).map(channel=>{const x=channel/255;return x<=.04045?x/12.92:((x+.055)/1.055)**2.4;}).reduce((sum,x,index)=>sum+x*[.2126,.7152,.0722][index],0);const a=lum(style.color),b=lum(style.backgroundColor);const probe=document.createElement('i');probe.style.background=getComputedStyle(document.documentElement).getPropertyValue(key||'--button-primary');document.body.append(probe);const expected=getComputedStyle(probe).backgroundColor;probe.remove();return{foreground:style.color,background:style.backgroundColor,expected,ratio:(Math.max(a,b)+.05)/(Math.min(a,b)+.05),opacity:Number(style.opacity),disabled:element.disabled};},key);
+    primaryColors.push({action,palette,mode,state,...value});
+    if(key&&(value.background!==value.expected||value.ratio<4.5))throw Error('Unreadable primary control: '+JSON.stringify({action,palette,mode,state,...value}));
+    if(!key&&(!value.disabled||value.opacity>=1))throw Error('Missing disabled primary control: '+action);
+   }
+  }
+ }
 })().catch(error=>{console.error(error);process.exit(1);});

@@ -1,5 +1,9 @@
 /* 产品复核样式：复用 Studio 三态八色，保持原有工作流布局。 */
 body { font-family:"Microsoft YaHei UI","Segoe UI",sans-serif; }
+.btn.primary { background:var(--button-primary);color:var(--on-primary);box-shadow:none; }
+.btn.primary:hover { background:var(--button-primary-hover);color:var(--on-primary);filter:none; }
+.btn.primary:active { background:var(--button-primary-pressed);color:var(--on-primary); }
+.btn.primary:disabled { background:var(--button-primary);color:var(--on-primary);opacity:.4; }
 .titlebar,.menubar,.statusbar { background:var(--bg);color:var(--text-1); }
 .titlebar { border:0;border-bottom:3px solid var(--primary);height:42px;z-index:70; }
 .window[hidden],[data-window-restore][hidden]{display:none!important}.window.prototype-maximized{position:fixed;inset:0;width:100vw;height:100vh;max-width:none;border-radius:0;z-index:100}[data-window-restore]{position:fixed;inset:auto auto 18px 18px;padding:10px 20px;background:var(--surface);color:var(--text-1);border:1px solid var(--primary);border-radius:5px;cursor:pointer}

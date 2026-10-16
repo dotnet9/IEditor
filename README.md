@@ -1,4 +1,4 @@
-<p align="center"><img src="logo.svg" width="96" alt="IEditor 标志" /></p>
+﻿<p align="center"><img src="logo.svg" width="96" alt="IEditor 标志" /></p>
 
 # IEditor 证件照处理
 
@@ -34,3 +34,7 @@ dotnet run --project scripts/ui-verification/UiVerification.csproj -c Release --
 [design/index.html](design/index.html) 是可复制后离线使用的单文件交互原型；维护和自动审计说明见 [design/README.md](design/README.md)。
 
 [界面验证记录](docs/UI-VERIFICATION.md) 记录了同尺寸原型对照、真实行为和 NativeAOT 验证边界。发布入口为 `pwsh scripts/publish.ps1 -RuntimeIdentifier win-x64`，完整流程见 [docs/RELEASE.md](docs/RELEASE.md)。GitHub 版本工作流分别在原生 runner 生成 Windows exe、Linux x64/arm64 deb、macOS x64/arm64 dmg 安装包及 SHA-256 校验文件。
+
+## 统一安装体验
+
+安装包采用统一 .NET 品牌紫设计：Windows 使用异形原生向导、真实进度核心和双语许可；macOS 使用品牌 DMG 背景与 Finder 拖放布局；Linux 提供原生 DEB 及 AppStream 品牌信息。各仓库保存自包含安装器源码，交付 EXE / DEB / DMG 和 SHA-256，不以 ZIP 代替安装包。实现、维护流程与平台验收边界见 [安装器说明](scripts/installer/README.md)。

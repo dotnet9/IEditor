@@ -14,6 +14,7 @@
 #endif
 
 [Setup]
+LicenseFile=..\LICENSE
 AppId={{E7A1C2D4-3B5F-4A6E-9C8D-0B1A2C3D4E5F}}
 AppName=IEditor
 AppVersion={#AppVersion}
@@ -32,6 +33,10 @@ ArchitecturesInstallIn64BitMode=x64compatible
 PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog commandline
 
+[Languages]
+Name: "english"; MessagesFile: "compiler:Default.isl"
+Name: "chinesesimplified"; MessagesFile: "Languages\ChineseSimplified.isl"
+
 [Files]
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Excludes: "*.pdb,*.dbg,*.dSYM"; Flags: ignoreversion recursesubdirs createallsubdirs
 
@@ -45,5 +50,4 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Run]
 Filename: "{app}\IEditor.App.exe"; Description: "{cm:LaunchProgram,IEditor}"; Flags: nowait postinstall skipifsilent
 
-[UninstallDelete]
-Type: filesandordirs; Name: "{app}"
+#include "installer\CodeWF.Setup.iss"

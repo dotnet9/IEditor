@@ -1,10 +1,12 @@
-# IEditor 0.3.12 界面与行为复核
+# IEditor 0.3.13 界面与行为复核
 
-验证基线：Windows x64，1320 × 860，简体中文和英文；CodeWF.Avalonia 12.1.4.22、CodeWF.Toolkit 1.0.0.19。原型与应用均使用同一组 Studio 主题资源。
+验证基线：Windows x64，1320 × 860，简体中文和英文；CodeWF.Avalonia Controls/Lang 12.1.4.25、CodeWF.Toolkit 1.0.0.19。原型内嵌对应的 Studio 主题角色快照。
+
+0.3.13 将关于更新与导出对话框使用的主按钮改为现有 Semi `SolidButton`，替换深色模式下白字与明亮渐变的低对比组合。实际按钮和原型均覆盖十六套配色的 normal、hover、pressed、disabled、reenabled，分别输出 160 条取色记录；启用状态要求文字对比度至少 4.5，禁用状态单独检查操作和视觉弱化。证据 JSON 使用源生成序列化，可参与 NativeAOT 回归。本文既有图片与历史原生验证记录仍为 0.3.12；新增版本的最终原生结果以对应运行日志为准。
 
 ## 可复现检查
 
-- `dotnet test IEditor.slnx -c Release`：核心图像处理和几何换算，当前 8 项。
+- `dotnet test --project tests/IEditor.Core.Tests/IEditor.Core.Tests.csproj -c Release`：核心图像处理和几何换算，当前 8 项。
 - `pwsh scripts/sync_localization_keys.ps1 -Check`：宿主 JSON 与 T4 强类型键、原型资源同步。
 - `node scripts/prototype/build.cjs --check`：单文件原型可重建，兼容 LF/CRLF 检出。
 - `node scripts/prototype/tests/audit-prototype.cjs`：将 HTML 复制到空目录，断网遍历 96 个工作区、语言、配色、明暗组合；检查导出、质量、参考线、关于与更新状态，禁止脚本错误、外部资源请求和英文界面残留中文。
@@ -68,3 +70,8 @@ Ursa/Semi 的裁剪与 AOT 分析告警保留可见，不通过屏蔽告警宣�
 通过原生截图发现自定义输出已经为 30 × 40 mm，宽高输入框却仍为 25 × 35。新增同一对真实输入框的回归，修复前会失败；尺寸基础属性变更现在同时通知输入绑定。验证预设切换、自定义文本编辑及重置时，输入值、参数、预览和导出保持同步。
 
 README 的工作区截图与本页关于窗口截图已刷新为 0.3.12 本轮正式原生验证输出，文件与原始 PNG 的 SHA-256 一致；静态图不作为系统窗口、文件选择器或安装器人工操作的证明。
+
+
+## 0.3.13 本地原生复核
+
+本轮冻结源码的正式 NativeAOT、实际隔离 runtime、完整原生 UI 384/384 条断言通过、8 项测试、离线原型和原样式 Windows 安装器编译均通过。README 使用本轮原生输出；历史章节与旧图片保持其原版本范围。当前源码指纹、媒体 SHA-256 和完整边界见 [本轮媒体复核](recheck25-native-media.md)。未运行安装器，未宣称整页 95% 还原或其他系统桌面验收完成。

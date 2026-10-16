@@ -2,7 +2,7 @@
 
 # IEditor 证件照处理
 
-基于 Avalonia 的本地证件照工具。当前版本：**0.3.12**。
+基于 Avalonia 的本地证件照工具。当前版本：**0.3.13**。
 
 - 单张处理：一寸、二寸及自定义毫米尺寸，DPI、背景颜色、旋转、镜像、缩放、拖动与原图对比，支持 JPG、PNG 导出。
 - 背景处理：支持去除均匀纯色背景；复杂发丝和复杂场景不在当前算法范围内。
@@ -10,11 +10,11 @@
 - 外观与语言：Semi、Ursa、CodeWF 组件系；浅色、深色、跟随系统，八套主题色，即时切换简体中文和英文并保存偏好。
 - 关于与更新：真实版本和编译时间，通过 CodeWF.Toolkit 完成检查、下载、校验、安装、取消及异常恢复。
 
-![证件照工作区](docs/images/photo-light.png)
+![证件照工作区](docs/images/photo-v0.3.13-light.png)
 
-![批量处理深色工作区](docs/images/batch-dark.png)
+![批量处理深色工作区](docs/images/batch-v0.3.13-dark.png)
 
-以上两张截图来自 0.3.12 的独立 Windows NativeAOT 界面验证器，使用真实视图与 Skia 离屏渲染；不代表人工桌面或安装器操作验收。验证范围见 [界面验证记录](docs/UI-VERIFICATION.md)。
+以上两张截图来自 0.3.13 本地候选版本的独立 Windows NativeAOT 界面验证器，使用真实视图与 Skia 离屏渲染；不代表人工桌面或安装器操作验收。源码指纹和图片 SHA-256 见 [本轮媒体复核](docs/recheck25-native-media.md)。本轮尚未推送、创建标签或公开发布。
 
 ## 运行与验证
 
@@ -22,7 +22,7 @@
 
 ```powershell
 dotnet run --project src/IEditor.App/IEditor.App.csproj
-dotnet test IEditor.slnx -c Release
+dotnet test --project tests/IEditor.Core.Tests/IEditor.Core.Tests.csproj -c Release
 pwsh scripts/sync_localization_keys.ps1 -Check
 dotnet run --project scripts/ui-verification/UiVerification.csproj -c Release -- artifacts/ui-managed
 ```
